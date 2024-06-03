@@ -7,7 +7,6 @@ const syncuser = () => ({
   init() {
     this.user = undefined;
     this.camera = this.el;
-    var userId = this.data.userId;
     const iframe = document.getElementById("iframe")
     console.log(iframe)
 
@@ -24,9 +23,7 @@ const syncuser = () => ({
   },
   tick() {
     if ((typeof this.user !== "undefined") && (this.user != null)) {
-      // var pos = this.camera.object3D.position
       var rot = this.camera.object3D.rotation
-      // this.user.object3D.position.copy(pos)
       this.user.object3D.rotation.copy(rot)
     }
     else if(this.data.load){this.load()}
@@ -36,8 +33,6 @@ const syncuser = () => ({
     console.log(`load function`)
     if ((typeof this.user === "undefined")) {
       const doc = iframe.contentDocument || iframe.contentWindow.document
-      const b= doc.getElementsByClassName('a-dialog-ok-button')
-      if(b.length > 0) b[0].click()
       this.user = doc.getElementById(this.data.userId)
       this.data.load = false
     }

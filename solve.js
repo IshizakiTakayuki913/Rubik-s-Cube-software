@@ -873,7 +873,7 @@ function raycast_rotate(roate,rad){
 	edge = document.getElementById("edge").children
 	center = document.getElementById("center").children
 
-	console.log(`rad [${rad}]`)
+	// console.log(`rad [${rad}]`)
 
 	for(let i of moves_face_c[index]){
 		corner[i].object3D.rotation[vec[index]] = rad

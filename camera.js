@@ -378,8 +378,8 @@ const camera = () => ({
 			else{
 				const rad = Math.min((dists[this.NextMove[0]]-0.5)/2,Math.PI/2) * (rads[this.NextMove[0]] > 0 ?1:-1)
 				if(isNaN(rad)){
-					console.log(dists)
-					// console.log(`[${dists[this.NextMove[0]]}] [${this.NextMove[0]}] [${(rads[this.NextMove[0]] > 0 ?1:-1)}]`)
+					console.log(`rad = NaN`)
+					return
 				}
 				raycast_rotate(MoveCode, Math.min((dists[this.NextMove[0]]-0.5)/2,Math.PI/2) * (rads[this.NextMove[0]] > 0 ?1:-1))
 			}
