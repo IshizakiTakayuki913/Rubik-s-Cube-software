@@ -3,7 +3,6 @@ const cubemode = () => ({
 		one_sul_mode: {type: 'boolean', default: true},
 		all_sul_mode: {type: 'boolean', default: false},
     btn_mode: {type: 'int', default: 0},
-    coa: {type: 'int', default: 120},
     solve_time: {type: 'int', default: -1},
 	},	
 
@@ -78,6 +77,7 @@ const cubemode = () => ({
     if(this.data.btn_mode < 0)	return
     else if(this.data.btn_mode === 1)	{
       // this.btn1.classList.add("un-pointer-events")
+      solve_preview = true
       this.btn1.children[0].innerHTML = 'moveing'
       this.data.one_sul_mode = false
       this.data.all_sul_mode = true
@@ -102,6 +102,27 @@ const cubemode = () => ({
       
     }
     // console.log(e)
+  },
+
+  hand_move(moves){
+    // console.log(`debug hand_move`)
+
+    if(this.data.all_sul_mode)	return
+    if(this.data.btn_mode < 0)	return
+    
+    sum_solution2 = [moves.split(" ")]
+    solve_preview = false
+    this.data.btn_mode = 1
+
+    const Lhand = document.getElementById("L-hand")
+    const Rhand = document.getElementById("R-hand")
+    Lhand.object3D.visible = true
+    Rhand.object3D.visible = true
+
+    this.btn1.children[0].innerHTML = 'moveing'
+    this.data.one_sul_mode = false
+    this.data.all_sul_mode = true
+    
   },
 
 	tick() {

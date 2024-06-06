@@ -305,7 +305,7 @@ moves_face_e = [
 	[0,1,2,3,4,5,6,7],
 	[0,1,2,3,8,9,10,11],
 	[2,3,5,6,7,9,10,11],
-	[0,1,3,4,5,7,8,9,11],
+	[0,1,4,5,7,8,9,11],
 ]
 
 moves_face_cn = [
@@ -451,12 +451,12 @@ function rotate(roates ,time = 1000,dist_time = 50){
 
 				scrambled_state = scamble2state(scrambled_state,nr+cr[size+1])
 				scrambled_state = scrambled_state.hand_move(moves[V+cr[(dist*size)+1]])
-				// color_data = color_re_set(V+cr[(dist*size)+1])
+				color_data = color_re_set(V+cr[(dist*size)+1])
 			}
 			else {
 				// console.log(`xyz [${roat_list[i]}]`)
 				scrambled_state = scrambled_state.hand_move(moves[roat_list[i]])
-				// color_data = color_re_set(roat_list[i])
+				color_data = color_re_set(roat_list[i])
 			}
 			one_rotate(scrambled_state, roat_list[i])
 		}, time_tank + time)
@@ -712,7 +712,7 @@ const Pre_movement2 = {
 	"L'.1":	[""],
 	"U'.1":	["",".f"],
 	"y.1":	[".b",""],
-	"y'.1":	[".b",""],
+	"y'.1":	[""],
 }
 
 const Lhands = {
@@ -724,6 +724,7 @@ const Lhands = {
 	"F'"  :"F'.2" ,
 	"y"		:"y.1"	,
 	"y'"	:"y'.1"	,
+	"x'"	:"y'.1"	,
 }
 const Lhandv = {
 	"U'"  :0 ,
@@ -734,6 +735,7 @@ const Lhandv = {
 	"F'"  :0 ,
 	"y"		:0 ,
 	"y'"	:0 ,
+	"x'"	:0 ,
 }
 
 const Rhands = {
@@ -745,6 +747,7 @@ const Rhands = {
 	"F"   :"F'.1"	,
 	"y" 	:"y'.1"	,
 	"y'"	:"y.1"	,
+	"x'"	:"L.1"	,
 }
 const Rhandv = {
 	"U"   :0 ,
@@ -755,6 +758,7 @@ const Rhandv = {
 	"F"   :1 ,
 	"y"	  :0 ,
 	"y'"	:0 ,
+	"x'"	:0 ,
 }
 
 const Change = [
@@ -765,9 +769,12 @@ const Change = [
 let h_v = [0,0]
 let movementCount = -1
 let move180 = false
+
+let solve_preview = true
 // console.log(`f2l 1 ${(sum_solution += search.start_search(solved_state,1, 20))}`)
 
 function motions(){
+	// console.log(`debug motions`)
 	for(;sum_solution2.length > 0 && sum_solution2[0].length == 0;sum_solution2.shift());
 
 	if(sum_solution2.length == 0){
@@ -798,8 +805,10 @@ function motions(){
 	sum_solution2[0].shift()
 
 	movementCount+=1
-	const solveDiv = document.getElementById('sulves').getElementsByTagName('div')
-	solveDiv[movementCount].classList.add('now-move')
+	if(solve_preview){
+		const solveDiv = document.getElementById('sulves').getElementsByTagName('div')
+		solveDiv[movementCount].classList.add('now-move')
+	}
 	
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
@@ -839,6 +848,7 @@ function one_motion(sulb){
 		// console.log(`Rtime.move_schedule`)
 		for(let s of Rtime.move_schedule){
 			setTimeout(() => {
+				Rhand.removeAttribute('animation-mixer')
 				Rhand.setAttribute('animation-mixer', {
 					clip: s.clip,
 					loop: 'once',
@@ -853,6 +863,7 @@ function one_motion(sulb){
 		// console.log(`Ltime.move_schedule`)
 		for(let s of Ltime.move_schedule){
 			setTimeout(() => {
+				Lhand.removeAttribute('animation-mixer')
 				Lhand.setAttribute('animation-mixer', {
 					clip: s.clip,
 					loop: 'once',
