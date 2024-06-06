@@ -8,7 +8,7 @@ const syncuser = () => ({
     this.user = undefined;
     this.camera = this.el;
     const iframe = document.getElementById("iframe")
-    console.log(iframe)
+    // console.log(iframe)
 
     try {
       const doc = iframe.contentDocument || iframe.contentWindow.document
@@ -30,7 +30,7 @@ const syncuser = () => ({
   },
   load() {
     const iframe = document.getElementById("iframe")
-    console.log(`load function`)
+    // console.log(`load function`)
     if ((typeof this.user === "undefined")) {
       const doc = iframe.contentDocument || iframe.contentWindow.document
       this.user = doc.getElementById(this.data.userId)
