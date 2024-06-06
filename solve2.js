@@ -18,6 +18,8 @@ const presskeyboard = () => ({
 			'Digit1':false,
 			'Digit2':false,
 			'Digit3':false,
+			'KeyJ':false,
+			'KeyG':false,
 		}
 		
 		const M = {
@@ -30,6 +32,12 @@ const presskeyboard = () => ({
 			'Digit1':'x',
 			'Digit2':'y',
 			'Digit3':'z',
+			'KeyJ':'r',
+			'KeyG':'l',
+			'KeyY':'u',
+			'KeyN':'d',
+			'KeyM':'f',
+			'KeyU':'b',
 		}
 
 		body.addEventListener("keydown", (e) => {

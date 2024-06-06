@@ -8,8 +8,6 @@ const cubemode = () => ({
 	},	
 
 	init() {
-    console.log(`compnet cubemode`)
-    // this.document.getElementById('scene').components["cube-mode"].data
 		this.btn1 = document.getElementById("btn1")
     const icon = document.getElementById('ins-screen')
 
@@ -35,7 +33,7 @@ const cubemode = () => ({
     fanwisegradient.addColorStop(0,   '#000');
     fanwisegradient.addColorStop(0.3, '#000');
     fanwisegradient.addColorStop(0.6, '#fff');
-    fanwisegradient.addColorStop(0.8, '#ffffff00');
+    fanwisegradient.addColorStop(0.8, '#CCCCCC00');
 
     ctx.strokeStyle = fanwisegradient;
 
@@ -46,11 +44,6 @@ const cubemode = () => ({
 
     icon.appendChild(canvas)
 	},
-
-  // update(newData) {
-  //   console.log(newData)
-  //   console.log(`cubemode updateSchema [${newData.primitive}]`)
-  // },
 
   Ins_Complete(){
     this.data.btn_mode = 1
@@ -72,8 +65,8 @@ const cubemode = () => ({
 
   Ins_reset(){
     if(this.data.btn_mode == 1 && this.data.one_sul_mode){
-      console.log(this.NextMove)
-      console.log(`計算済み　リセット`)
+      // console.log(this.NextMove)
+      // console.log(`計算済み　リセット`)
       this.btn1.children[0].innerHTML = 'Solve'
       this.data.btn_mode = 0
     }

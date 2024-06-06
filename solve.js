@@ -27,20 +27,20 @@ class State {
 	hand_move(move) {
 		let new_cp = new Array(8);
 		let new_co = new Array(8);
-		let graph = ". 今前位置 前向き 今、前位置の中にあるのがいる出来場所\n"
+		// let graph = ". 今前位置 前向き 今、前位置の中にあるのがいる出来場所\n"
 		for(let i=0;i<8;i++){
 			new_cp[i] = move.cp.indexOf(this.cp[move.cp[i]])
 			new_co[i] = (3+move.co[i]+this.co[move.cp[i]]-move.co[move.cp.indexOf(this.cp[move.cp[i]])])%3
-			graph += [
-				i,
-				move.co[i],
-				move.cp[i],
-				this.co[move.cp[i]],
-				this.cp[move.cp[i]],
-				move.cp.indexOf(this.cp[move.cp[i]]),
-				move.co[move.cp.indexOf(this.cp[move.cp[i]])],
-				(3+move.co[i]+this.co[move.cp[i]]-move.co[move.cp.indexOf(this.cp[move.cp[i]])])%3,
-			].join(' ')+"\n"
+			// graph += [
+			// 	i,
+			// 	move.co[i],
+			// 	move.cp[i],
+			// 	this.co[move.cp[i]],
+			// 	this.cp[move.cp[i]],
+			// 	move.cp.indexOf(this.cp[move.cp[i]]),
+			// 	move.co[move.cp.indexOf(this.cp[move.cp[i]])],
+			// 	(3+move.co[i]+this.co[move.cp[i]]-move.co[move.cp.indexOf(this.cp[move.cp[i]])])%3,
+			// ].join(' ')+"\n"
 		}
 		// console.log(graph)
 
@@ -258,6 +258,18 @@ moves = {
 		[8, 4, 6, 10, 0, 7, 3, 11, 1, 5, 2, 9],
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 	),
+	// 'r': new State(
+	// 	[0, 2, 6, 3, 4, 1, 5, 7],
+	// 	[0, 1, 2, 0, 0, 2, 1, 0],
+	// 	[0, 5, 9, 3, 6, 2, 10, 7, 4, 1, 8, 11],
+	// 	[0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+	// ),
+	// 'l': new State(
+	// 	[4, 1, 2, 0, 7, 5, 6, 3],
+	// 	[2, 0, 0, 1, 1, 0, 0, 2],
+	// 	[11, 1, 2, 7, 8, 5, 4, 0, 10, 9, 6, 3],
+	// 	[0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+	// ),
 }
 
 moves_face_c = [
@@ -270,6 +282,12 @@ moves_face_c = [
 	[0,1,2,3,4,5,6,7],
 	[0,1,2,3,4,5,6,7],
 	[0,1,2,3,4,5,6,7],
+	[1,2,5,6],
+	[0,3,4,7],
+	[0,1,2,3],
+	[4,5,6,7],
+	[2,3,6,7],
+	[0,1,4,5],
 ]
 
 moves_face_e = [
@@ -282,6 +300,12 @@ moves_face_e = [
 	[0,1,2,3,4,5,6,7,8,9,10,11],
 	[0,1,2,3,4,5,6,7,8,9,10,11],
 	[0,1,2,3,4,5,6,7,8,9,10,11],
+	[1,2,4,5,6,8,9,10],
+	[0,3,4,6,7,8,10,11],
+	[0,1,2,3,4,5,6,7],
+	[0,1,2,3,8,9,10,11],
+	[2,3,5,6,7,9,10,11],
+	[0,1,3,4,5,7,8,9,11],
 ]
 
 moves_face_cn = [
@@ -294,16 +318,30 @@ moves_face_cn = [
 	[0,1,2,3,4,5],
 	[0,1,2,3,4,5],
 	[0,1,2,3,4,5],
+	[0,1,2,4,5],
+	[0,2,3,4,5],
+	[0,1,2,3,4],
+	[0,1,2,3,5],
+	[1,2,3,4,5],
+	[0,1,3,4,5],
 ]
 
 let move_names = []
 let move_cross = []
 let move_D_corner = []
+
+moves['r'] = moves["L"].apply_move(moves["x"])
+moves['l'] = moves["R"].apply_move(moves["x"]).apply_move(moves["x"]).apply_move(moves["x"])
+moves['u'] = moves["D"].apply_move(moves["y"]).apply_move(moves["y"]).apply_move(moves["y"])
+moves['d'] = moves["U"].apply_move(moves["y"]).apply_move(moves["y"]).apply_move(moves["y"])
+moves['f'] = moves["B"].apply_move(moves["z"]).apply_move(moves["z"]).apply_move(moves["z"])
+moves['b'] = moves["F"].apply_move(moves["z"]).apply_move(moves["z"]).apply_move(moves["z"])
+
 const faces = Object.keys(moves)
-// console.log(faces)
+console.log(faces)
 // U D L R B F
-// U R L F D B
-const faces_rad = [-1, -1,1,  -1,   1,1,  -1,-1,-1]
+// 									U   R L    F    D B    y  z  x   r l   u d   b f
+const faces_rad = [-1, -1,1,  -1,   1,1,  -1,-1,-1 ,-1,1, -1,1, -1,1]
 for(let i=0;i<faces.length;i++){
 	if(i < 6)	move_names.push(faces[i], faces[i] + '2', faces[i] + '\'')
 	moves[faces[i] + '2'] = moves[faces[i]].apply_move(moves[faces[i]])
@@ -318,6 +356,8 @@ let color_modes = {
 	"x":[4,1,5,3,2,0],
 	"y":[3,0,1,2,4,5],
 	"z":[0,4,2,5,3,1],
+	"r":[4,1,5,3,2,0],
+	"l":[5,1,4,3,0,2],
 }
 
 const faces2 = Object.keys(color_modes)
@@ -365,6 +405,7 @@ color_cn = [
 	[4],
 	[5],
 ]
+const vec	= 'yxxzyzxyzxxyyzz'
 
 let solved_state = new State(
 	[0, 1, 2, 3, 4, 5, 6, 7],
@@ -379,25 +420,45 @@ function rotate(roates ,time = 1000,dist_time = 50){
 	let time_tank = 0
 	for(let i=0;i<roat_list.length;i++){
 		setTimeout(() => {
-			// console.log(`rotate roat_list[i] [${roat_list[i]}]`)
 			one_rotate_anim(roat_list[i],time)
 		}, time_tank)
 
 		setTimeout(() => {
-			if(roat_list[i][0] > "Z"){
-				// console.log(`小文字 [${roat_list[i]}]`)
-				scrambled_state = scrambled_state.hand_move(moves[roat_list[i]])
-				// console.log(color_data)
-				color_data = color_re_set(roat_list[i])
-				// console.log(`後`)
-				// console.log(color_data)
-			}
-			else{
+			if(roat_list[i][0] <= "Z"){
+				// console.log(`A~~Z [${roat_list[i]}]`)
 				scrambled_state = scamble2state(scrambled_state,roat_list[i])
 			}
+			else if( roat_list[i][0] < "x"){
+				// console.log(`a~~w [${roat_list[i]}]`)
+
+				const index = faces.indexOf(roat_list[i][0])
+				const V = vec[index]
+				const rad = roat_list[i][1]
+				let size = 1
+				if(rad == '\'')	size = -1
+				else if(rad == '2')	size = 0
+				const cr = ["'", "2", ""]
+				const nr = inv_face[roat_list[i][0].toUpperCase()]
+				const index_vec = faces.indexOf(V)
+				const dist = faces_rad[index]==faces_rad[index_vec]?1:-1
+
+				// console.log(`roat_list[i]>[${roat_list[i]}] faces_rad>[${faces_rad[index]}] index_vec>${faces_rad[index_vec]}\nans>[${faces_rad[index]!=faces_rad[index_vec]?"false":"true"}]`+
+				// 						`nr+cr[size+1]>[${nr+cr[size+1]}] V+cr[(size)+1]>${V+cr[(dist*size)+1]} color>[${V+cr[size+1]}]`)
+
+				// scrambled_state = scamble2state(scrambled_state,roat_list[i])
+				// scrambled_state = scrambled_state.hand_move(moves[roat_list[i]])
+				// color_data = color_re_set(V+cr[size+1])
+
+				scrambled_state = scamble2state(scrambled_state,nr+cr[size+1])
+				scrambled_state = scrambled_state.hand_move(moves[V+cr[(dist*size)+1]])
+				// color_data = color_re_set(V+cr[(dist*size)+1])
+			}
+			else {
+				// console.log(`xyz [${roat_list[i]}]`)
+				scrambled_state = scrambled_state.hand_move(moves[roat_list[i]])
+				// color_data = color_re_set(roat_list[i])
+			}
 			one_rotate(scrambled_state, roat_list[i])
-			// console.log("rotate")
-			// scrambled_state.data_print()
 		}, time_tank + time)
 		time_tank += time + dist_time
 	}
@@ -489,7 +550,6 @@ function one_rotate_anim(roate,time = 2000){
 	center = document.getElementById("center").children
 
 						// URLFDB
-	const vec = 'yxxzyzxyz'
 	let size = 1
 	if(rad == '\'')	size = -1
 	else if(rad == '2')	size = 2
@@ -757,12 +817,12 @@ function one_motion(sulb){
 
 	let sum_time = Math.max(Rtime.time,Ltime.time)
 	let som_sovle_time = Math.max(Rtime.sovle_time,Ltime.sovle_time)
-	console.log(`R time [${Rtime.time}]  sovle_time [${Rtime.sovle_time}]\n`+
-							`L time [${Ltime.time}]  sovle_time [${Ltime.sovle_time}]\n`+
-							`sum time [${sum_time}]  sovle_time [${som_sovle_time}]`)
+	// console.log(`R time [${Rtime.time}]  sovle_time [${Rtime.sovle_time}]\n`+
+	// 						`L time [${Ltime.time}]  sovle_time [${Ltime.sovle_time}]\n`+
+	// 						`sum time [${sum_time}]  sovle_time [${som_sovle_time}]`)
 
-	console.log(Rtime.move_schedule)
-	console.log(Ltime.move_schedule)
+	// console.log(Rtime.move_schedule)
+	// console.log(Ltime.move_schedule)
 
 	if(Rtime.sovle_time != -1 && Ltime.sovle_time != -1 && Rtime.sovle_time != Ltime.sovle_time){
 		const dis = Rtime.sovle_time - Ltime.sovle_time
@@ -776,7 +836,7 @@ function one_motion(sulb){
 
 
 	if(Rtime.move_schedule != undefined){
-		console.log(`Rtime.move_schedule`)
+		// console.log(`Rtime.move_schedule`)
 		for(let s of Rtime.move_schedule){
 			setTimeout(() => {
 				Rhand.setAttribute('animation-mixer', {
@@ -790,7 +850,7 @@ function one_motion(sulb){
 	}
 
 	if(Ltime.move_schedule != undefined){
-		console.log(`Ltime.move_schedule`)
+		// console.log(`Ltime.move_schedule`)
 		for(let s of Ltime.move_schedule){
 			setTimeout(() => {
 				Lhand.setAttribute('animation-mixer', {
@@ -822,16 +882,7 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 
 	index = Change.find((u) => u.int === index)
 	
-	if(sulb[0] === "y")	
-	console.log(`  Su [${Su}] name [` + (index == undefined ? "no" : index.name) +"]")
-
 	if(index !== undefined){
-		// hand.setAttribute('animation-mixer', {
-		// 	clip: index.name,
-		// 	loop: 'once',
-		// 	timeScale: speed,
-		// 	clampWhenFinished: true,
-		// })
 		move_schedule.push({
 			clip: index.name,
 			timeScale: speed,
@@ -843,15 +894,6 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 	h_v[influence] = vec_count % 2
 
 	for(let i=0; i<Pre_movement2[Su].length; i++){
-		// console.log(`Su + Pre_movement2[Su][i] [${Su + Pre_movement2[Su][i]}]`)
-		// setTimeout(() => {
-		// 	hand.setAttribute('animation-mixer', {
-		// 		clip: `${Su + Pre_movement2[Su][i]}`,
-		// 		loop: 'once',
-		// 		timeScale: speed,
-		// 		clampWhenFinished: true,
-		// 	})
-		// }, time)
 		move_schedule.push({
 			clip: `${Su + Pre_movement2[Su][i]}`,
 			timeScale: speed,
@@ -866,14 +908,10 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 }
 
 function raycast_rotate(roate,rad){
-
 	const index = faces.indexOf(roate[0])
-	const vec = 'yxxzyzxyz'
 	corner = document.getElementById("corner").children
 	edge = document.getElementById("edge").children
 	center = document.getElementById("center").children
-
-	// console.log(`rad [${rad}]`)
 
 	for(let i of moves_face_c[index]){
 		corner[i].object3D.rotation[vec[index]] = rad
