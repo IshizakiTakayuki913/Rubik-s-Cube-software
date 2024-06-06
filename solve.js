@@ -725,6 +725,7 @@ const Lhands = {
 	"y"		:"y.1"	,
 	"y'"	:"y'.1"	,
 	"x'"	:"y'.1"	,
+	"x"		:"y'.1"	,
 }
 const Lhandv = {
 	"U'"  :0 ,
@@ -736,6 +737,7 @@ const Lhandv = {
 	"y"		:0 ,
 	"y'"	:0 ,
 	"x'"	:0 ,
+	"x"		:0 ,
 }
 
 const Rhands = {
@@ -748,6 +750,7 @@ const Rhands = {
 	"y" 	:"y'.1"	,
 	"y'"	:"y.1"	,
 	"x'"	:"L.1"	,
+	"x"		:"L'.1"	,
 }
 const Rhandv = {
 	"U"   :0 ,
@@ -759,6 +762,7 @@ const Rhandv = {
 	"y"	  :0 ,
 	"y'"	:0 ,
 	"x'"	:0 ,
+	"x"		:1 ,
 }
 
 const Change = [
@@ -889,7 +893,8 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 
 	let index = hdvec[sulb]-h_v[influence]
 	let vec_count = h_v[influence]
-	if(sulb[0] === 'R' || sulb[0] === 'L')	vec_count+=1
+
+	if(Su[0] === 'L')	vec_count+=1
 
 	index = Change.find((u) => u.int === index)
 	
