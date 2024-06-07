@@ -726,6 +726,8 @@ const Lhands = {
 	"y'"	:"y'.1"	,
 	"x'"	:"y'.1"	,
 	"x"		:"y'.1"	,
+	"l"		:"L.1"	,
+	"l'"  :"L'.1"	,
 }
 const Lhandv = {
 	"U'"  :0 ,
@@ -738,6 +740,8 @@ const Lhandv = {
 	"y'"	:0 ,
 	"x'"	:0 ,
 	"x"		:0 ,
+	"l"		:0 ,
+	"l'"	:1 ,
 }
 
 const Rhands = {
@@ -751,6 +755,8 @@ const Rhands = {
 	"y'"	:"y.1"	,
 	"x'"	:"L.1"	,
 	"x"		:"L'.1"	,
+	"r"		:"L'.1"	,
+	"r'"  :"L.1"	,
 }
 const Rhandv = {
 	"U"   :0 ,
@@ -761,8 +767,10 @@ const Rhandv = {
 	"F"   :1 ,
 	"y"	  :0 ,
 	"y'"	:0 ,
-	"x'"	:0 ,
 	"x"		:1 ,
+	"x'"	:0 ,
+	"r"		:1 ,
+	"r'"  :0 ,
 }
 
 const Change = [
