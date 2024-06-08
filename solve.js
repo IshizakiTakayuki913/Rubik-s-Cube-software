@@ -399,12 +399,19 @@ color_cn = [
 const vec	= 'yxxzyzxyzxxyyzz'
 
 let solved_state = new State(
-	[0, 1, 2, 3, 4, 5, 6, 7],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[1, 3, 0, 2, 4, 5, 6, 7],
+	[2, 0, 0, 1, 0, 0, 0, 0],
+	[7, 5, 0, 6, 2, 3, 4, 1, 8, 9, 10, 11],
+	[1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 1, 2, 3, 4, 5],
 )
+// let solved_state = new State(
+// 	[0, 1, 2, 3, 4, 5, 6, 7],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+// 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 1, 2, 3, 4, 5],
+// )
 
 function rotate(roates ,time = 1000,dist_time = 50){
 
@@ -624,6 +631,22 @@ solv_step = [
 	"c":[4,5,6,7],
 	"e":[8,9,10,11]
 	},
+	{
+	"c":[4,5,6,7],
+	"e":[2,8,9,10,11]
+	},
+	{
+	"c":[4,5,6,7],
+	"e":[2,3,8,9,10,11]
+	},
+	{
+	"c":[4,5,6,7],
+	"e":[0,2,3,8,9,10,11]
+	},
+	{
+	"c":[4,5,6,7],
+	"e":[0,1,2,3,8,9,10,11]
+	},
 ]
 
 // {
@@ -708,6 +731,34 @@ function BBB(){
 	solved_state = solved_state.hand_move(moves["y"])
 
 	search.start_search(solved_state,7, 10, ["R","R'","U","U'","U2",])
+	sum_solution.push(["y"].concat(search.current_solution))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+
+	search.start_search(solved_state,8, 15, ["R","R'","R2","U","U'","U2","y","y'","y2"])
+	sum_solution.push(["y"].concat(search.current_solution))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+
+	search.start_search(solved_state,9, 15, ["R","R'","R2","L","L'","U","U'","U2","y","y'","y2"])
+	sum_solution.push(["y"].concat(search.current_solution))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+
+	search.start_search(solved_state,10, 15, ["R","R'","R2","L","L'","U","U'","U2","y","y'","y2"])
+	sum_solution.push(["y"].concat(search.current_solution))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+
+	search.start_search(solved_state,11, 15, ["R","R'","R2","L","L'","U","U'","U2","y","y'","y2"])
 	sum_solution.push(["y"].concat(search.current_solution))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
