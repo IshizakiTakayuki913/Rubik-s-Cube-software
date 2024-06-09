@@ -24,7 +24,7 @@
     <script src="./cubeTouch.js"></script>
     <script src="./syncuser.js"></script>
 
-    
+
     <link rel="stylesheet" href="./style.css">
     <link rel="shortcut icon" href="">
   </head>
@@ -49,7 +49,35 @@
 
 <a-assets>
   <a-asset-item id="model_hand" src="./sub-hand.glb"></a-asset-item>
+  <a-asset-item id="model_corner" src="./corner.glb"></a-asset-item>
+  <a-asset-item id="model_center" src="./center.glb"></a-asset-item>
+  <a-asset-item id="model_edge" src="./edge.glb"></a-asset-item>
 </a-assets>
+
+<!-- <a-entity
+  id="cube_corner"
+  position="0 0 0"
+  rotation="0 0 0"
+  gltf-model="#model_corner"
+  scale="1 1 1"
+  shadow="receive: false">
+</a-entity>
+<a-entity
+  id="cube_center"
+  position="0 0 0"
+  rotation="0 0 0"
+  gltf-model="#model_center"
+  scale="1 1 1"
+  shadow="receive: false">
+</a-entity>
+<a-entity
+  id="cube_edge"
+  position="0 0 0"
+  rotation="0 0 0"
+  gltf-model="#model_edge"
+  scale="1 1 1"
+  shadow="receive: false">
+</a-entity> -->
 
 <a-entity id="root" position="0 0 0" rotation="0 0 0">
 
@@ -78,27 +106,63 @@
 
   <a-entity id="center" position="0 0 0">
     <a-entity id="center0" position="0 0 0">
-      <a-box id="00" class="clickable" position="0 0 -1.5" width="0.9" height="0.9" depth="0.01" color="#00f"></a-box>
+      <a-entity
+        class="clickable"
+        rotation="0 180 0"
+        gltf-model="#model_center"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
         
     <a-entity id="center1" position="0 0 0">
-      <a-box id="01" class="clickable" position="1.5 0 0" width="0.01" height="0.9" depth="0.9" color="#f00"></a-box>
+      <a-entity
+        class="clickable"
+        rotation="0 90 0"
+        gltf-model="#model_center"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
       
     <a-entity id="center2" position="0 0 0">
-      <a-box id="02" class="clickable" position="0 0 1.5" width="0.9" height="0.9" depth="0.01" color="#0f0"></a-box>
+      <a-entity
+        class="clickable"
+        rotation="0 0 0"
+        gltf-model="#model_center"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
       
     <a-entity id="center3" position="0 0 0">
-      <a-box id="03" class="clickable" position="-1.5 0 0" width="0.01" height="0.9" depth="0.9" color="#f80"></a-box>
+      <a-entity
+        class="clickable"
+        rotation="0 -90 0"
+        gltf-model="#model_center"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
       
     <a-entity id="center4" position="0 0 0">
-      <a-box id="04" class="clickable" position="0 1.5 0" width="0.9" height="0.01" depth="0.9" color="#fff"></a-box>
+      <a-entity
+        class="clickable"
+        rotation="-90 0 0"
+        gltf-model="#model_center"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
       
     <a-entity id="center5" position="0 0 0">
-      <a-box id="05" class="clickable" position="0 -1.5 0" width="0.9" height="0.01" depth="0.9" color="#ef0"></a-box>
+      <a-entity
+        class="clickable"
+        rotation="90 0 0"
+        gltf-model="#model_center"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <!-- <a-cylinder id="center0" position="0 0 -1.5" rotation="90 0 0" radius="0.45" height="0.01" color="#00f"></a-cylinder>
@@ -111,134 +175,215 @@
 
   <a-entity id="edge" position="0 0 0">
     <a-entity id="edge0" position="0 0 0">
-      <a-box id="06" class="clickable" position="-1 0 -1.5" width="1" height="0.9" depth="0.01" color="#00f"></a-box>
-      <a-box id="07" class="clickable" position="-1.5 0 -1" width="0.01" height="0.9" depth="1" color="#f80"></a-box>
-      <!-- <a-box position="-1 0 -1" width="1" height="0.9" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 -90 90"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <a-entity id="edge1" position="0 0 0">
-      <a-box id="08" class="clickable" position="1 0 -1.5" width="1" height="0.9" depth="0.01" color="#00f"></a-box>
-      <a-box id="09" class="clickable" position="1.5 0 -1" width="0.01" height="0.9" depth="1" color="#f00"></a-box>
-      <!-- <a-box position="1 0 -1" width="1" height="0.9" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 90 -90"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <a-entity id="edge2" position="0 0 0">
-      <a-box id="10" class="clickable" position="1 0 1.5" width="1" height="0.9" depth="0.01" color="#0f0"></a-box>
-      <a-box id="11" class="clickable" position="1.5 0 1" width="0.01" height="0.9" depth="1" color="#f00"></a-box>
-      <!-- <a-box position="1 0 1" width="1" height="0.9" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 90 90"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="edge3" position="0 0 0">
-      <a-box id="12" class="clickable" position="-1 0 1.5" width="1" height="0.9" depth="0.01" color="#0f0"></a-box>
-      <a-box id="13" class="clickable" position="-1.5 0 1" width="0.01" height="0.9" depth="1" color="#f80"></a-box>
-      <!-- <a-box position="-1 0 1" width="1" height="0.9" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 -90 -90"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <a-entity id="edge4" position="0 0 0">
-      <a-box id="14" class="clickable" position="0 1.5 -1" width="0.9" height="0.01" depth="1" color="#fff"></a-box>
-      <a-box id="15" class="clickable" position="0 1 -1.5" width="0.9" height="1" depth="0.01" color="#00f"></a-box>
-      <!-- <a-box position="0 1 -1" width="0.9" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 180 0"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="edge5" position="0 0 0">
-      <a-box id="16" class="clickable" position="1 1.5 0" width="1" height="0.01" depth="0.9" color="#fff"></a-box>
-      <a-box id="17" class="clickable" position="1.5 1 0" width="0.01" height="1" depth="0.9" color="#f00"></a-box>
-      <!-- <a-box position="1 1 0" width="1" height="1" depth="0.9" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 90 0"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <a-entity id="edge6" position="0 0 0">
-      <a-box id="18" class="clickable" position="0 1.5 1" width="0.9" height="0.01" depth="1" color="#fff"></a-box>
-      <a-box id="19" class="clickable" position="0 1 1.5" width="0.9" height="1" depth="0.01" color="#0f0"></a-box>
-      <!-- <a-box position="0 1 1" width="0.9" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 0 0"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="edge7" position="0 0 0">
-      <a-box id="20" class="clickable" position="-1 1.5 0" width="1" height="0.01" depth="0.9" color="#fff"></a-box>
-      <a-box id="21" class="clickable" position="-1.5 1 0" width="0.01" height="1" depth="0.9" color="#f80"></a-box>
-      <!-- <a-box position="-1 1 0" width="1" height="1" depth="0.9" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 -90 0"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <a-entity id="edge8" position="0 0 0">
-      <a-box id="22" class="clickable" position="0 -1.5 -1" width="0.9" height="0.01" depth="1" color="#ef0"></a-box>
-      <a-box id="23" class="clickable" position="0 -1 -1.5" width="0.9" height="1" depth="0.01" color="#00f"></a-box>
-      <!-- <a-box position="0 -1 -1" width="0.9" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 180 180"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
     
     <a-entity id="edge9" position="0 0 0">
-      <a-box id="24" class="clickable" position="1 -1.5 0" width="1" height="0.01" depth="0.9" color="#ef0"></a-box>
-      <a-box id="25" class="clickable" position="1.5 -1 0" width="0.01" height="1" depth="0.9" color="#f00"></a-box>
-      <!-- <a-box position="1 -1 0" width="1" height="1" depth="0.9" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 90 180"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="edge10" position="0 0 0">
-      <a-box id="26" class="clickable" position="0 -1.5 1" width="0.9" height="0.01" depth="1" color="#ef0"></a-box>
-      <a-box id="27" class="clickable" position="0 -1 1.5" width="0.9" height="1" depth="0.01" color="#0f0"></a-box>
-      <!-- <a-box position="0 -1 1" width="0.9" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 0 180"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="edge11" position="0 0 0">
-      <a-box id="28" class="clickable" position="-1 -1.5 0" width="1" height="0.01" depth="0.9" color="#ef0"></a-box>
-      <a-box id="29" class="clickable" position="-1.5 -1 0" width="0.01" height="1" depth="0.9" color="#f80"></a-box>
-      <!-- <a-box position="-1 -1 0" width="1" height="1" depth="0.9" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        rotation="0 -90 180"
+        gltf-model="#model_edge"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
   </a-entity>
 
   <a-entity id="corner" position="0 0 0">
     <a-entity id="corner0" position="0 0 0">
-      <a-box id="30" class="clickable" position="-1 1.5 -1" width="1" height="0.01" depth="1" color="#fff"></a-box>
-      <a-box id="31" class="clickable" position="-1.5 1 -1" width="0.01" height="1" depth="1" color="#f80"></a-box>
-      <a-box id="32" class="clickable" position="-1 1 -1.5" width="1" height="1" depth="0.01" color="#00F"></a-box>
-      <!-- <a-box position="-1 1 -1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 180 0"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner1" position="0 0 0">
-      <a-box id="33" class="clickable" position="1 1.5 -1" width="1" height="0.01" depth="1" color="#fff"></a-box>
-      <a-box id="34" class="clickable" position="1 1 -1.5" width="1" height="1" depth="0.01" color="#00F"></a-box>
-      <a-box id="35" class="clickable" position="1.5 1 -1" width="0.01" height="1" depth="1" color="#f00"></a-box>
-      <!-- <a-box position="1 1 -1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 90 0"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner2" position="0 0 0">
-      <a-box id="36" class="clickable" position="1 1.5 1" width="1" height="0.01" depth="1" color="#fff"></a-box>
-      <a-box id="37" class="clickable" position="1.5 1 1" width="0.01" height="1" depth="1" color="#f00"></a-box>
-      <a-box id="38" class="clickable" position="1 1 1.5" width="1" height="1" depth="0.01" color="#0f0"></a-box>
-      <!-- <a-box position="1 1 1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 0 0"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner3" position="0 0 0">
-      <a-box id="39" class="clickable" position="-1 1.5 1" width="1" height="0.01" depth="1" color="#fff"></a-box>
-      <a-box id="40" class="clickable" position="-1 1 1.5" width="1" height="1" depth="0.01" color="#0f0"></a-box>
-      <a-box id="41" class="clickable" position="-1.5 1 1" width="0.01" height="1" depth="1" color="#f80"></a-box>
-      <!-- <a-box position="-1 1 1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 270 0"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner4" position="0 0 0">
-      <a-box id="42" class="clickable" position="-1 -1.5 -1" width="1" height="0.01" depth="1" color="#ef0"></a-box>
-      <a-box id="43" class="clickable" position="-1 -1 -1.5" width="1" height="1" depth="0.01" color="#00F"></a-box>
-      <a-box id="44" class="clickable" position="-1.5 -1 -1" width="0.01" height="1" depth="1" color="#f80"></a-box>
-      <!-- <a-box position="-1 -1 -1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 270 180"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner5" position="0 0 0">
-      <a-box id="45" class="clickable" position="1 -1.5 -1" width="1" height="0.01" depth="1" color="#ef0"></a-box>
-      <a-box id="46" class="clickable" position="1.5 -1 -1" width="0.01" height="1" depth="1" color="#f00"></a-box>
-      <a-box id="47" class="clickable" position="1 -1 -1.5" width="1" height="1" depth="0.01" color="#00F"></a-box>
-      <!-- <a-box position="1 -1 -1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 180 180"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner6" position="0 0 0">
-      <a-box id="48" class="clickable" position="1 -1.5 1" width="1" height="0.01" depth="1" color="#ef0"></a-box>
-      <a-box id="49" class="clickable" position="1 -1 1.5" width="1" height="1" depth="0.01" color="#0f0"></a-box>
-      <a-box id="50" class="clickable" position="1.5 -1 1" width="0.01" height="1" depth="1" color="#f00"></a-box>
-      <!-- <a-box position="1 -1 1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 90 180"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
 
     <a-entity id="corner7" position="0 0 0">
-      <a-box id="51" class="clickable" position="-1 -1.5 1" width="1" height="0.01" depth="1" color="#ef0"></a-box>
-      <a-box id="52" class="clickable" position="-1.5 -1 1" width="0.01" height="1" depth="1" color="#f80"></a-box>
-      <a-box id="53" class="clickable" position="-1 -1 1.5" width="1" height="1" depth="0.01" color="#0f0"></a-box>
-      <!-- <a-box position="-1 -1 1" width="1" height="1" depth="1" color="#AAA"></a-box> -->
+      <a-entity
+        class="clickable"
+        position="0 0 0"
+        rotation="0 0 180"
+        gltf-model="#model_corner"
+        scale="1 1 1"
+        shadow="receive: false">
+      </a-entity>
     </a-entity>
+
   </a-entity>
 
   <a-entity id="camera" sync-user="userId: userPosition" position="0 0 0" rotation="-30 30 0">

@@ -340,7 +340,14 @@ for(let i=0;i<faces.length;i++){
 }
 console.log(move_names)
 
-color_data = ["#00f","#f00","#0f0","#f80","#fff","#ef0"]
+color_data = [
+	{r:0,g:0.05,b:0.95},
+	{r:0.89,g:0,b:0},
+	{r:0,g:0.75,b:0},
+	{r:1,g:0.25,b:0},
+	{r:1,g:1,b:1},
+	{r:0.9,g:0.95,b:0},
+]
 // 						青     赤     緑     オ    白     黄      
 
 let color_modes = {
@@ -475,32 +482,26 @@ function one_rotate(sc_st,roate){
 
 	// console.log(moves_face_c[index])
 	for(let i of moves_face_c[index]){
-			corner[i].setAttribute('rotation', {x:0,y:0,z:0})
-			corner[i].removeAttribute('animation')
-		let F = corner[i].children
-		for(let s=0;s<3;s++){
-	  F[s].setAttribute('material', 'color', color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]])
-		}
+		corner[i].setAttribute('rotation', {x:0,y:0,z:0})
+		corner[i].removeAttribute('animation')
+		let F = corner[i].children[0].object3D.children[0].children[0].children
+		for(let s=0;s<3;s++)
+	  	F[s].material.color = color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]
 	}
 
 	for(let i of moves_face_e[index]){
 		edge[i].setAttribute('rotation', {x:0,y:0,z:0})
 		edge[i].removeAttribute('animation')
-		let F = edge[i].children
-		for(let s=0;s<2;s++){
-	  F[s].setAttribute('material', 'color', color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]])
-		}
+		let F = edge[i].children[0].object3D.children[0].children[0].children
+		for(let s=0;s<2;s++)
+	  	F[s].material.color = color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]
 	}
 
 	for(let i of moves_face_cn[index]){
 		center[i].setAttribute('rotation', {x:0,y:0,z:0})
 		center[i].removeAttribute('animation')
-		let F = center[i].children
-	  F[0].setAttribute('material', 'color', color_data[i])
-		// let F = center[i].children
-		// for(let s=0;s<1;s++){
-	  // F[s].setAttribute('material', 'color', color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]])
-		// }
+		let F = center[i].children[0].object3D.children[0].children[0].children
+	  F[0].material.color = color_data[color_cn[sc_st.c[i]][0]]
 	}
 	return sc_st
 }
@@ -512,30 +513,21 @@ function color_set(sc_st){
 	center = document.getElementById("center").children
 
 	for(let i=0;i<corner.length;i++){
-		let F = corner[i].children
-		for(let s=0;s<3;s++){
-	  F[s].setAttribute('material', 'color', color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]])
-		}
+		let F = corner[i].children[0].object3D.children[0].children[0].children
+		for(let s=0;s<3;s++)
+	  	F[s].material.color = color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]
 	}
 
 	for(let i=0;i<edge.length;i++){
-		let F = edge[i].children
-		for(let s=0;s<2;s++){
-	  F[s].setAttribute('material', 'color', color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]])
-		}
+		let F = edge[i].children[0].object3D.children[0].children[0].children
+		for(let s=0;s<2;s++)
+	  	F[s].material.color = color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]
 	}
-	// console.log(center)
-	for(let i=0;i<center.length;i++){
-		let F = center[i].children
-		// console.log(`i:${i}`)
-		// console.log(F)
-		// console.log(`color_cn[i][0]:${color_cn[i][0]} color_data[color_cn[i][0]]:${color_data[color_cn[i][0]]}`)
-		// console.log(F[0])
-	  F[0].setAttribute('material', 'color', color_data[i])
 
-		// for(let s=0;s<2;s++){
-	  // F[s].setAttribute('material', 'color', color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]])
-		// }
+	for(let i=0;i<center.length;i++){
+		let F = center[i].children[0].object3D.children[0].children[0].children
+		console.log(color_cn[sc_st.c[i]])
+	  F[0].material.color = color_data[color_cn[sc_st.c[i]][0]]
 	}
 }
 

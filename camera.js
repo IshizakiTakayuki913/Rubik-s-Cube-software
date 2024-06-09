@@ -122,6 +122,9 @@ const camera = () => ({
 		this.insMove = document.getElementById('insMove')
 		this.log = document.getElementById('logs')
 
+		setTimeout(()=> {color_set(scrambled_state)},1000)
+		
+
 		this.el.addEventListener('raycaster-intersection', (e) => {
 			if (e.target !== this.data.rayFace) return; // 対応するレイキャスターのみ反応
 
@@ -167,16 +170,30 @@ const camera = () => ({
 
 			const pos = this.rayCube.getIntersection(this.targetCube)
 
-			// console.log(`pushed id = [${this.parts.id}] parseInt [${parseInt(this.parts.id)}]`)
-			this.pmove = this.cubeTileMove[parseInt(this.parts.id)]
+			let num = 0
+			if(parts_type === "center"){
+				num = be
+				console.log(`center num [${num}]`)
+			}
+			else if(parts_type === "edge"	){
+				num = be*2 + 6
+				num += pos.face.normal.y > 0.707 ? 0 : 1
+				console.log(`edge num [${num}]`)
+			}
+			else if(parts_type === "corner"){
+				num = be*3 + 30
+				num += pos.face.normal.y > 0.707 ? 0 : (pos.face.normal.x > 0.707 ? 1 : 2)
+				console.log(`corner num [${num}]`)
+			}
+
+			// console.log(pos.face.normal)
+
+			this.pmove = this.cubeTileMove[num]
 			this.candidateMove = []
 
 			for(let i=0;i<this.pmove.length;i++){
 				this.candidateMove[i] = this.vec[this.pmove[i]]
 			}
-
-			// console.log(`candidateMove`)
-			// console.log(this.candidateMove)
 
 			this.startRad = []
 
