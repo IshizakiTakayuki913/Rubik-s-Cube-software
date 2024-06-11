@@ -31,8 +31,9 @@ a-scene {
 
 #btn1 {
 	text-align: center;
-	right: 20px;
-	bottom: 20px;
+	translate: -2vmin -2vmin;
+	right: 0;
+	bottom: 30%;
 	user-select: none;
 }
 

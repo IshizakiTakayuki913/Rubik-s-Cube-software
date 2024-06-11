@@ -98,7 +98,7 @@ const cubemode = () => ({
 
       const icon = document.getElementById("icon")
       icon.classList.add("rotate-ani")
-      setTimeout(() =>{BBB()},1650)
+      setTimeout(() =>{BBB()},100)
       
     }
     // console.log(e)
