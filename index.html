@@ -36,50 +36,66 @@
     AFRAME.registerComponent('cube-mode', cubemode())
     AFRAME.registerComponent('sync-user', syncuser())
 
+    AFRAME.registerComponent('model-load',{
+      schema: {
+        modelType: {type: 'string', default: ""},
+      },
+      init(){
+        this.parts = [
+          document.getElementById("center").children[5].children[0],
+          document.getElementById("edge").children[11].children[0],
+          document.getElementById("corner").children[7].children[0],
+        ]
+        this.loadedCount=0
+        for(let i=0;i<3;i++){
+          console.log(this.parts[i])
+          this.parts[i].addEventListener('model-loaded',(e)=>{
+            this.loadedCount++
+            if(this.loadedCount==3){
+              color_set(scrambled_state)
+              this.el.object3D.visible = true
+            }
+          })
+        }
+      },
+    })
+    
   </script>
 <!--  onpaste="return false" oncontextmenu="return false" -->
-  <body id="rootBody" oncontextmenu="return false;">
+  <body oncontextmenu="return false;" style="background-color: #000">
     <a-scene id="scene"
+      renderer="sortObjects: true"
+      embedded 
       press-key-board
       cube-mode
       xr-mode-ui="enabled: false"
       keyboard-shortcuts="enterVR: false; exitVR: false"
       device-orientation-permission-ui="enabled: false"
     >
-
-<a-assets>
-  <a-asset-item id="model_hand" src="./sub-hand.glb"></a-asset-item>
+    <!-- 
+      debug
+      loading-screen
+      stats
+    -->
+<a-assets >
+  <a-asset-item id="model_hand"   src="./sub-hand.glb"></a-asset-item>
   <a-asset-item id="model_corner" src="./corner.glb"></a-asset-item>
+  <a-asset-item id="model_edge"   src="./edge.glb"></a-asset-item>
   <a-asset-item id="model_center" src="./center.glb"></a-asset-item>
-  <a-asset-item id="model_edge" src="./edge.glb"></a-asset-item>
+
+  <a-mixin id="m_ce" gltf-model="#model_center"></a-mixin>
+  <a-mixin id="m_e" gltf-model="#model_edge"></a-mixin>
+  <a-mixin id="m_c" gltf-model="#model_corner"></a-mixin>
+  <a-mixin 
+    id="m_normal"
+    scale="1 1 1"
+    shadow="receive: false">
+  </a-mixin>
+
+  
 </a-assets>
 
-<!-- <a-entity
-  id="cube_corner"
-  position="0 0 0"
-  rotation="0 0 0"
-  gltf-model="#model_corner"
-  scale="1 1 1"
-  shadow="receive: false">
-</a-entity>
-<a-entity
-  id="cube_center"
-  position="0 0 0"
-  rotation="0 0 0"
-  gltf-model="#model_center"
-  scale="1 1 1"
-  shadow="receive: false">
-</a-entity>
-<a-entity
-  id="cube_edge"
-  position="0 0 0"
-  rotation="0 0 0"
-  gltf-model="#model_edge"
-  scale="1 1 1"
-  shadow="receive: false">
-</a-entity> -->
-
-<a-entity id="root" position="0 0 0" rotation="0 0 0">
+<a-entity id="root" position="0 0 0" rotation="0 0 0" model-load visible="false">
 
   <a-entity
     id="L-hand"
@@ -107,190 +123,150 @@
   <a-entity id="center" position="0 0 0">
     <a-entity id="center0" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 180 0"
-        gltf-model="#model_center"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_ce m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
         
     <a-entity id="center1" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 90 0"
-        gltf-model="#model_center"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_ce m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
       
     <a-entity id="center2" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 0 0"
-        gltf-model="#model_center"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_ce m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
       
     <a-entity id="center3" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 -90 0"
-        gltf-model="#model_center"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_ce m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
       
     <a-entity id="center4" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="-90 0 0"
-        gltf-model="#model_center"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_ce m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
       
     <a-entity id="center5" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="90 0 0"
-        gltf-model="#model_center"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_ce m_normal"
+        class="clickable">
       </a-entity>
-    </a-entity>
-    
-    <!-- <a-cylinder id="center0" position="0 0 -1.5" rotation="90 0 0" radius="0.45" height="0.01" color="#00f"></a-cylinder>
-    <a-cylinder id="center1" position="1.5 0 0" rotation="0 0 90" radius="0.45" height="0.01" color="#f00"></a-cylinder>
-    <a-cylinder id="center2" position="0 0 1.5" rotation="90 0 0" radius="0.45" height="0.01" color="#0f0"></a-cylinder>
-    <a-cylinder id="center3" position="-1.5 0 0" rotation="0 0 90" radius="0.45" height="0.01" color="#f80"></a-cylinder>
-    <a-cylinder id="center4" position="0 1.5 0" rotation="0 0 0" radius="0.45" height="0.01" color="#fff"></a-cylinder>
-    <a-cylinder id="center5" position="0 -1.5 0" rotation="0 0 0" radius="0.45" height="0.01" color="#ef0"></a-cylinder> -->
+    </a-entity>    
   </a-entity>
+  <!-- model-load = "modelType: center"
+    model-load = "modelType: edge"
+    model-load = "modelType: corner" -->
 
   <a-entity id="edge" position="0 0 0">
     <a-entity id="edge0" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 -90 90"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
     
     <a-entity id="edge1" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 90 -90"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
     
     <a-entity id="edge2" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 90 90"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="edge3" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 -90 -90"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
     
     <a-entity id="edge4" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 180 0"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="edge5" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 90 0"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
     
     <a-entity id="edge6" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 0 0"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="edge7" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 -90 0"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
     
     <a-entity id="edge8" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 180 180"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
     
     <a-entity id="edge9" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 90 180"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="edge10" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 0 180"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="edge11" position="0 0 0">
       <a-entity
-        class="clickable"
         rotation="0 -90 180"
-        gltf-model="#model_edge"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_e m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
   </a-entity>
@@ -298,89 +274,66 @@
   <a-entity id="corner" position="0 0 0">
     <a-entity id="corner0" position="0 0 0">
       <a-entity
-        class="clickable"
-        position="0 0 0"
         rotation="0 180 0"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner1" position="0 0 0">
       <a-entity
-        class="clickable"
-        position="0 0 0"
         rotation="0 90 0"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner2" position="0 0 0">
       <a-entity
-        class="clickable"
         position="0 0 0"
-        rotation="0 0 0"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner3" position="0 0 0">
       <a-entity
-        class="clickable"
-        position="0 0 0"
         rotation="0 270 0"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner4" position="0 0 0">
       <a-entity
-        class="clickable"
         position="0 0 0"
         rotation="0 270 180"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner5" position="0 0 0">
       <a-entity
-        class="clickable"
-        position="0 0 0"
         rotation="0 180 180"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner6" position="0 0 0">
       <a-entity
-        class="clickable"
-        position="0 0 0"
         rotation="0 90 180"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
     <a-entity id="corner7" position="0 0 0">
       <a-entity
-        class="clickable"
-        position="0 0 0"
         rotation="0 0 180"
-        gltf-model="#model_corner"
-        scale="1 1 1"
-        shadow="receive: false">
+        mixin="m_c m_normal"
+        class="clickable">
       </a-entity>
     </a-entity>
 
@@ -393,7 +346,7 @@
       look-controls-enabled="false"
       wasd-controls-enabled="false"
       position="0 0 10"
-      fov="30">
+      fov="60">
 
       <a-entity
         id="touch-face"
@@ -483,5 +436,6 @@
 
     <iframe id="iframe" class="un-pointer-events" src="./index2.html" width="150" height="150"
     ></iframe>
+    <div></div>
   </body >
 </html>

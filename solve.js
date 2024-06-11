@@ -1104,3 +1104,24 @@ function raycast_rotate(roate,rad){
 		center[i].object3D.rotation[vec[index]] = rad
 	}
 }
+
+function objopacty(ojb, op1 = 0.5, op2 = undefined) {
+  const F = ojb.object3D.children[0].children[0].children
+  for(let s=0;s<F.length;s++){
+      F[s].material.opacity = op1
+      F[s].material.transparent = true
+  }
+}
+function cubeOpa(op1,op2=undefined) {
+  const cn = document.getElementById('center').children
+  for(let i=0;i<cn.length;i++)
+      objopacty(cn[i].children[0], op1,op2)
+      
+  const c = document.getElementById('corner').children
+  for(let i=0;i<c.length;i++)
+      objopacty(c[i].children[0], op1,op2)
+      
+  const e = document.getElementById('edge').children
+  for(let i=0;i<e.length;i++)
+      objopacty(e[i].children[0], op1,op2)
+}

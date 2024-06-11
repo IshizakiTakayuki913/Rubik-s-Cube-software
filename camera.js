@@ -123,16 +123,6 @@ const camera = () => ({
 		this.insMove = document.getElementById('insMove')
 		this.log = document.getElementById('logs')
 
-		// setTimeout(()=> {color_set(scrambled_state)},1000)
-		// document.getElementById('model_hand').addEventListener('load',(e)=>{
-		// 	console.log("model_hand")
-		// 	console.log(e)
-
-		// 	// color_set(scrambled_state)
-		// })
-	
-		console.log(document.getElementById('model_hand'))
-
 		this.el.addEventListener('raycaster-intersection', (e) => {
 			if (e.target !== this.data.rayFace) return; // 対応するレイキャスターのみ反応
 
