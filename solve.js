@@ -181,9 +181,13 @@ function color_re_set(sulb){
 	return new_color
 }
 
-function is_solved(state,step){
+let is_solved
+
+function is_solved_1(state,step){
 // 特定の場所の状態だけを調べる
 	// console.log(`is_solved`)
+	if(state.c[0] != 0 || state.c[1] != 1)	return false
+
 	for(let i=0;i<solv_step[step]["c"].length;i++){
 		if(state.cp[solv_step[step]["c"][i]] != solv_step[step]["c"][i] || state.co[solv_step[step]["c"][i]] != 0)
 			return false
@@ -193,15 +197,37 @@ function is_solved(state,step){
 		if(state.ep[solv_step[step]["e"][i]] != solv_step[step]["e"][i] || state.eo[solv_step[step]["e"][i]] != 0)
 			return false
 	}
-	
-	if(state.c[0] != 0 || state.c[1] != 1){
-		// console.log("state.c[0] != 0 || state.c[1] != 1")
-		return false
-	}
 
 	return true
 }
 
+function is_solved_2(state,step){
+	// 特定の場所の状態だけを調べる
+		// console.log(`is_solved`)
+		if(state.c[0] != 0 || state.c[1] != 1)	return false
+	
+		for(let i=0;i<solv_step[step]["c"].length;i++){
+			if(state.cp[solv_step[step]["c"][i]] != solv_step[step]["c"][i] || state.co[solv_step[step]["c"][i]] != 0)
+				return false
+		}
+		
+		for(let i=0;i<solv_step[step]["e"].length;i++){
+			if(state.ep[solv_step[step]["e"][i]] != solv_step[step]["e"][i] || state.eo[solv_step[step]["e"][i]] != 0)
+				return false
+		}
+
+		for(let i=0;i<solv_step[step]["co"].length;i++){
+			if(state.co[solv_step[step]["co"][i]] != 0)
+				return false
+		}
+		
+		for(let i=0;i<solv_step[step]["eo"].length;i++){
+			if(state.eo[solv_step[step]["eo"][i]] !=  0)
+				return false
+		}
+	
+		return true
+	}
 moves = {
 	'U': new State(
 		[3, 0, 1, 2, 4, 5, 6, 7],
@@ -252,6 +278,13 @@ moves = {
 		[3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10],
 		[1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
 		[3, 0, 1, 2, 4, 5],
+	),
+	'z': new State(
+		[4, 0, 3, 7, 5, 1, 2, 6],
+		[1, 2, 1, 2, 2, 1, 2, 1],
+		[8, 4, 6, 10, 0, 7, 3, 11, 1, 5, 2, 9],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+		[0, 4, 2, 5, 3, 1],
 	),
 	'z': new State(
 		[4, 0, 3, 7, 5, 1, 2, 6],
@@ -329,15 +362,83 @@ moves['f'] = moves["B"].apply_move(moves["z"])
 moves['b'] = moves["F"].apply_move(moves["z"]).apply_move(moves["z"]).apply_move(moves["z"])
 
 const faces = Object.keys(moves)
-console.log(faces)
 // U D L R B F
 // 									U   R L    F    D B    y  z  x   r l   u d   b f
 const faces_rad = [-1, -1,1,  -1,   1,1,  -1,-1,-1 ,-1,1, -1,1, -1,1]
 for(let i=0;i<faces.length;i++){
-	if(i < 6)	move_names.push(faces[i], faces[i] + '2', faces[i] + '\'')
+	move_names.push(faces[i], faces[i] + '2', faces[i] + '\'')
 	moves[faces[i] + '2'] = moves[faces[i]].apply_move(moves[faces[i]])
 	moves[faces[i] + '\''] = moves[faces[i]].apply_move(moves[faces[i]]).apply_move(moves[faces[i]])
 }
+
+function palms(P){
+	let ps = P
+	if(typeof P === "String")	ps = [P]
+	for(const ms of ps){
+		const Sps = ms.split(' ')
+		let n_ps = moves[Sps[0]]
+		// console.log(n_ps)
+		for(let i=1;i<Sps.length;i++){
+			// console.log(moves[Sps[i]])
+				n_ps = n_ps.apply_move(moves[Sps[i]])
+		}
+		moves[ms] = n_ps
+	}
+}
+
+palms([
+	"L' U' L",
+	"L U' L'",
+	"R U R'",
+	"R U' R'",
+	"R' U R",
+	"R U R' U",
+	"R U2 R' U'",
+	"R' F' R U R U' R' F",
+	"R U' R' F R' F' R",
+	"F R' F' R U R U' R'",
+	"F R U R' U' F'",
+	"R U R' U R U2 R'",
+])
+
+const D_Corner = [
+	"y",
+	"y'",
+	"y2",
+	"U",
+	"U'",
+	"U2",
+	"R U R'",
+	"R U' R'",
+]
+
+const F_Edge = [
+	"y",
+	"y'",
+	"y2",
+	"U",
+	"U'",
+	"U2",
+	"R' F' R U R U' R' F",
+	"R U' R' F R' F' R",
+]
+
+const OLL_Cross = [
+	"U",
+	"U'",
+	"U2",
+	"F R U R' U' F'",
+	// "F R' F' R U R U' R'",
+]
+
+const OLL_Edge = [
+	"U",
+	"U'",
+	"U2",
+	"R U R' U R U2 R'",
+	// "F R' F' R U R U' R'",
+]
+
 console.log(move_names)
 
 color_data = [
@@ -406,11 +507,11 @@ color_cn = [
 const vec	= 'yxxzyzxyzxxyyzz'
 
 let solved_state = new State(
-	[1, 3, 0, 2, 4, 5, 6, 7],
-	[2, 0, 0, 1, 0, 0, 0, 0],
-	[7, 5, 0, 6, 2, 3, 4, 1, 8, 9, 10, 11],
-	[1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 2, 3, 4, 5],
+  [2,1,7,3,4,5,0,6],
+  [1,1,1,1,0,0,2,0],
+  [7,5,2,1,3,0,6,4,8,9,10,11],
+  [1,1,0,0,0,1,1,0,0,0,0,0],
+  [0,1,2,3,4,5],
 )
 // let solved_state = new State(
 // 	[0, 1, 2, 3, 4, 5, 6, 7],
@@ -590,7 +691,7 @@ let search = new Search()
 let sum_solution = []
 let sum_solution2 = []
 
-solv_step = [
+const solv_step = [
 	{
 	"c":[],
 	"e":[5]
@@ -639,6 +740,18 @@ solv_step = [
 	"c":[4,5,6,7],
 	"e":[0,1,2,3,8,9,10,11]
 	},
+	{
+	"c":[4,5,6,7],
+	"e":[0,1,2,3,8,9,10,11],
+	"co":[],
+	"eo":[4,5,6,7]
+	},
+	{
+	"c":[4,5,6,7],
+	"e":[0,1,2,3,8,9,10,11],
+	"co":[0,1,2,3],
+	"eo":[4,5,6,7]
+	},
 ]
 
 // {
@@ -666,6 +779,8 @@ solv_step = [
 function BBB(){
 	solved_state = scrambled_state
 	sum_solution = []
+
+	is_solved = is_solved_1
 
 	solved_state = solved_state.hand_move(moves["x"])
 	solved_state = solved_state.hand_move(moves["y'"])
@@ -701,61 +816,73 @@ function BBB(){
 	solved_state = solved_state.hand_move(moves["y"])
 	solved_state = solved_state.hand_move(moves["x'"])
 
-	search.start_search(solved_state,4, 10, ["L","L'","R","R'","U","U'","U2",])
-	sum_solution.push(["x'","y","x'"].concat(search.current_solution))
+	// "L' U' L",
+	// "L U' L'",
+	// "R U R'",
+	// "R U' R'",
+	// "R' U R",
+	search.start_search(solved_state,4, 10, D_Corner)//["L' U' L","L'","R","R'","U","U'","U2",]
+	sum_solution.push(["x'","y","x'"].concat(search.current_solution).join(' ').split(' '))
+	// sum_solution.push(search.current_solution.join(' ').split(' '))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+	search.start_search(solved_state,5, 10, D_Corner)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+	search.start_search(solved_state,6, 10, D_Corner)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	solved_state = solved_state.hand_move(moves["y"])
+	search.start_search(solved_state,7, 10, D_Corner)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["y"])
 
-	search.start_search(solved_state,5, 10, ["L","L'","R","R'","U","U'","U2",])
-	sum_solution.push(["y"].concat(search.current_solution))
+	search.start_search(solved_state,8, 10, F_Edge)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,6, 10, ["R","R'","U","U'","U2",])
-	sum_solution.push(["y"].concat(search.current_solution))
+	search.start_search(solved_state,9, 10, F_Edge)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,7, 10, ["R","R'","U","U'","U2",])
-	sum_solution.push(["y"].concat(search.current_solution))
+	search.start_search(solved_state,10, 10, F_Edge)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["y"])
+	search.start_search(solved_state,11, 10, F_Edge)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
 
-	search.start_search(solved_state,8, 15, ["R","R'","R2","U","U'","U2","y","y'","y2"])
-	sum_solution.push(["y"].concat(search.current_solution))
+	is_solved = is_solved_2
+
+	solved_state = solved_state.hand_move(moves["y"])
+	search.start_search(solved_state,12, 10, OLL_Cross)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,9, 15, ["R","R'","R2","L","L'","U","U'","U2","y","y'","y2"])
-	sum_solution.push(["y"].concat(search.current_solution))
+	search.start_search(solved_state,13, 10, OLL_Edge)
+	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,10, 15, ["R","R'","R2","L","L'","U","U'","U2","y","y'","y2"])
-	sum_solution.push(["y"].concat(search.current_solution))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,11, 15, ["R","R'","R2","L","L'","U","U'","U2","y","y'","y2"])
-	sum_solution.push(["y"].concat(search.current_solution))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	search.current_solution = []
-
-
 
 	for(sum of sum_solution)
 		console.log(sum)
@@ -940,8 +1067,7 @@ let move180 = false
 let solve_preview = true
 // console.log(`f2l 1 ${(sum_solution += search.start_search(solved_state,1, 20))}`)
 
-function motions(){
-	// console.log(`debug motions`)
+function motions(){	
 	for(;sum_solution2.length > 0 && sum_solution2[0].length == 0;sum_solution2.shift());
 
 	if(sum_solution2.length == 0){
@@ -961,6 +1087,14 @@ function motions(){
 		move180 = false
 	}
 
+	// if(sum_solution2[0][0].length > 2){
+	// 	let palm = sum_solution2[0].shift()
+	// 	let palmSp = palm.split(' ')
+	// 	let palm1 = palmSp.shift()
+	// 	sum_solution2[0].unshift(palm1, palmSp.join(' '))
+	// 	move180 = true
+	// }
+
 	if(sum_solution2[0][0][1] == '2'){
 		const S2 = sum_solution2[0].shift()
 		sum_solution2[0].unshift(S2[0], S2[0])
@@ -968,7 +1102,7 @@ function motions(){
 	}
 
 	let time_tank = 0
-	time_tank += one_motion(sum_solution2[0][0])
+	time_tank += one_motion(sum_solution2[0][0],4)
 	sum_solution2[0].shift()
 
 	movementCount+=1
@@ -983,8 +1117,8 @@ function motions(){
 	},time_tank)
 }
 
-function one_motion(sulb){
-	const speed=1000.0/500
+function one_motion(sulb,speed){
+	// const speed=1000.0/S
 	const Lhand = document.getElementById("L-hand")
 	const Rhand = document.getElementById("R-hand")
 
@@ -1042,7 +1176,7 @@ function one_motion(sulb){
 	}
 	
 	setTimeout(() => {
-		rotate(sulb,500)
+		rotate(sulb,parseInt(1000/speed))
 	}, som_sovle_time)
 	return sum_time
 }
@@ -1067,7 +1201,7 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 			timeScale: speed,
 			time : time
 		})
-		time += 500
+		time += parseInt(1000/speed)
 		vec_count += 1
 	}
 	h_v[influence] = vec_count % 2
@@ -1081,7 +1215,7 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 		if(Pre_movement2[Su][i] == ""){
 			sovle_time = time
 		}
-		time+=500
+		time+=parseInt(1000/speed)
 	}
 	return {time,sovle_time,move_schedule}
 }
@@ -1124,4 +1258,14 @@ function cubeOpa(op1,op2=undefined) {
   const e = document.getElementById('edge').children
   for(let i=0;i<e.length;i++)
       objopacty(e[i].children[0], op1,op2)
+}
+function psd() {
+	let t="let solved_state = new State(\n"
+	t+="  ["+scrambled_state.cp.join(',')+"],\n"
+	t+="  ["+scrambled_state.co.join(',')+"],\n"
+	t+="  ["+scrambled_state.ep.join(',')+"],\n"
+	t+="  ["+scrambled_state.eo.join(',')+"],\n"
+	t+="  ["+scrambled_state.c.join(',')+"],\n"
+	t+=")\n"
+	console.log(t)
 }
