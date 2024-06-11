@@ -4,9 +4,9 @@ const presskeyboard = () => ({
 	},
 	
 	init() {
-		const btn1 = document.getElementById("btn1")
-		const body = document.getElementById("rootBody")
-		const scene = document.getElementById('scene')
+		// const btn1 = document.getElementById("btn1")
+		// const body = document.getElementById("rootBody")
+		// const scene = document.getElementById('scene')
 
 		const key_ples = {
 			'KeyW':false,
@@ -40,7 +40,7 @@ const presskeyboard = () => ({
 			'KeyU':'b',
 		}
 
-		body.addEventListener("keydown", (e) => {
+		window.addEventListener("keydown", (e) => {
 			if(e.code == "KeyP"){
 				const camera = document.getElementById('camera').components["sync-user"]
 				camera.load()
@@ -64,7 +64,7 @@ const presskeyboard = () => ({
 			rotate(sulb,500)
 		})
 		
-		body.addEventListener("keyup", (e) => {
+		window.addEventListener("keyup", (e) => {
 			if(e.code == "Space")
 				this.data.Space_key = false
 			key_ples[e.code] = false

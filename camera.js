@@ -13,7 +13,8 @@ const camera = () => ({
 		const btn1 = document.getElementById("btn1")
 		const camera = document.getElementById("camera")
 		const camera2 = document.getElementById("camera2")
-		const canvas = document.getElementsByTagName('canvas')[0]
+		const canvas = document.getElementById("scene")
+		// document.getElementsByTagName('canvas')[0]
 		const root = document.getElementById("root")
 
 		this.data.camera_dist = camera2.object3D.position.z
@@ -122,8 +123,15 @@ const camera = () => ({
 		this.insMove = document.getElementById('insMove')
 		this.log = document.getElementById('logs')
 
-		setTimeout(()=> {color_set(scrambled_state)},1000)
-		
+		// setTimeout(()=> {color_set(scrambled_state)},1000)
+		// document.getElementById('model_hand').addEventListener('load',(e)=>{
+		// 	console.log("model_hand")
+		// 	console.log(e)
+
+		// 	// color_set(scrambled_state)
+		// })
+	
+		console.log(document.getElementById('model_hand'))
 
 		this.el.addEventListener('raycaster-intersection', (e) => {
 			if (e.target !== this.data.rayFace) return; // 対応するレイキャスターのみ反応
@@ -173,17 +181,17 @@ const camera = () => ({
 			let num = 0
 			if(parts_type === "center"){
 				num = be
-				console.log(`center num [${num}]`)
+				// console.log(`center num [${num}]`)
 			}
 			else if(parts_type === "edge"	){
 				num = be*2 + 6
 				num += pos.face.normal.y > 0.707 ? 0 : 1
-				console.log(`edge num [${num}]`)
+				// console.log(`edge num [${num}]`)
 			}
 			else if(parts_type === "corner"){
 				num = be*3 + 30
 				num += pos.face.normal.y > 0.707 ? 0 : (pos.face.normal.x > 0.707 ? 1 : 2)
-				console.log(`corner num [${num}]`)
+				// console.log(`corner num [${num}]`)
 			}
 
 			// console.log(pos.face.normal)
@@ -327,7 +335,10 @@ const camera = () => ({
 
 		canvas.addEventListener('mouseleave', (e) => {
 			this.mouse_or_touch = false
-			if(e.target.tagName === 'CANVAS'){
+			// console.log(
+			// 	`target ${e.target.tagName} id [${e.target.id}]\n`+
+			// 	`currentTarget${e.currentTarget.tagName} id [${e.currentTarget.id}]`)
+			if(e.target.tagName === 'A-SCENE'){
 				// console.log(`mouseleave target:${e.target.tagName} currentTarget:${e.currentTarget.tagName}`)
 				this.mouse_ples = false
 				this.el.emit('raycaster-mouseup')
@@ -344,6 +355,7 @@ const camera = () => ({
 		});
 	},
 	tick(){
+		// if(window.readyState !== "complete")	console.log(window.readyState)
 		if(this.candidateMove.length === 0) return
 		let rads = []
 		let dists = []
