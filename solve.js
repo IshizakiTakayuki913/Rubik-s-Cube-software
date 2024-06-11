@@ -399,6 +399,8 @@ palms([
 	"F R' F' R U R U' R'",
 	"F R U R' U' F'",
 	"R U R' U R U2 R'",
+	"R U' R U R U R U' R' U' R2",
+	"x' U2 R2 U' L' U R2 U' L U' x",
 ])
 
 const D_Corner = [
@@ -439,6 +441,21 @@ const OLL_Edge = [
 	// "F R' F' R U R U' R'",
 ]
 
+const PLL_Cross = [
+	"U",
+	"U'",
+	"U2",
+	"R U' R U R U R U' R' U' R2",
+	// "F R' F' R U R U' R'",
+]
+
+const PLL_Edge = [
+	"y",
+	"y'",
+	"y2",
+	"x' U2 R2 U' L' U R2 U' L U' x",
+	// "F R' F' R U R U' R'",
+]
 console.log(move_names)
 
 color_data = [
@@ -752,6 +769,14 @@ const solv_step = [
 	"co":[0,1,2,3],
 	"eo":[4,5,6,7]
 	},
+	{
+	"c":[4,5,6,7],
+	"e":[0,1,2,3,4,5,6,7,8,9,10,11],
+	},
+	{
+	"c":[0,1,2,3,4,5,6,7],
+	"e":[0,1,2,3,4,5,6,7,8,9,10,11],
+	},
 ]
 
 // {
@@ -883,6 +908,20 @@ function BBB(){
 	sum_solution.push(["y"].concat(search.current_solution).join(' ').split(' '))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
+
+
+	is_solved = is_solved_1
+
+	search.start_search(solved_state,14, 10, PLL_Cross)
+	sum_solution.push(search.current_solution.join(' ').split(' '))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+
+	search.start_search(solved_state,15, 10, PLL_Edge)
+	sum_solution.push(search.current_solution.join(' ').split(' '))
+	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+	search.current_solution = []
+	
 
 	for(sum of sum_solution)
 		console.log(sum)
