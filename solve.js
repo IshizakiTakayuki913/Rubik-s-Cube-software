@@ -458,7 +458,7 @@ const PLL_Edge = [
 ]
 console.log(move_names)
 
-color_data = [
+const set_color_data = [
 	{r:0,g:0.05,b:0.95},
 	{r:0.89,g:0,b:0},
 	{r:0,g:0.75,b:0},
@@ -466,6 +466,9 @@ color_data = [
 	{r:1,g:1,b:1},
 	{r:0.9,g:0.95,b:0},
 ]
+
+
+let color_data = [0,1,2,3,4,5]
 // 						青     赤     緑     オ    白     黄      
 
 let color_modes = {
@@ -523,20 +526,20 @@ color_cn = [
 ]
 const vec	= 'yxxzyzxyzxxyyzz'
 
-let solved_state = new State(
-  [2,1,7,3,4,5,0,6],
-  [1,1,1,1,0,0,2,0],
-  [7,5,2,1,3,0,6,4,8,9,10,11],
-  [1,1,0,0,0,1,1,0,0,0,0,0],
-  [0,1,2,3,4,5],
-)
 // let solved_state = new State(
-// 	[0, 1, 2, 3, 4, 5, 6, 7],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-// 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 1, 2, 3, 4, 5],
+//   [2,1,7,3,4,5,0,6],
+//   [1,1,1,1,0,0,2,0],
+//   [7,5,2,1,3,0,6,4,8,9,10,11],
+//   [1,1,0,0,0,1,1,0,0,0,0,0],
+//   [0,1,2,3,4,5],
 // )
+let solved_state = new State(
+	[0, 1, 2, 3, 4, 5, 6, 7],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 2, 3, 4, 5],
+)
 
 function rotate(roates ,time = 1000,dist_time = 50){
 
@@ -604,7 +607,7 @@ function one_rotate(sc_st,roate){
 		corner[i].removeAttribute('animation')
 		let F = corner[i].children[0].object3D.children[0].children[0].children
 		for(let s=0;s<3;s++)
-	  	F[s].material.color = color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]
+	  	F[s].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
 	}
 
 	for(let i of moves_face_e[index]){
@@ -612,14 +615,14 @@ function one_rotate(sc_st,roate){
 		edge[i].removeAttribute('animation')
 		let F = edge[i].children[0].object3D.children[0].children[0].children
 		for(let s=0;s<2;s++)
-	  	F[s].material.color = color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]
+	  	F[s].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
 	}
 
 	for(let i of moves_face_cn[index]){
 		center[i].setAttribute('rotation', {x:0,y:0,z:0})
 		center[i].removeAttribute('animation')
 		let F = center[i].children[0].object3D.children[0].children[0].children
-	  F[0].material.color = color_data[color_cn[sc_st.c[i]][0]]
+	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
 	return sc_st
 }
@@ -633,19 +636,18 @@ function color_set(sc_st){
 	for(let i=0;i<corner.length;i++){
 		let F = corner[i].children[0].object3D.children[0].children[0].children
 		for(let s=0;s<3;s++)
-	  	F[s].material.color = color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]
+	  	F[s].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
 	}
 
 	for(let i=0;i<edge.length;i++){
 		let F = edge[i].children[0].object3D.children[0].children[0].children
 		for(let s=0;s<2;s++)
-	  	F[s].material.color = color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]
+	  	F[s].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
 	}
 
 	for(let i=0;i<center.length;i++){
 		let F = center[i].children[0].object3D.children[0].children[0].children
-		console.log(color_cn[sc_st.c[i]])
-	  F[0].material.color = color_data[color_cn[sc_st.c[i]][0]]
+	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
 }
 
@@ -1288,15 +1290,15 @@ function objopacty(ojb, op1 = 0.5, op2 = undefined) {
 function cubeOpa(op1,op2=undefined) {
   const cn = document.getElementById('center').children
   for(let i=0;i<cn.length;i++)
-      objopacty(cn[i].children[0], op1,op2)
+    objopacty(cn[i].children[0], op1,op2)
       
   const c = document.getElementById('corner').children
   for(let i=0;i<c.length;i++)
-      objopacty(c[i].children[0], op1,op2)
+    objopacty(c[i].children[0], op1,op2)
       
   const e = document.getElementById('edge').children
   for(let i=0;i<e.length;i++)
-      objopacty(e[i].children[0], op1,op2)
+    objopacty(e[i].children[0], op1,op2)
 }
 function psd() {
 	let t="let solved_state = new State(\n"

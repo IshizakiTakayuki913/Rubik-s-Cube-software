@@ -10,7 +10,6 @@ const camera = () => ({
 	// dependency: ['raycaster'],
 
 	init() {
-		const btn1 = document.getElementById("btn1")
 		const camera = document.getElementById("camera")
 		const camera2 = document.getElementById("camera2")
 		const canvas = document.getElementById("scene")
@@ -125,6 +124,9 @@ const camera = () => ({
 
 		this.el.addEventListener('raycaster-intersection', (e) => {
 			if (e.target !== this.data.rayFace) return; // 対応するレイキャスターのみ反応
+			
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.cube_mode !== "stay")	return
 
 			this.rayFace = e.target.components.raycaster
 			for(let i=0;i<e.detail.els.length;i++){
@@ -135,6 +137,8 @@ const camera = () => ({
 		})
 
 		this.el.addEventListener('raycaster-intersection-cleared', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.cube_mode !== "stay")	return
 			if (e.target !== this.data.rayFace) return; // 対応するレイキャスターのみ反応
 
 			for(let i=0;i<e.detail.clearedEls.length;i++){
@@ -145,9 +149,13 @@ const camera = () => ({
 		})
 
 		root.addEventListener("mousedown", (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.cube_mode !== "stay"){
+				scene.Color_set(e)
+				return
+			}
 			if(this.root_mode)	return
 			
-			const scene = document.getElementById('scene').components["cube-mode"]
 			if(scene.data.all_sul_mode)	return
 
 			this.parts = e.target
@@ -212,17 +220,16 @@ const camera = () => ({
 				}
 			}
 		})
-
 		
 		this.el.addEventListener("raycaster-mouseup", (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.cube_mode !== "stay")	return
 			if(!this.root_mode)	return
 
 			this.parts = undefined
 			this.root_mode = false
 			
 			let move1 = this.pmove[this.NextMove[0]] + ((this.faces_rad[this.pmove[this.NextMove[0]]] * this.NextMove[1] > 0) ? "":"'")
-
-			const scene = document.getElementById('scene').components["cube-mode"]
 
 			if(this.NextMove.length > 0){
 				scene.Ins_reset()
@@ -245,13 +252,10 @@ const camera = () => ({
 			this.candidateMove = []
 		})
 
-		btn1.addEventListener('click', (e) => {
-			// document.getElementById('iframe').onload()
-			const scene = document.getElementById('scene').components["cube-mode"]
-			scene.Button(e)
-		})
-
 		canvas.addEventListener('touchstart', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.face_select)	return
+			
 			this.mouse_or_touch = true
 			if(this.root_mode)	return
 			// console.log(`touchstart target:${e.target.tagName} currentTarget:${e.currentTarget.tagName}`)
@@ -262,7 +266,7 @@ const camera = () => ({
 				this.zoom_mode = true
 			}
 			else if(e.touches.length === 2 && this.zoom_mode){
-				console.log(`touchstart 2 len[${e.touches.length}]`)
+				// console.log(`touchstart 2 len[${e.touches.length}]`)
 				this.positionP = {x:e.touches[1].clientX - e.touches[0].clientX , y:e.touches[1].clientY - e.touches[0].clientY}
 				this.data.camera_dist = camera2.object3D.position.z		
 				// this.zoom_mode = true
@@ -270,6 +274,8 @@ const camera = () => ({
 		})
 
 		canvas.addEventListener('touchmove', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.face_select)	return
 			if(this.root_mode)	return
 
 			if(e.touches.length === 1 && this.zoom_mode){
@@ -278,7 +284,7 @@ const camera = () => ({
 				camera.object3D.rotation.x = Math.max(Math.min(this.data.view_pres_rad.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
 			}
 			else if(e.touches.length === 2 && this.zoom_mode){
-				console.log(`touchmove 2 `)
+				// console.log(`touchmove 2 `)
 				let pdx = Math.sqrt( Math.pow( e.touches[1].clientX - e.touches[0].clientX, 2) + Math.pow( e.touches[1].clientY - e.touches[0].clientY, 2) )
 				let dx = Math.sqrt( Math.pow( this.positionP.x, 2) + Math.pow( this.positionP.y, 2) )
 				camera2.object3D.position.z	= Math.max(this.data.camera_dist - ( pdx - dx )/70 , 0)
@@ -287,12 +293,16 @@ const camera = () => ({
 		})
 
 		canvas.addEventListener('touchend', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.face_select)	return
 			this.mouse_or_touch = false
 			this.zoom_mode = false
 			this.el.emit('raycaster-mouseup')
 		})
 		
 		canvas.addEventListener('mousedown', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.face_select)	return
 			this.mouse_or_touch = true
 			if(this.root_mode)	return
 			// console.log(`mousedown target:${e.target.tagName} currentTarget:${e.currentTarget.tagName}`)
@@ -305,6 +315,9 @@ const camera = () => ({
 		})
 
 		canvas.addEventListener('mousemove', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			// console.log(`face_select[${scene.data.face_select}] root_mode[${this.root_mode}] mouse_ples [${this.mouse_ples}]`)
+			if(scene.data.face_select)	return
 			if(this.root_mode)	return
 			// console.log(`mousemove target:${e.target.tagName} currentTarget:${e.currentTarget.tagName}`)
 
@@ -316,6 +329,8 @@ const camera = () => ({
 		})
 		
 		canvas.addEventListener('mouseup', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.face_select)	return
 			this.mouse_or_touch = false
 			this.el.emit('raycaster-mouseup')
 			if(this.root_mode)	return
@@ -324,6 +339,8 @@ const camera = () => ({
 		})
 
 		canvas.addEventListener('mouseleave', (e) => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			if(scene.data.face_select)	return
 			this.mouse_or_touch = false
 			// console.log(
 			// 	`target ${e.target.tagName} id [${e.target.id}]\n`+
