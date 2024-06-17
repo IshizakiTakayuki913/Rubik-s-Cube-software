@@ -812,7 +812,7 @@ function BBB(){
 	solved_state = solved_state.hand_move(moves["x"])
 	solved_state = solved_state.hand_move(moves["y'"])
 
-	search.start_search(solved_state,0, 6, ["F'","B","U","U'","U2","D'","R","R'","R2","l","l'",])
+	search.start_search(solved_state,0, 10, ["F'","B","U","U'","U2","D'","R","R'","R2","l","l'",])
 	// search.start_search(solved_state,0, 4, ["R","R'","R2","l","l'","r2","U","U'","U2"])
 	sum_solution.push(["x", "y'"].concat(search.current_solution))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
@@ -820,21 +820,21 @@ function BBB(){
 
 	solved_state = solved_state.hand_move(moves["x'"])
 
-	search.start_search(solved_state,1, 6, ["B","U","U'","U2","D'","R","R'","R2","l","l'",])
+	search.start_search(solved_state,1, 10, ["B","U","U'","U2","D'","R","R'","R2","l","l'",])
 	sum_solution.push(["x'"].concat(search.current_solution))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["x'"])
 
-	search.start_search(solved_state,2, 6, ["B","U","U'","U2","D'","R","R'","R2","l","l'",])
+	search.start_search(solved_state,2, 10, ["B","U","U'","U2","D'","R","R'","R2","l","l'",])
 	sum_solution.push(["x'"].concat(search.current_solution))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 
 	solved_state = solved_state.hand_move(moves["x'"])
 
-	search.start_search(solved_state,3, 6, ["B","U","U'","U2","D'","R","R'","R2","l","l'",])
+	search.start_search(solved_state,3, 10, ["B","U","U'","U2","D'","R","R'","R2","l","l'",])
 	sum_solution.push(["x'"].concat(search.current_solution))
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
@@ -1287,6 +1287,7 @@ function objopacty(ojb, op1 = 0.5, op2 = undefined) {
       F[s].material.transparent = true
   }
 }
+
 function cubeOpa(op1,op2=undefined) {
   const cn = document.getElementById('center').children
   for(let i=0;i<cn.length;i++)
@@ -1300,6 +1301,7 @@ function cubeOpa(op1,op2=undefined) {
   for(let i=0;i<e.length;i++)
     objopacty(e[i].children[0], op1,op2)
 }
+
 function psd() {
 	let t="let solved_state = new State(\n"
 	t+="  ["+scrambled_state.cp.join(',')+"],\n"
