@@ -703,6 +703,58 @@ function one_rotate_anim(roate,time = 2000){
 	}
 }
 
+function Compensation_anim(roate,time = 5000, From, To){
+	const index = faces.indexOf(roate[0])
+	const rad = roate[1]
+	// console.log("roate "+roate+" len "+rotate.length+" index "+index+" rad "+rad)
+
+	corner = document.getElementById("corner").children
+	edge = document.getElementById("edge").children
+	center = document.getElementById("center").children
+
+						// URLFDB
+	let size = 1
+	if(rad == '\'')	size = -1
+	else if(rad == '2')	size = 2
+
+	// console.log(`one_rotate_anim index:${index} size:${size}`)
+	// console.log(`one_rotate_anim moves_face_c[index] [${moves_face_c[index]}]`)
+	// console.log(`vec.charAt(index) [${vec.charAt(index)}] faces_rad[index] [${faces_rad[index]}]`)
+
+	for(let i of moves_face_c[index]){
+		corner[i].setAttribute('animation', {
+			property: 'rotation.'+vec.charAt(index),
+			dur: time,
+			from: From,
+			to: To,
+			// easing: 'easeOutSine',
+			easing: 'linear',
+		})
+	}
+
+	for(let i of moves_face_e[index]){
+		edge[i].setAttribute('animation', {
+			property: 'rotation.'+vec.charAt(index),
+			dur: time,
+			from: From,
+			to: To,
+			// easing: 'easeOutSine',
+			easing: 'linear',
+		})
+	}
+
+	for(let i of moves_face_cn[index]){
+		center[i].setAttribute('animation', {
+			property: 'rotation.'+vec.charAt(index),
+			dur: time,
+			from: From,
+			to: To,
+			// easing: 'easeOutSine',
+			easing: 'linear',
+		})
+	}
+}
+
 
 let scrambled_state = solved_state
 
@@ -1277,6 +1329,28 @@ function raycast_rotate(roate,rad){
 
 	for(let i of moves_face_cn[index]){
 		center[i].object3D.rotation[vec[index]] = rad
+	}
+}
+
+function remove_animation(roate){
+	const index = faces.indexOf(roate[0])
+	corner = document.getElementById("corner").children
+	edge = document.getElementById("edge").children
+	center = document.getElementById("center").children
+
+	for(let i of moves_face_c[index]){
+		corner[i].setAttribute('rotation', {x:0,y:0,z:0})
+		corner[i].removeAttribute('animation')
+	}
+
+	for(let i of moves_face_e[index]){
+		edge[i].setAttribute('rotation', {x:0,y:0,z:0})
+		edge[i].removeAttribute('animation')
+	}
+
+	for(let i of moves_face_cn[index]){
+		center[i].setAttribute('rotation', {x:0,y:0,z:0})
+		center[i].removeAttribute('animation')
 	}
 }
 

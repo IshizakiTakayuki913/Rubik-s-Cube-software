@@ -245,6 +245,7 @@
 
     this.new_move = undefined
     this.new_rad = undefined
+    this.raycast_rotate_T = true
   },
 
   set_position(NP, PROT){
@@ -307,24 +308,37 @@
     if(roteInde == -1)  return
 
     a = (value == Math.abs(value) ? -1 : 1 )
-    console.log(`value [${value}] direi [${direi* a}`)
+    // console.log(`value [${value}] direi [${direi* a}`)
     value += direi * a
 
+    let raycast_rotate_T = true
 
-    if(this.new_move !== undefined && this.new_move != this.moves[roteInde]){
-      // this.new_move
-      // console.log()
-      raycast_rotate(this.new_move, 0)
-    }
-
-    // this.new_rad = undefined
-    // const vec = this.moves[roteInde].length>1?-1:1
     let faces_rad = this.faces_rad[this.moves[roteInde][0]]
     const RAD = Math.max(Math.min(value/1.5,Math.PI/2),-Math.PI/2)
 
     if(this.moves[roteInde].length>1) faces_rad *= -1
 
-    raycast_rotate(this.moves[roteInde], faces_rad * RAD)
+    if(this.raycast_rotate_T && this.new_move !== undefined && this.new_move != this.moves[roteInde]){
+      // this.new_move
+      // console.log()
+      raycast_rotate(this.new_move, 0)
+      // this.raycast_rotate_T = false
+      // const Prad = this.new_rad
+      // let Pfr = this.faces_rad[this.new_move[0]]
+      // if(this.new_move.length>1) Pfr *= -1
+      // const PMove_rad = Pfr * Prad * 180 / Math.PI
+      // Compensation_anim(this.new_move,1000, PMove_rad, 0)
+      // setTimeout(() => {
+      //   this.raycast_rotate_T = true
+      //   remove_animation(this.new_move)
+      //   this.Progress_rotate()
+      // },1010)
+    }
+
+    // this.new_rad = undefined
+    // const vec = this.moves[roteInde].length>1?-1:1
+
+    if(this.raycast_rotate_T)raycast_rotate(this.moves[roteInde], faces_rad * RAD)
     this.new_move = this.moves[roteInde]
     this.new_rad = RAD
   },
@@ -332,6 +346,18 @@
   Decision_rotate(){
     if(this.new_move !== undefined){
       const rad = this.new_rad
+      let faces_rad = this.faces_rad[this.new_move[0]]
+      if(this.new_move.length>1) faces_rad *= -1
+      const Move_rad = faces_rad * rad * 180 / Math.PI
+
+      if(Math.abs(rad) < 0.3){
+        // raycast_rotate(this.new_move, 0)
+        // console.log(`rad [${rad}] `)
+        Compensation_anim(this.new_move,100, Move_rad, 0)
+        return
+      }
+
+      // console.log(`rad [${rad}]`)
       let vec = rad>0?"":"'"
       if(this.new_move.length>1){
         if(rad>0) vec = "'"
@@ -342,7 +368,9 @@
         else      vec = "'"
       }
 
-      console.log(`this.new_move [${this.new_move}] solv [${this.new_move[0]+vec}]move [${this.new_move[0]}] vec [${vec}]`)
+
+
+      // console.log(`this.new_move [${this.new_move}] solv [${this.new_move[0]+vec}]move [${this.new_move[0]}] vec [${vec}]`)
 
       if(this.new_move[0] > "Z"){
         scrambled_state = scrambled_state.hand_move(moves[this.new_move[0]+vec])
@@ -352,6 +380,9 @@
         scrambled_state = scamble2state(scrambled_state,this.new_move[0]+vec)
       }
       one_rotate(scrambled_state, this.new_move[0]+vec)
+      a = (Move_rad)>0?-90:90
+      Compensation_anim(this.new_move,100, a + Move_rad, 0)
+
       
       const mode  = document.getElementById("scene").components["cube-mode"]
       mode.Ins_reset()

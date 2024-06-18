@@ -74,7 +74,7 @@ const cubemode = () => ({
       this.Mode_set("Input")
       const Colorset  = document.getElementById("camera2").components["color-set"]
       Colorset.Intiset()
-			console.log(`mode Change Input`)
+			// console.log(`mode Change Input`)
 		})
     
     this.Mode_set("Free")
@@ -90,7 +90,7 @@ const cubemode = () => ({
     Rotation.data.Rotation   = this.data.mode_list[this.data.cube_modes[this.data.cube_mode]][this.data.cube_modes["Rotation"]]
     Colorset.data.Colorset   = this.data.mode_list[this.data.cube_modes[this.data.cube_mode]][this.data.cube_modes["Colorset"]]
 
-    console.log(`Viewpoint [${Viewpoint.data.Viewpoint}] Rotation [${Rotation.data.Rotation}] Colorset [${Colorset.data.Colorset}]`)
+    // console.log(`Viewpoint [${Viewpoint.data.Viewpoint}] Rotation [${Rotation.data.Rotation}] Colorset [${Colorset.data.Colorset}]`)
   },
 
   Ins_Complete(){
@@ -187,6 +187,8 @@ const cubemode = () => ({
     this.color_solve = Check_ans
     scrambled_state = Check_ans
     // color_set(scrambled_state)
+    // one_rotate()
+    // set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
     this.Mode_set("Free")
   },
 
