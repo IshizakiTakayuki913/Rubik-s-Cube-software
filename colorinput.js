@@ -15,6 +15,7 @@ const colorinput = () => ({
 		this.touchId= undefined
     this.choiceColor = undefined
     this.check_list = undefined
+    this.color_index = undefined
 
 
     this.menu = document.getElementById('color-menu')
@@ -383,7 +384,7 @@ const colorinput = () => ({
     // console.log(face)
 
     
-    if(this.cData[face.type[0]][face.Pindex][face.Findex]  == this.choiceColor) return
+    if(this.cData[face.type[0]][face.Pindex][face.Findex]  == this.color_index[this.choiceColor]) return
     if(this.cData[face.type[0]][face.Pindex][face.Findex]  != -1)
       this.cData.count[this.cData[face.type[0]][face.Pindex][face.Findex]] += 1
 
@@ -394,8 +395,8 @@ const colorinput = () => ({
     // console.log(`type [${face.type[0]}] Pin [${[face.Pindex]}] Fin [${face.Findex}]`)
     // console.log(this.cData)
 
-    this.cData[face.type[0]][face.Pindex][face.Findex] = this.choiceColor
-    this.cData.count[this.choiceColor] -= 1
+    this.cData[face.type[0]][face.Pindex][face.Findex] = this.color_index[this.choiceColor]
+    this.cData.count[this.color_index[this.choiceColor]] -= 1
     // console.log(this.cData)
     Check_ans = this.Check_pos(face.type[0],face.Pindex)
     // console.log(Check_ans)
@@ -437,6 +438,13 @@ const colorinput = () => ({
       for(let s=0;s<2;s++)
         F[s].material.color = gray
     }
+
+    ci = color_data
+    n_ci = new Array(6)
+    for(let i=0;i<6;i++)  n_ci[ci[i]] = i
+    this.color_index = n_ci
+    console.log(color_data)
+    console.log(this.color_index)
   },
 
   XX (r,x,y) {return x*Math.cos(r)-y*Math.sin(r)},
