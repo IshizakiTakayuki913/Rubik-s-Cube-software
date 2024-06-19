@@ -69,7 +69,10 @@ const colorinput = () => ({
 
     btn2.addEventListener("click",() =>{
 			if(!this.data.Colorset) return
-      text = objcetText(this.check_list)
+      text =""
+      text += objcetText(this.check_list)
+      text += "\n"+objcetText(color_data)
+      text += "\n"+objcetText(set_color_data)
       const a = document.createElement('a');
       a.href = 'data:text/plain,' + encodeURIComponent(text);
       a.download = 'log.txt';
