@@ -7,13 +7,15 @@ const colorinput = () => ({
 	init() {
 		const camera = document.getElementById("camera")
 		const camera2 = document.getElementById("camera2")
+		const btn2 = document.getElementById('btn2')
+		this.scene = document.getElementById('scene')
 		
 		this.mousePress = false
 		this.touchPress = false
 		this.touchId= undefined
     this.choiceColor = undefined
+    this.check_list = undefined
 
-		this.scene = document.getElementById('scene')
 
     this.menu = document.getElementById('color-menu')
     colors = ["#1617ff","#ff1616","#15d832","#d88015","#ececec","#e9f121"]
@@ -63,6 +65,16 @@ const colorinput = () => ({
         this.menu.children[id].classList.add("choice-color")
         this.choiceColor = id
       }
+    })
+
+    btn2.addEventListener("click",() =>{
+			if(!this.data.Colorset) return
+      text = objcetText(this.check_list)
+      const a = document.createElement('a');
+      a.href = 'data:text/plain,' + encodeURIComponent(text);
+      a.download = 'log.txt';
+
+      a.click();
     })
   },
 	

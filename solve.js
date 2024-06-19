@@ -1386,3 +1386,45 @@ function psd() {
 	t+=")\n"
 	console.log(t)
 }
+
+function objcetText(obj) {
+  this.length = Object.keys(obj).length;
+  this.count = 0;
+  this.outText = "{\n";
+  this.format = function(obj,times){
+    var i = 0;
+    var _objlength = Object.keys(obj).length;
+    for(key in obj){
+      i++;
+      //階層分のタブを追加
+      var tabs = "";
+      for(var j = 0; j < times+1; j++){
+        tabs += "\t";
+      }
+      this.outText += tabs + key + ":";
+      if(typeof obj[key] == "object"){
+        this.outText += "{" + "\n";
+        //下層のオブジェクト数を足す
+        this.length += Object.keys(obj[key]).length;
+        //再帰処理
+        this.format(obj[key],times+1);
+        if(i == _objlength){
+          this.outText += tabs.replace(/(\t?).$/,'$1') + "}\n";
+        }
+        this.count++;
+      }else{
+        this.outText += obj[key];
+        if(i != _objlength){
+          this.outText += ",\n";
+        }else{
+          this.outText += "\n" + tabs.replace(/(\t?).$/,'$1') + "}\n";
+        }
+        this.count++;
+      }
+    }
+    if(this.length == this.count){
+      return this.outText
+    }
+  }
+  return this.format(obj,0);
+}
