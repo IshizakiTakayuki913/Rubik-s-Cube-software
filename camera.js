@@ -15,11 +15,16 @@ const camera = () => ({
 		this.touchMode = undefined
 
 		this.scene = document.getElementById('scene')
+		// this.setpos = this.scene.getBounndingClientRect()
 
 		this.scene.addEventListener('mousedown', (e) => {
 			if(!this.data.Viewpoint) return
 			if(e.target.tagName !== 'CANVAS') return
-			if(!this.hit({x:e.offsetX , y:e.offsetY})) return	
+			if(!this.hit({
+				x:e.clientX - this.scene.getBoundingClientRect().left,
+				y:e.clientY - this.scene.getBoundingClientRect().top
+			})) return
+
 			this.mousePress = true
 			
 			if(this.touchPress || this.touchMode !== undefined){
@@ -28,15 +33,22 @@ const camera = () => ({
 				console.log("touchPres")
 			}
 
-			this.mousePos = {x:e.offsetX , y:e.offsetY}
+			this.mousePos = {
+				x:e.clientX - this.scene.getBoundingClientRect().left,
+				y:e.clientY - this.scene.getBoundingClientRect().top
+			}
 			this.sceneRot = {x:camera.object3D.rotation.x, y:camera.object3D.rotation.y}
 		})
 		
 		document.addEventListener('mousemove', (e) => {
 			if(!this.data.Viewpoint) return
 			if(!this.mousePress)	return
+			// console.log(`target [${e.target.tagName}] current [${e.currentTarget.tagName}]`)
 			
-			let dx = {x:e.offsetX - this.mousePos.x, y:e.offsetY - this.mousePos.y}
+			let dx = {
+				x:e.clientX - this.scene.getBoundingClientRect().left - this.mousePos.x,
+				y:e.clientY - this.scene.getBoundingClientRect().top - this.mousePos.y
+			}
 			camera.object3D.rotation.y = (this.sceneRot.y - dx.x/150) % (2*Math.PI)
 			camera.object3D.rotation.x = Math.max(Math.min(this.sceneRot.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
 		})
@@ -59,7 +71,10 @@ const camera = () => ({
 			if(!this.data.Viewpoint) return
 			if(e.target.tagName !== 'CANVAS') return
 			// console.log(e.touches[0])
-			if(e.touches.length>0 && !this.hit({x:e.touches[0].clientX , y:e.touches[0].clientY})) return	
+			if(e.touches.length>0 && !this.hit({
+				x:e.touches[0].clientX - this.scene.getBoundingClientRect().left,
+				y:e.touches[0].clientY - this.scene.getBoundingClientRect().top
+			})) return	
 
 			this.touchPress = true
 
@@ -71,12 +86,18 @@ const camera = () => ({
 			if(this.touchMode === "none"){}
 			else if(e.touches.length == 1){
 				this.touchMode = "oun"
-				this.touchPos = {x:e.touches[0].clientX , y:e.touches[0].clientY}
+				this.touchPos = {
+					x:e.touches[0].clientX - this.scene.getBoundingClientRect().left,
+					y:e.touches[0].clientY - this.scene.getBoundingClientRect().top
+				}
 				this.sceneRot = {x:camera.object3D.rotation.x, y:camera.object3D.rotation.y}
 			}
 			else if(e.touches.length == 2){
 				this.touchMode = "two"
-				this.touchPos = {x:e.touches[1].clientX - e.touches[0].clientX , y:e.touches[1].clientY - e.touches[0].clientY}
+				this.touchPos = {
+					x:e.touches[1].clientX - e.touches[0].clientX ,
+					y:e.touches[1].clientY - e.touches[0].clientY
+				}
 				this.touchSetPos = camera2.object3D.position.z
 			}
 		})
@@ -86,13 +107,19 @@ const camera = () => ({
 			if(!this.touchPress)	return
 
 			if(this.touchMode === "oun"){
-				let dx = {x:e.touches[0].clientX - this.touchPos.x, y:e.touches[0].clientY - this.touchPos.y}
+				let dx = {
+					x:e.touches[0].clientX - this.scene.getBoundingClientRect().left - this.touchPos.x,
+					y:e.touches[0].clientY - this.scene.getBoundingClientRect().top - this.touchPos.y
+				}
 				camera.object3D.rotation.y = (this.sceneRot.y - dx.x/150) % (2*Math.PI)
 				camera.object3D.rotation.x = Math.max(Math.min(this.sceneRot.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
 			}
 			else if(this.touchMode === "two"){
 				d = this.touchSetPos
-				let pdx = Math.sqrt( Math.pow( e.touches[1].clientX - e.touches[0].clientX, 2) + Math.pow( e.touches[1].clientY - e.touches[0].clientY, 2) )
+				let pdx = Math.sqrt( 
+					Math.pow( e.touches[1].clientX - e.touches[0].clientX, 2) + 
+					Math.pow( e.touches[1].clientY - e.touches[0].clientY, 2) 
+				)
 				let dx = Math.sqrt( Math.pow( this.touchPos.x, 2) + Math.pow( this.touchPos.y, 2) )
 				d = Math.max(d - ( pdx - dx )/70 , 0)
 				camera2.object3D.position.z	= d

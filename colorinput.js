@@ -18,12 +18,24 @@ const colorinput = () => ({
     this.color_index = undefined
 
 
-    this.menu = document.getElementById('color-menu')
+    this.menu = document.createElement('div')
+    this.menu.id = "color-menu"
+    this.menu.classList.add("color-menu-bar")
+    CD = document.createElement("div")
+    CD.classList.add("menu-colors")
+    for(let i=0;i<6;i++){
+      nCD = CD.cloneNode(true)
+      nCD.classList.add(`c${i}`)
+      this.menu.append(nCD)
+    }
+    
+    document.getElementsByTagName('body')[0].append(this.menu)
+
+
     colors = ["#1617ff","#ff1616","#15d832","#d88015","#ececec","#e9f121"]
     menu = this.menu.children
     for(let i=0; i<menu.length; i++)  menu[i].style.backgroundColor = colors[i]
 
-    this.color_menu = document.getElementById('color-menu-screen')
 
 		this.scene.addEventListener('mousedown', (e) => {
 			if(!this.data.Colorset) return
@@ -66,19 +78,6 @@ const colorinput = () => ({
         this.menu.children[id].classList.add("choice-color")
         this.choiceColor = id
       }
-    })
-
-    btn2.addEventListener("click",() =>{
-			if(!this.data.Colorset) return
-      text =""
-      text += objcetText(this.check_list)
-      text += "\n"+objcetText(color_data)
-      text += "\n"+objcetText(set_color_data)
-      const a = document.createElement('a');
-      a.href = 'data:text/plain,' + encodeURIComponent(text);
-      a.download = 'log.txt';
-
-      a.click();
     })
   },
 	

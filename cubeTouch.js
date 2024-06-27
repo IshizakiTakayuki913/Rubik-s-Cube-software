@@ -1,6 +1,6 @@
 const cubemode = () => ({
 	schema: {
-		one_sul_mode: {type: 'boolean', default: true},
+		Execution_move: {type: 'boolean', default: false},
 		all_sul_mode: {type: 'boolean', default: false},
     btn_mode: {type: 'int', default: 0},
     solve_time: {type: 'int', default: -1},
@@ -31,10 +31,7 @@ const cubemode = () => ({
 	},	
 
 	init() {
-		this.btn1 = document.getElementById("btn1")
-		this.btn2 = document.getElementById("btn2")
-  
-    const icon = document.getElementById('ins-screen')
+    // const icon = document.getElementById('ins-screen')
     const canvas = document.createElement("canvas")
     canvas.id="icon"
     canvas.style.width = "40vmin"
@@ -46,30 +43,56 @@ const cubemode = () => ({
     canvas.height = 300
     const w = 300
     ctx.lineWidth = w/10
-
     let fanwisegradient = ctx.createConicGradient(-0.2, w/2, w/2);
     fanwisegradient.addColorStop(0,   '#000');
     fanwisegradient.addColorStop(0.3, '#000');
     fanwisegradient.addColorStop(0.6, '#fff');
     fanwisegradient.addColorStop(0.8, '#CCCCCC00');
     ctx.strokeStyle = fanwisegradient;
-
     ctx.lineCap = "round";
     ctx.beginPath()
     ctx.arc(w/2, w/2, w/2-ctx.lineWidth/2, 0, 1.6*Math.PI)
     ctx.stroke()
+    document.getElementsByTagName("body")[0].append(canvas)
+    this.icon = canvas
 
-    icon.appendChild(canvas)
 
 
-		this.btn1.addEventListener('click', (e) => {
+    const iframe = document.getElementById('iframe')
+    iframe.width = 100
+    iframe.height = 100
+
+
+
+    const map = document.getElementsByClassName('sulves-map')[0]
+    const list = document.createElement('div')
+    const line = document.createElement('div')
+    const rotas = document.createElement('div')
+
+    list.classList.add("list")
+    line.classList.add("line")
+    rotas.classList.add("rotas")
+    
+    line.append(rotas)
+
+    for(let i=0;i<16;i++)
+      list.append(line.cloneNode(true))
+
+    map.append(list)
+
+
+
+    this.color_set_buttont = document.getElementsByClassName("color-set-buttont")[0]
+    this.calculation_set_buttont = document.getElementsByClassName("calculation_set_buttont")[0]
+
+    
+		this.calculation_set_buttont.addEventListener('click', (e) => {
 			if(this.data.cube_mode !== "Free")	return
-      
-			// if(this.data.cube_mode !== "Calculation")	return
+      this.Mode_set("Calculation")
 			this.Button(e)
 		})
 
-		this.btn2.addEventListener('click', (e) => {
+		this.color_set_buttont.addEventListener('click', (e) => {
 			if(this.data.cube_mode !== "Free") return
       this.Mode_set("Input")
       const Colorset  = document.getElementById("camera2").components["color-set"]
@@ -79,7 +102,7 @@ const cubemode = () => ({
     
     this.Mode_set("Free")
 	},
-
+    		
   Mode_set(Nmode){
     this.data.cube_mode = Nmode
     const Viewpoint = document.getElementById("camera2").components["camera-view"]
@@ -93,94 +116,119 @@ const cubemode = () => ({
     // console.log(`Viewpoint [${Viewpoint.data.Viewpoint}] Rotation [${Rotation.data.Rotation}] Colorset [${Colorset.data.Colorset}]`)
   },
 
-  Ins_Complete(){
-    this.data.btn_mode = 1
-    document.getElementById("ins-screen").style.display = "none"
-    const icon = document.getElementById("icon")
-    icon.classList.remove("rotate-ani")
+  Ins_Complete(sum_solution){
+
+    // for(sum of sum_solution)
+    //   console.log(sum)
+  
+    const rotas = document.getElementsByClassName('rotas')
+  
+    const imgDiv = document.createElement('div')
+    imgDiv.classList.add("img-div")
+    const img = document.createElement('img')
+    const line = document.getElementsByClassName('line')[0]
+    img.classList.add('rotate-img')
+    console.log(line.clientWidth)
+    imgW = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*7/100
+    lineCount = parseInt(line.clientWidth / imgW)
+    console.log(`imgW ${imgW} lineCount ${lineCount}`)
+
+    for(let i=0;i<sum_solution.length;i++){
+      rotas[i].innerHTML = ''
+      if(sum_solution[i].length == 0){
+        continue
+      }
+      // sum_solution[i]
+      for(s=0;s<sum_solution[i].length;s++){
+        const D = imgDiv.cloneNode(), I=img.cloneNode()
+        I.src=`./img/${sum_solution[i][s]}.png`
+        D.append(I)
+        rotas[i].append(D)
+      }
+      // console.log(rotas[i].parentElement)
+      rotas[i].style.width = `${Math.min(sum_solution[i].length, lineCount) * imgW}px`
+      rotas[i].parentElement.style.height = `${Math.ceil(sum_solution[i].length / lineCount) * imgW}px`
+    }
+  
+    sum_solution2 = sum_solution
+
+    this.icon.style.display = "none"
+    this.icon.classList.remove("rotate-ani")
     
-    this.Mode_set("Free")
+    const Lhand = document.getElementById("L-hand")
+    const Rhand = document.getElementById("R-hand")
+    Lhand.object3D.visible = true
+    Rhand.object3D.visible = true
+
+    this.data.Execution_move = true
+
+    // document.getElementById("ins-screen").style.display = "none"
+    
+    this.Mode_set("Execution")
   },
 
   Complete(){
-		this.data.btn_mode = 0
-		this.data.all_sul_mode = false
-		
-		this.btn1.children[0].innerHTML = 'Complete'
+		// this.btn1.children[0].innerHTML = 'Complete'
     const Lhand = document.getElementById("L-hand")
     const Rhand = document.getElementById("R-hand")
     Lhand.object3D.visible = false
     Rhand.object3D.visible = false
-    
+
     this.Mode_set("Free")
   },
 
   Ins_reset(){
-    if(this.data.btn_mode == 1 && this.data.one_sul_mode){
       // console.log(this.NextMove)
       console.log(`計算済み　リセット`)
-      this.btn1.children[0].innerHTML = 'Solve'
-      this.data.btn_mode = 0
       this.Mode_set("Free")
-    }
   },
 
   Button(e){
-    if(this.data.all_sul_mode)	return
+    this.icon.classList.add("rotate-ani")
+    this.icon.style.display = "block"
 
-    if(this.data.btn_mode < 0)	return
-    else if(this.data.btn_mode === 1)	{
-      // this.btn1.classList.add("un-pointer-events")
-      solve_preview = true
-      this.btn1.children[0].innerHTML = 'moveing'
-      this.data.one_sul_mode = false
-      this.data.all_sul_mode = true
+    setTimeout(() =>{BBB()},2000)
+
+    // else if(this.data.btn_mode === 1)	{
+    //   // this.btn1.classList.add("un-pointer-events")
+    //   solve_preview = true
+    //   // this.btn1.children[0].innerHTML = 'moveing'
+    //   this.data.one_sul_mode = false
+    //   this.data.all_sul_mode = true
       
-      const Lhand = document.getElementById("L-hand")
-      const Rhand = document.getElementById("R-hand")
-      Lhand.object3D.visible = true
-      Rhand.object3D.visible = true
+    //   const Lhand = document.getElementById("L-hand")
+    //   const Rhand = document.getElementById("R-hand")
+    //   Lhand.object3D.visible = true
+    //   Rhand.object3D.visible = true
 
-      this.Mode_set("Execution")
-      // btn_mode = -1
-    }
-    else if(this.data.btn_mode === 0)	{
-      console.log('Calculating')
-      this.btn1.children[0].innerHTML = 'Calculating'
-      // this.btn1.classList.add("un-pointer-events")
-      this.data.btn_mode = -1
+    //   this.Mode_set("Execution")
+    //   // btn_mode = -1
+    // }
+    // else if(this.data.btn_mode === 0)	{
+    //   console.log('Calculating')
+    //   this.data.btn_mode = -1
 
-      document.getElementById("ins-screen").style.display = "block"
+    //   this.icon.style.display = "block"
+    //   this.icon.classList.add("rotate-ani")
 
-      const icon = document.getElementById("icon")
-      icon.classList.add("rotate-ani")
+    //   this.Mode_set("Calculation")
 
-      this.Mode_set("Calculation")
-
-      setTimeout(() =>{BBB()},100)
-    }
+    //   setTimeout(() =>{BBB()},20000)
+    // }
     // console.log(e)
   },
 
   hand_move(moves){
     // console.log(`debug hand_move`)
-
-    if(this.data.all_sul_mode)	return
-    if(this.data.btn_mode < 0)	return
     
     sum_solution2 = [moves.split(" ")]
-    solve_preview = false
-    this.data.btn_mode = 1
 
     const Lhand = document.getElementById("L-hand")
     const Rhand = document.getElementById("R-hand")
     Lhand.object3D.visible = true
     Rhand.object3D.visible = true
 
-    this.btn1.children[0].innerHTML = 'moveing'
-    this.data.one_sul_mode = false
-    this.data.all_sul_mode = true
-    
+    // this.btn1.children[0].innerHTML = 'moveing'
   },
 
   Color_completion(Check_ans){
@@ -193,9 +241,9 @@ const cubemode = () => ({
   },
 
 	tick() {
-		if(!this.data.one_sul_mode){
+    if(this.data.Execution_move){
 			motions()
-			this.data.one_sul_mode = true
-		}
+			this.data.Execution_move = false
+    }
 	},
 })
