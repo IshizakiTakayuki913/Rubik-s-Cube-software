@@ -13,7 +13,7 @@ body {
 	background: rgb(0 0 0);
 	top: 0;
 	left: 0;
-	height: 70%;
+	height: 60%;
 	width: 70%;
 	/* max-height: 400px; */
 	/* max-width: ; */
@@ -47,26 +47,31 @@ a-scene {
 	left: 0;
 	bottom: 0;
 	width: 70%;
-	height: 30%;
+	height: 40%;
   /* resize: both; */
+}
+
+.next-step {
+	position: absolute;
+	z-index: 5;
+	background: #a9dbff;
+	left: 50%;
+	bottom: 5%;
+	width: 8vmin;
+	height: 8vmin;
 }
 
 
 .list {
 	width: auto;
-	height: 60%;
+	height: 75%;
 	margin: 0 10px;
 	background: #000e78;
-  overflow: hidden;
-	/* transition: all 1s; */
-	animation: 3s linear 1s infinite running;
-	/* scrolltop: */
+  overflow: scroll;
+	scroll-snap-type: y mandatory;
+	transition: all 1s ease-out;
 }
 
-/* @keyframes list-move {
-	0%   { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-} */
 
 .list::-webkit-scrollbar{
   display: none;
@@ -76,7 +81,17 @@ a-scene {
 	width: 100%;
 	height: auto;
 	position: relative; 
-	margin: 25px 0 0 0;
+	margin: 25% 0 0 0;
+  text-align: center;
+  scroll-snap-align: center;
+	scroll-snap-stop: always;
+}
+
+.line:first-child{
+	margin-top: 50%;
+}
+.line:last-child{
+	margin-bottom: 50%;
 }
 
 .rotas {
@@ -101,6 +116,8 @@ a-scene {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	display: block;
+	width: 7vmin;
+	height: 7vmin;
 }
 
 .now-move{

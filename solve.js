@@ -1185,10 +1185,12 @@ function motions(){
 		solveDiv[movementCount].classList.add('now-move')
 	}
 	
-	setTimeout(() => {
-		const scene = document.getElementById('scene').components["cube-mode"]
-		scene.data.Execution_move =true
-	},time_tank)
+	if(sum_solution2[0].length > 0){
+		setTimeout(() => {
+			const scene = document.getElementById('scene').components["cube-mode"]
+			scene.data.Execution_move =true
+		},time_tank)
+	}
 }
 
 function one_motion(sulb,speed){

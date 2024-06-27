@@ -80,11 +80,21 @@ const cubemode = () => ({
 
     map.append(list)
 
+    
+    const next = document.createElement('div')
+    next.classList.add('next-step')
+    map.append(next)
 
-
+    this.next_step_buttont = next
     this.color_set_buttont = document.getElementsByClassName("color-set-buttont")[0]
     this.calculation_set_buttont = document.getElementsByClassName("calculation_set_buttont")[0]
 
+    this.next_step_buttont.addEventListener("click",(e) => {
+      console.log("next_step_buttont")
+			if(this.data.cube_mode !== "Execution")	return
+      if(this.data.Execution_move)  return
+      this.data.Execution_move = true
+    })
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
 			if(this.data.cube_mode !== "Free")	return
@@ -125,30 +135,34 @@ const cubemode = () => ({
   
     const imgDiv = document.createElement('div')
     imgDiv.classList.add("img-div")
+    const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
+    imgDiv.style.width = imgW
+    imgDiv.style.height = imgW
+
     const img = document.createElement('img')
-    const line = document.getElementsByClassName('line')[0]
     img.classList.add('rotate-img')
-    console.log(line.clientWidth)
-    imgW = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*7/100
-    lineCount = parseInt(line.clientWidth / imgW)
-    console.log(`imgW ${imgW} lineCount ${lineCount}`)
+
+    const line = document.getElementsByClassName('line')[0]
+    const lineCount = parseInt(line.clientWidth / imgW)
 
     for(let i=0;i<sum_solution.length;i++){
       rotas[i].innerHTML = ''
       if(sum_solution[i].length == 0){
         continue
       }
-      // sum_solution[i]
+      
       for(s=0;s<sum_solution[i].length;s++){
         const D = imgDiv.cloneNode(), I=img.cloneNode()
         I.src=`./img/${sum_solution[i][s]}.png`
         D.append(I)
         rotas[i].append(D)
-      }
-      // console.log(rotas[i].parentElement)
+      }      
+      // console.log(`sum_solution [${sum_solution[i].length}]  lineCount [${lineCount}]`)
       rotas[i].style.width = `${Math.min(sum_solution[i].length, lineCount) * imgW}px`
       rotas[i].parentElement.style.height = `${Math.ceil(sum_solution[i].length / lineCount) * imgW}px`
+
     }
+
   
     sum_solution2 = sum_solution
 
