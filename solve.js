@@ -976,29 +976,9 @@ function BBB(){
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
 	search.current_solution = []
 	
-
-	for(sum of sum_solution)
-		console.log(sum)
-
-	const sulveText = document.getElementById('sulves')
-	table = sulveText.getElementsByTagName('td')
-
-	for(let i=0;i<sum_solution.length;i++){
-		if(sum_solution[i].length == 0){
-			table[i].innerHTML = ''
-			continue
-		}
-		table[i].innerHTML = "<div><p>" + sum_solution[i].join("</p></div><div><p>") + "</p></div>"
-	}
-	
-	const btn1 = document.getElementById("btn1")
-	btn1.children[0].innerHTML = 'move'
-
-	sum_solution2 = sum_solution
-
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
-		scene.Ins_Complete()
+		scene.Ins_Complete(sum_solution)
 	},50)
 }
 
@@ -1200,13 +1180,14 @@ function motions(){
 
 	movementCount+=1
 	if(solve_preview){
-		const solveDiv = document.getElementById('sulves').getElementsByTagName('div')
+		const solveDiv = document.getElementsByClassName("img-div")
+
 		solveDiv[movementCount].classList.add('now-move')
 	}
 	
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
-		scene.data.one_sul_mode = false
+		scene.data.Execution_move =true
 	},time_tank)
 }
 
