@@ -1184,13 +1184,20 @@ function motions(){
 
 		solveDiv[movementCount].classList.add('now-move')
 	}
+
 	
+	const scene = document.getElementById('scene').components["cube-mode"]
 	if(sum_solution2[0].length > 0){
 		setTimeout(() => {
-			const scene = document.getElementById('scene').components["cube-mode"]
 			scene.data.Execution_move =true
 		},time_tank)
 	}
+	else {
+		setTimeout(() => {
+			scene.data.step_move = false
+		},time_tank)
+	}
+	
 }
 
 function one_motion(sulb,speed){

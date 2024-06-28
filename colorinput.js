@@ -12,7 +12,7 @@ const colorinput = () => ({
 		
 		this.mousePress = false
 		this.touchPress = false
-		this.touchId= undefined
+		this.touchId = undefined
     this.choiceColor = undefined
     this.check_list = undefined
     this.color_index = undefined

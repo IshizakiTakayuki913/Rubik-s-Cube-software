@@ -28,6 +28,7 @@ const cubemode = () => ({
     Rotation: {type: 'boolean', default: false},
     Colorset: {type: 'boolean', default: false},
     face_select: {type: 'boolean', default: false},
+    step_move:  {type: 'boolean', default: false},
 	},	
 
 	init() {
@@ -93,7 +94,22 @@ const cubemode = () => ({
       console.log("next_step_buttont")
 			if(this.data.cube_mode !== "Execution")	return
       if(this.data.Execution_move)  return
-      this.data.Execution_move = true
+      if(this.data.step_move) return
+
+      const _list = document.getElementsByClassName("list")[0]
+
+      this.now_step += 1
+      hei = _list.children[this.now_step].offsetTop
+      console.log(_list.children[this.now_step])
+      console.log(_list.children[this.now_step].offsetTop)
+      _list.scrollTo({
+        top: hei,
+        left: 0,
+        behavior: "smooth",
+      });
+      
+      this.data.step_move = true
+      setTimeout(() => {this.data.Execution_move = true},400)
     })
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
@@ -174,10 +190,11 @@ const cubemode = () => ({
     Lhand.object3D.visible = true
     Rhand.object3D.visible = true
 
-    this.data.Execution_move = true
+    // this.data.Execution_move = true
 
     // document.getElementById("ins-screen").style.display = "none"
     
+    this.now_step = -1
     this.Mode_set("Execution")
   },
 
