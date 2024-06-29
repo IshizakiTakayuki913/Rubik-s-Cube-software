@@ -86,6 +86,13 @@ const cubemode = () => ({
     next.classList.add('next-step')
     map.append(next)
 
+
+    
+    // const pointer = document.createElement('div')
+    // pointer.classList.add("pointer")
+    // pointer.id="pointer"
+    // list.append(pointer)
+
     this.next_step_buttont = next
     this.color_set_buttont = document.getElementsByClassName("color-set-buttont")[0]
     this.calculation_set_buttont = document.getElementsByClassName("calculation_set_buttont")[0]
@@ -100,13 +107,15 @@ const cubemode = () => ({
 
       this.now_step += 1
       hei = _list.children[this.now_step].offsetTop
-      console.log(_list.children[this.now_step])
-      console.log(_list.children[this.now_step].offsetTop)
+      // console.log(_list.children[this.now_step])
+      // console.log(_list.children[this.now_step].offsetTop)
       _list.scrollTo({
-        top: hei,
+        top: hei - _list.clientHeight/2,
         left: 0,
         behavior: "smooth",
-      });
+      })
+      // const P = document.getElementById('pointer')
+      // P.style.top = `${hei}px`
       
       this.data.step_move = true
       setTimeout(() => {this.data.Execution_move = true},400)

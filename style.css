@@ -61,6 +61,17 @@ a-scene {
 	height: 8vmin;
 }
 
+.pointer {
+	position: absolute;
+	z-index: 5;
+	background: #a9dbff;
+	left: 0;
+	top: 0;
+	width: 4vmin;
+	height: 4vmin;
+	border-radius: 50%;
+}
+
 
 .list {
 	width: auto;
@@ -70,6 +81,7 @@ a-scene {
   overflow: scroll;
 	scroll-snap-type: y mandatory;
 	transition: all 1s ease-out;
+	position: relative;
 }
 
 
