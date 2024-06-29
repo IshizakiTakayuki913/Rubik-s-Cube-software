@@ -86,7 +86,6 @@ const cubemode = () => ({
     next.classList.add('next-step')
     map.append(next)
 
-
     
     // const pointer = document.createElement('div')
     // pointer.classList.add("pointer")
@@ -96,6 +95,18 @@ const cubemode = () => ({
     this.next_step_buttont = next
     this.color_set_buttont = document.getElementsByClassName("color-set-buttont")[0]
     this.calculation_set_buttont = document.getElementsByClassName("calculation_set_buttont")[0]
+
+    const folderTile = document.getElementsByClassName("folder-tile")
+    console.log(folderTile)
+    for(let i=0; i<folderTile.length; i++){
+      folderTile[i].addEventListener("click", (e) => {
+        // console.log(folderTile[i].parentElement)
+        if(folderTile[i].parentElement.classList.value.includes("clause-folder"))
+          folderTile[i].parentElement.classList.remove('clause-folder')
+        else
+          folderTile[i].parentElement.classList.add('clause-folder')
+      })
+    }
 
     this.next_step_buttont.addEventListener("click",(e) => {
       console.log("next_step_buttont")
@@ -191,20 +202,20 @@ const cubemode = () => ({
   
     sum_solution2 = sum_solution
 
-    this.icon.style.display = "none"
-    this.icon.classList.remove("rotate-ani")
-    
-    const Lhand = document.getElementById("L-hand")
-    const Rhand = document.getElementById("R-hand")
-    Lhand.object3D.visible = true
-    Rhand.object3D.visible = true
+    setTimeout(()=>{
+      this.icon.style.display = "none"
+      this.icon.classList.remove("rotate-ani")
+      
+      const Lhand = document.getElementById("L-hand")
+      const Rhand = document.getElementById("R-hand")
+      Lhand.object3D.visible = true
+      Rhand.object3D.visible = true
 
-    // this.data.Execution_move = true
-
-    // document.getElementById("ins-screen").style.display = "none"
-    
-    this.now_step = -1
-    this.Mode_set("Execution")
+      // this.data.Execution_move = true
+      
+      this.now_step = -1
+      this.Mode_set("Execution")
+    },100)
   },
 
   Complete(){

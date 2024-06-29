@@ -205,11 +205,12 @@ a-scene {
 	width: 30%;
 	top: 0;
 	right: 0;
-	background: #aaf;
+	background: #363664;
 	padding: 10px 0 0 10px;
 }
 
 .root-menu p {
+	color: #fff;
 	margin: unset;
 	display: inline;
 }
@@ -218,21 +219,46 @@ a-scene {
 	padding: unset;
 }
 
+.root-menu div {
+	height: auto;
+	max-height: 100px;
+	transition: max-height .5s linear 0s;
+	overflow: hidden;
+}
+
+/* .clause-folder{
+	max-height: 0;
+} */
+
 .folder { 
 	width: 100%;
 	background: #faa;
 	padding: 0 0 0 10px;
-	transition: all .3s;
+}
+
+.clause-folder > div:not(.folder-tile) {
+	max-height: 0;
+}
+
+/* .folder-tile {
+	content: "a";
+} */
+.folder-tile > p::after {
+  content: '▼';
+}
+
+.clause-folder > .folder-tile > p::after {
+  content: '▶';
 }
 
 #b {
-	background: rgb(170, 255, 201);
+	background: rgb(92, 114, 100);
 }
 #c {
-	background: rgb(255, 170, 170);
+	background: rgb(115, 90, 90);
 }
 #d {
-	background: rgb(252 255 170);
+	background: rgb(124 114 114);
 }
 
 .rotate-img {
