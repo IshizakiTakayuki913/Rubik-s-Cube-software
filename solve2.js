@@ -1,6 +1,7 @@
 const presskeyboard = () => ({
 	schema: {
 		Space_key: {type: 'boolean', default: false},
+		Rotation: {type: 'boolean', default: false},
 	},
 	
 	init() {
@@ -41,6 +42,7 @@ const presskeyboard = () => ({
 		}
 
 		window.addEventListener("keydown", (e) => {
+			if(!this.data.Rotation) return
 			if(e.code == "KeyP"){
 				const camera = document.getElementById('camera').components["sync-user"]
 				camera.load()

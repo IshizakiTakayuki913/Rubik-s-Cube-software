@@ -29,7 +29,7 @@ const colorinput = () => ({
       this.menu.append(nCD)
     }
     
-    document.getElementsByTagName('body')[0].append(this.menu)
+    document.getElementById('main-display').append(this.menu)
 
 
     colors = ["#1617ff","#ff1616","#15d832","#d88015","#ececec","#e9f121"]

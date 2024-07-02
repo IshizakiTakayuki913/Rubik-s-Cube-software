@@ -120,6 +120,11 @@ const cubemode = () => ({
       hei = _list.children[this.now_step].offsetTop
       // console.log(_list.children[this.now_step])
       // console.log(_list.children[this.now_step].offsetTop)
+
+      St = document.getElementsByClassName(`step${this.now_step}`)
+      for(let i=0;i<St.length;i++)
+        St[i].classList.add("now-step")
+
       _list.scrollTo({
         top: hei - _list.clientHeight/2,
         left: 0,
@@ -154,10 +159,13 @@ const cubemode = () => ({
     const Viewpoint = document.getElementById("camera2").components["camera-view"]
     const Rotation  = document.getElementById("camera2").components["cube-rotate"]
     const Colorset  = document.getElementById("camera2").components["color-set"]
+    const presskey  = document.getElementById("scene").components["press-key-board"]
+    
 
     Viewpoint.data.Viewpoint = this.data.mode_list[this.data.cube_modes[this.data.cube_mode]][this.data.cube_modes["Viewpoint"]]
     Rotation.data.Rotation   = this.data.mode_list[this.data.cube_modes[this.data.cube_mode]][this.data.cube_modes["Rotation"]]
     Colorset.data.Colorset   = this.data.mode_list[this.data.cube_modes[this.data.cube_mode]][this.data.cube_modes["Colorset"]]
+    presskey.data.Rotation   = this.data.mode_list[this.data.cube_modes[this.data.cube_mode]][this.data.cube_modes["Rotation"]]
 
     // console.log(`Viewpoint [${Viewpoint.data.Viewpoint}] Rotation [${Rotation.data.Rotation}] Colorset [${Colorset.data.Colorset}]`)
   },
