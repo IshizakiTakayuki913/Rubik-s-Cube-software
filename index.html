@@ -55,10 +55,37 @@
             this.loadedCount++
             if(this.loadedCount==3){
               color_set(scrambled_state)
+              // cubeOpa(1,0)
               this.el.object3D.visible = true
             }
           })
         }
+
+        const hands = [
+          Lhand = document.getElementById('L-hand'),
+          Rhand = document.getElementById('R-hand'),
+        ]
+
+        hands[1].addEventListener("model-loaded", (e) => {
+          console.log("hands[1] model-loaded")
+          c = {r:1,g:0.8,b:0.6}
+          hands[0].object3D.traverse( (child) => {
+            if(child.type == "SkinnedMesh") {
+              child.material.transparent = true;
+              child.material.opacity = 0.5;
+              child.material.color=c
+            }
+          })
+          hands[1].object3D.traverse( (child) => {
+            if(child.type == "SkinnedMesh") {
+              child.material.transparent = true;
+              child.material.opacity = 0.5;
+              child.material.color=c
+            }
+          })
+              // child.material.transparent = true;
+              // child.material.opacity = 0.5;
+        })
       },
     })
   </script>
@@ -119,7 +146,6 @@
       position="0 0 0"
       rotation="0 -90 0"
       gltf-model="#model_hand"
-      Amaterial="opacity:0.1; transparent: true"
       animation-mixer="clip: Idole; loop: repeat"
       scale="2.2 2.2 2.2"
       shadow

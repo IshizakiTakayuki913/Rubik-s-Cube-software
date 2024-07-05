@@ -109,7 +109,6 @@ const cubemode = () => ({
     }
 
     this.next_step_buttont.addEventListener("click",(e) => {
-      console.log("next_step_buttont")
 			if(this.data.cube_mode !== "Execution")	return
       if(this.data.Execution_move)  return
       if(this.data.step_move) return

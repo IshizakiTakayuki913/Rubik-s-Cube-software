@@ -467,6 +467,15 @@ const set_color_data = [
 	{r:0.9,g:0.95,b:0},
 ]
 
+const gray_color_data = [
+	{r:0,g:0,b:0.4},
+	{r:0.5,g:0,b:0},
+	{r:0,g:0.4,b:0},
+	{r:0.5,g:0.2,b:0},
+	{r:0.5,g:0.5,b:0.5},
+	{r:0.5,g:0.5,b:0},
+]
+
 
 let color_data = [0,1,2,3,4,5]
 // 						青     赤     緑     オ    白     黄      
@@ -1141,19 +1150,20 @@ let solve_preview = true
 // console.log(`f2l 1 ${(sum_solution += search.start_search(solved_state,1, 20))}`)
 
 function motions(){	
-	for(;sum_solution2.length > 0 && sum_solution2[0].length == 0;sum_solution2.shift());
+	// for(;sum_solution2.length > 0 && sum_solution2[0].length == 0;sum_solution2.shift());
+	if(sum_solution2.length > 0 && sum_solution2[0].length == 0) sum_solution2.shift()
 
-	if(sum_solution2.length == 0){
+	// if(sum_solution2.length == 0){
 		
-		// console.log(`sulb no`)
+	// 	// console.log(`sulb no`)
 
-		movementCount = -1
-		move180 = false
+	// 	movementCount = -1
+	// 	move180 = false
 		
-		const scene = document.getElementById('scene').components["cube-mode"]
-		scene.Complete()
-		return
-	}
+	// 	const scene = document.getElementById('scene').components["cube-mode"]
+	// 	scene.Complete()
+	// 	return
+	// }
 	
 	if(move180){
 		movementCount -= 1
@@ -1196,6 +1206,13 @@ function motions(){
 		setTimeout(() => {
 			scene.data.step_move = false
 		},time_tank)
+	}
+	if(sum_solution2.length == 1 && sum_solution2[0].length == 0){
+		movementCount = -1
+		move180 = false
+		
+		const scene = document.getElementById('scene').components["cube-mode"]
+		scene.Complete()
 	}
 	
 }
@@ -1350,6 +1367,10 @@ function objopacty(ojb, op1 = 0.5, op2 = undefined) {
       F[s].material.opacity = op1
       F[s].material.transparent = true
   }
+	if(op2 != undefined){
+		F[F.length-1].material.opacity = op2
+		F[F.length-1].material.transparent = true
+	}
 }
 
 function cubeOpa(op1,op2=undefined) {
@@ -1418,3 +1439,28 @@ function objcetText(obj) {
   }
   return this.format(obj,0);
 }
+
+function cubeOpa2(op1,op2=undefined) {
+  const cn = document.getElementById('center').children
+  for(let i=0;i<cn.length;i++)
+    objopacty2(cn[i].children[0], op1,op2)
+      
+  const c = document.getElementById('corner').children
+  for(let i=0;i<c.length;i++)
+    objopacty2(c[i].children[0], op1,op2)
+      
+  const e = document.getElementById('edge').children
+  for(let i=0;i<e.length;i++)
+    objopacty2(e[i].children[0], op1,op2)
+}
+function objopacty2(ojb, op1 = 0.5, op2 = undefined) {
+  const F = ojb.object3D.children[0].children[0].children
+  for(let s=0;s<F.length;s++){
+      F[s].material.opacity = op1
+      F[s].material.transparent = true
+  }
+	if(op2 != undefined){
+		F[F.length-1].visible = false
+	}
+}
+// cubeOpa(0.8,0)
