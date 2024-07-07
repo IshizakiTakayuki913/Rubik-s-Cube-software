@@ -32,7 +32,41 @@ const cubemode = () => ({
 	},	
 
 	init() {
-    // const icon = document.getElementById('ins-screen')
+    this.Rotation_Angle = {
+      e: [
+        [-30,-160],
+        [-30,160],
+        [-30,40],
+        [-30,-40],
+        
+        [-30,160],
+        [-30,40],
+        [-30,40],
+        [-30,-40],
+        
+        [30,160],
+        [30,40],
+        [30,40],
+        [30,-40],
+      ],
+      
+      c: [
+        [-30,-160],
+        [-30,160],
+        [-30,40],
+        [-30,-40],
+        
+        [30,-160],
+        [30,160],
+        [30,40],
+        [30,-40],  
+      ]
+    }
+
+    this.parts__Angle = [
+      10,10,10,10,  6,6,6,6,  2,2,2,2,
+    ]
+
     const canvas = document.createElement("canvas")
     canvas.id="icon"
     canvas.style.width = "40vmin"
@@ -117,8 +151,6 @@ const cubemode = () => ({
 
       this.now_step += 1
       hei = _list.children[this.now_step].offsetTop
-      // console.log(_list.children[this.now_step])
-      // console.log(_list.children[this.now_step].offsetTop)
 
       St = document.getElementsByClassName(`step${this.now_step}`)
       for(let i=0;i<St.length;i++)
@@ -129,11 +161,14 @@ const cubemode = () => ({
         left: 0,
         behavior: "smooth",
       })
-      // const P = document.getElementById('pointer')
-      // P.style.top = `${hei}px`
       
       this.data.step_move = true
-      setTimeout(() => {this.data.Execution_move = true},400)
+
+      Angle_move(undefined, this.now_step,500)
+
+      setTimeout(() => {
+        this.data.Execution_move = true
+      },500)
     })
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
