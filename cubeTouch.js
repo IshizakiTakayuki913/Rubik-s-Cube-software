@@ -32,6 +32,12 @@ const cubemode = () => ({
 	},	
 
 	init() {
+
+
+
+    // center.children[2].children[0].removeAttribute("gltf-model")
+    // center.children[2].children[0].setAttribute("gltf-model","#model_frame_edge")
+
     this.Rotation_Angle = {
       e: [
         [-30,-160],
@@ -164,6 +170,8 @@ const cubemode = () => ({
       
       this.data.step_move = true
 
+      
+      frame_rotate("R", this.now_step, 500, false)
       Angle_move(undefined, this.now_step,500)
 
       setTimeout(() => {

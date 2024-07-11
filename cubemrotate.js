@@ -16,10 +16,24 @@
 		this.faces_rad = {
 			"U":-1, "D":1, "L":1, "R":-1, "B":1, "F":-1, "y":-1, "x":-1, "z":-1, 
 		}
-
-    this.tile = document.getElementById('tile')
-
 		this.scene = document.getElementById('scene')
+
+    const tile_out = document.createElement('a-entity')
+    const tile_in = document.createElement('a-plane')
+    tile_out.id="tile-out"
+    tile_in.id="tile"
+    tile_in.setAttribute("width","50")
+    tile_in.setAttribute("height","50")
+    tile_in.setAttribute("material",{
+      visible: false, //opacity:0.5, color: "#AAF", 
+    })
+    tile_in.classList.add("clickable","tile")
+    
+    tile_out.appendChild(tile_in)
+    this.scene.appendChild(tile_out)
+
+    this.tile = tile_in
+
 
 		this.scene.addEventListener('mousedown', (e) => {
 			if(!this.data.Rotation) return

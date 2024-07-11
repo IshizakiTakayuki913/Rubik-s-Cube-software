@@ -229,6 +229,34 @@ function is_solved_2(state,step){
 	
 		return true
 	}
+	
+function is_solved_3(state,step){
+	// 特定の場所の状態だけを調べる
+		// console.log(`is_solved`)
+		if(state.c[0] != 0 || state.c[1] != 1)	return false
+	
+		for(let i=0;i<solv_step[step]["c"].length;i++){
+			if(state.cp[solv_step[step]["c"][i]] != solv_step[step]["c"][i] || state.co[solv_step[step]["c"][i]] != 0)
+				return false
+		}
+		
+		for(let i=0;i<solv_step[step]["e"].length;i++){
+			if(state.ep[solv_step[step]["e"][i]] != solv_step[step]["e"][i] || state.eo[solv_step[step]["e"][i]] != 0)
+				return false
+		}
+
+		for(let i=0;i<solv_step[step]["co"].length;i++){
+			if(state.co[solv_step[step]["co"][i]] != 0)
+				return false
+		}
+		
+		for(let i=0;i<solv_step[step]["eo"].length;i++){
+			if(state.eo[solv_step[step]["eo"][i]] !=  0)
+				return false
+		}
+	
+		return true
+	}
 moves = {
 	'U': new State(
 		[3, 0, 1, 2, 4, 5, 6, 7],
@@ -1237,7 +1265,7 @@ function motions(){
 	}
 
 	let time_tank = 0
-	time_tank += one_motion(sum_solution2[0][0], 1, 16 - sum_solution2.length)
+	time_tank += one_motion(sum_solution2[0][0], 2, 16 - sum_solution2.length)
 	sum_solution2[0].shift()
 
 	movementCount+=1
@@ -1256,14 +1284,17 @@ function motions(){
 	}
 	else {
 		setTimeout(() => {
-			scene.data.step_move = false
+			Angle_move(undefined, -1,500)
 		},time_tank)
+
+		setTimeout(() => {
+			scene.data.step_move = false
+		},time_tank+500)
 	}
 	if(sum_solution2.length == 1 && sum_solution2[0].length == 0){
 		movementCount = -1
 		move180 = false
 		
-		const scene = document.getElementById('scene').components["cube-mode"]
 		scene.Complete()
 	}
 	
@@ -1328,10 +1359,77 @@ function one_motion(sulb,speed,step){
 	}
 	
 	setTimeout(() => {
-		Angle_move(sulb, step,parseInt(1000/speed))
-		rotate(sulb,parseInt(1000/speed))
+		frame_rotate(sulb, step, parseInt(1000/speed), true)
+		Angle_move(sulb, step, parseInt(1000/speed))
+		rotate(sulb, parseInt(1000/speed))
 	}, som_sovle_time)
 	return sum_time
+}
+function frame_rotate(sulb = undefined, step, time, anime = false){
+	if(step>=12)	return 
+	const rote = {
+		ce: ["0 180 0","0 90 0","0 0 0","0 -90 0","-90 0 0","90 0 0"],
+		e:  [
+			"0 -90 90","0 90 -90","0 90 90","0 -90 -90","0 180 0","0 90 0",
+			"0 0 0","0 -90 0","0 180 180","0 90 180","0 0 180","0 -90 180"
+			],
+		c: [
+			"0 180 0","0 90 0","0 0 0","0 270 0",
+			"0 270 180","0 180 180","0 90 180","0 0 180"
+			],
+	}
+	// moves_face_c
+
+	parts__Angle = [
+		10,10,10,10,  6,6,6,6,  2,2,2,2,
+	]
+	const type = (4 <= step && step < 8)?"c":"e"
+	const ss = scrambled_state
+	// ss.data_print()
+	// console.log(`ss[].length[${ss[`${type}p`].length}] [${type}p]`)
+	// console.log(ss[`${type}p`])
+	const pos = ss[`${type}p`].indexOf(parts__Angle[step])
+
+	const index = faces.indexOf(sulb[0])
+	const mode_parts = type=="c"?moves_face_c:moves_face_e
+	const mode = mode_parts[index].indexOf(pos)
+
+	console.log(`step[${step}] type[${type}] pos[${pos}] index[${index}] mode[${mode}]`)
+	// console.log(mode_parts[index])
+	// console.log("rote[type][pos]")
+	// console.log(rote[type][pos])
+
+	if(mode==-1) return
+
+	const frame=document.getElementById(`frame_${type=="c"?"corner":"edge"}`)
+	const Pframe=document.getElementById(`frame`)
+	console.log(`type=="c"?"corner":"edge" ${type=="c"?"corner":"edge"}`)
+	console.log(Pframe.classList.value)
+	if(!Pframe.classList.value.includes(type=="c"?"corner":"edge")){
+		console.log(`corner":"edge`)
+		frame.setAttribute("visible",true)
+		document.getElementById(type!="c"?"frame_corner":"frame_edge").setAttribute("visible",false)
+		Pframe.classList.remove(type!="c"?"corner":"edge")
+		Pframe.classList.add(type=="c"?"corner":"edge")
+	}
+
+	frame.children[0].setAttribute("rotation",rote[type][pos])
+	frame.removeAttribute('animation')
+	frame.setAttribute('rotation', {x:0,y:0,z:0})
+	
+	if(anime){
+		const rad = sulb[1]
+		const size = (rad=='\'')?-1:((rad=='2')?2:1)
+
+		frame.setAttribute('animation', {
+			property: 'rotation.'+vec.charAt(index),
+			dur: time,
+			from: 0,
+			to: faces_rad[index] * 90 * size,
+			// easing: 'easeOutSine',
+			easing: 'linear',
+		})
+	}
 }
 
 function Angle_move(sulb = undefined, step, time){
@@ -1372,11 +1470,13 @@ function Angle_move(sulb = undefined, step, time){
 		10,10,10,10,  6,6,6,6,  2,2,2,2,
 	]
 
+	// const type = (4 <= step && step < 8)?"c":"e"
 	let ss = scrambled_state
 	let ro  = []
 	if(sulb !== undefined)	ss = scamble2state(ss,sulb)
 
-	if(4 <= step && step < 8){
+	if(step == -1)	ro = this.Rotation_Angle.c[2]
+	else if(4 <= step && step < 8){
 		let pos = -1
 		for(let i=0;i<8;i++){
 			if(ss.cp[i]==this.parts__Angle[step])   pos = i
@@ -1485,31 +1585,6 @@ function remove_animation(roate){
 	}
 }
 
-function objopacty(ojb, op1 = 0.5, op2 = undefined) {
-  const F = ojb.object3D.children[0].children[0].children
-  for(let s=0;s<F.length;s++){
-      F[s].material.opacity = op1
-      F[s].material.transparent = true
-  }
-	if(op2 != undefined){
-		F[F.length-1].material.opacity = op2
-		F[F.length-1].material.transparent = true
-	}
-}
-
-function cubeOpa(op1,op2=undefined) {
-  const cn = document.getElementById('center').children
-  for(let i=0;i<cn.length;i++)
-    objopacty(cn[i].children[0], op1,op2)
-      
-  const c = document.getElementById('corner').children
-  for(let i=0;i<c.length;i++)
-    objopacty(c[i].children[0], op1,op2)
-      
-  const e = document.getElementById('edge').children
-  for(let i=0;i<e.length;i++)
-    objopacty(e[i].children[0], op1,op2)
-}
 
 function psd() {
 	let t="let solved_state = new State(\n"
@@ -1564,27 +1639,49 @@ function objcetText(obj) {
   return this.format(obj,0);
 }
 
-function cubeOpa2(op1,op2=undefined) {
+function cubeOpa(op1,op2=undefined,objfunc = objopacty) {
   const cn = document.getElementById('center').children
   for(let i=0;i<cn.length;i++)
-    objopacty2(cn[i].children[0], op1,op2)
+    objfunc(cn[i].children[0], op1,op2)
       
   const c = document.getElementById('corner').children
   for(let i=0;i<c.length;i++)
-    objopacty2(c[i].children[0], op1,op2)
+    objfunc(c[i].children[0], op1,op2)
       
   const e = document.getElementById('edge').children
   for(let i=0;i<e.length;i++)
-    objopacty2(e[i].children[0], op1,op2)
+    objfunc(e[i].children[0], op1,op2)
 }
-function objopacty2(ojb, op1 = 0.5, op2 = undefined) {
+function objopacty(ojb, op1 = 0.5, op2 = undefined) {
   const F = ojb.object3D.children[0].children[0].children
   for(let s=0;s<F.length;s++){
       F[s].material.opacity = op1
       F[s].material.transparent = true
   }
 	if(op2 != undefined){
+		F[F.length-1].material.opacity = op2
+		F[F.length-1].material.transparent = true
+	}
+}
+
+function objopacty2(ojb, op1 = 0.5, op2 = undefined) {
+  const F = ojb.object3D.children[0].children[0].children
+	if(op1 != 1){
+		for(let s=0;s<F.length;s++){
+				F[s].material.opacity = op1
+				F[s].material.transparent = true
+		}
+	}
+	if(op2 != undefined){
 		F[F.length-1].visible = false
 	}
+}
+
+function objopacty3(ojb, op1 = 0.5, op2 = undefined) {
+  const F = ojb.object3D.children[0].children[0].children
+	for(let s=0;s<F.length;s++){
+		F[s].renderOrder  = 10
+	}
+	console.log("function objopacty3")
 }
 // cubeOpa(0.8,0)
