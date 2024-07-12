@@ -170,9 +170,10 @@ const cubemode = () => ({
       
       this.data.step_move = true
 
-      
+      console.log("")
+      hand_xyz.length=0
       frame_rotate("R", this.now_step, 500, false)
-      Angle_move(undefined, this.now_step,500)
+      // Angle_move(undefined, this.now_step,500)
 
       setTimeout(() => {
         this.data.Execution_move = true

@@ -613,14 +613,20 @@ const vec	= 'yxxzyzxyzxxyyzz'
 //   [1,1,0,0,0,1,1,0,0,0,0,0],
 //   [0,1,2,3,4,5],
 // )
-let solved_state = new State(
-	[0, 1, 2, 3, 4, 5, 6, 7],
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+// let solved_state = new State(	
+// 	[0, 1, 3, 2, 5, 7, 4, 6],
+// 	[1, 0, 0, 0, 0, 0, 1, 1],
+// 	[4, 6, 2, 7, 1, 3, 5, 0, 10, 8, 9, 11],
+// 	[0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+// 	[0, 1, 2, 3, 4, 5],
+// )
+let solved_state = new State(	
+	[2, 1, 3, 6, 7, 4, 5, 0],
+	[2, 0, 0, 0, 2, 1, 0, 1],
+	[0, 6, 2, 4, 1, 3, 5, 7, 8, 9, 10, 11],
+	[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
 	[0, 1, 2, 3, 4, 5],
 )
-
 function rotate(roates ,time = 1000,dist_time = 50){
 
 	const roat_list = roates.split(" ")
@@ -1360,12 +1366,16 @@ function one_motion(sulb,speed,step){
 	
 	setTimeout(() => {
 		frame_rotate(sulb, step, parseInt(1000/speed), true)
-		Angle_move(sulb, step, parseInt(1000/speed))
+		// Angle_move(sulb, step, parseInt(1000/speed))
 		rotate(sulb, parseInt(1000/speed))
 	}, som_sovle_time)
 	return sum_time
 }
+
+const hand_xyz = []
 function frame_rotate(sulb = undefined, step, time, anime = false){
+	let text = ""
+	text+=`hand_xyz [${hand_xyz.length==0?"None":hand_xyz.join(',')}]\n`
 	if(step>=12)	return 
 	const rote = {
 		ce: ["0 180 0","0 90 0","0 0 0","0 -90 0","-90 0 0","90 0 0"],
@@ -1385,28 +1395,56 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	]
 	const type = (4 <= step && step < 8)?"c":"e"
 	const ss = scrambled_state
+	let new_ang = parts__Angle[step]
+
+	text+=`ang ${new_ang} `
+	for(han of hand_xyz){
+		new_ang = moves[han][`${type}p`].indexOf(new_ang)
+		text+=`-> ${new_ang} `
+	}
+	text+='\n'
+	
+	if(sulb[0]>"a"){
+		if(hand_xyz.length > 0 && hand_xyz.at(-1)[0] == sulb[0] && hand_xyz.at(-1) != sulb )
+			hand_xyz.pop()
+		else
+			hand_xyz.push(sulb)
+	}
 	// ss.data_print()
 	// console.log(`ss[].length[${ss[`${type}p`].length}] [${type}p]`)
 	// console.log(ss[`${type}p`])
-	const pos = ss[`${type}p`].indexOf(parts__Angle[step])
+	const pos = ss[`${type}p`].indexOf(new_ang)
 
 	const index = faces.indexOf(sulb[0])
 	const mode_parts = type=="c"?moves_face_c:moves_face_e
 	const mode = mode_parts[index].indexOf(pos)
 
-	console.log(`step[${step}] type[${type}] pos[${pos}] index[${index}] mode[${mode}]`)
+	// console.log(`step[${step}] type[${type}] pos[${pos}] index[${index}] mode[${mode}]`)
 	// console.log(mode_parts[index])
 	// console.log("rote[type][pos]")
 	// console.log(rote[type][pos])
+	text += `sulb [${sulb}]  type [${type}]  mode [${mode!=-1?mode:"None"}]  pos [${pos}] rote [${rote[type][pos]}]\n`
+	// text += `[${.join(',')}]\n`
+	text += `index [${index}]\n`
+	text += `mode_parts[index] [${mode_parts[index].join(',')}]\n`
+	text += `indexOf [${mode_parts[index].indexOf(pos)}]`
 
-	if(mode==-1) return
+	if(mode==-1){
+		// text += `index [${index}]\n`
+		// text += `mode_parts[index] [${mode_parts[index].join(',')}]\n`
+		// text += `indexOf [${mode_parts[index].indexOf(pos)}]`
+
+		// console.log(text)
+		return
+	}
 
 	const frame=document.getElementById(`frame_${type=="c"?"corner":"edge"}`)
 	const Pframe=document.getElementById(`frame`)
-	console.log(`type=="c"?"corner":"edge" ${type=="c"?"corner":"edge"}`)
-	console.log(Pframe.classList.value)
+	// console.log(`type=="c"?"corner":"edge" ${type=="c"?"corner":"edge"}`)
+	// console.log(Pframe.classList.value)
 	if(!Pframe.classList.value.includes(type=="c"?"corner":"edge")){
-		console.log(`corner":"edge`)
+		// console.log(`--------Change--------    ${type=="c"?"Corner":"Edge"}`)
+
 		frame.setAttribute("visible",true)
 		document.getElementById(type!="c"?"frame_corner":"frame_edge").setAttribute("visible",false)
 		Pframe.classList.remove(type!="c"?"corner":"edge")
@@ -1417,10 +1455,11 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	frame.removeAttribute('animation')
 	frame.setAttribute('rotation', {x:0,y:0,z:0})
 	
-	if(anime){
-		const rad = sulb[1]
-		const size = (rad=='\'')?-1:((rad=='2')?2:1)
+	const rad = sulb[1]
+	const size = (rad=='\'')?-1:((rad=='2')?2:1)
+	text+=	`anime [${anime}]  rot [rotation.${vec.charAt(index)}]  to [${faces_rad[index] * 90 * size}]`
 
+	if(anime){
 		frame.setAttribute('animation', {
 			property: 'rotation.'+vec.charAt(index),
 			dur: time,
@@ -1430,6 +1469,7 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 			easing: 'linear',
 		})
 	}
+	// console.log(text)
 }
 
 function Angle_move(sulb = undefined, step, time){
@@ -1495,7 +1535,7 @@ function Angle_move(sulb = undefined, step, time){
 	let by = (camera.getAttribute("rotation").y+360)%360
 	let ay = (ro[1]+360)%360
 	
-	console.log(`[${by}] [${ay}]`)
+	// console.log(`[${by}] [${ay}]`)
 	camera.setAttribute('animation', {
 		property: 'rotation',
 		dur: time,
