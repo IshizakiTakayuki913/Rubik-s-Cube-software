@@ -53,10 +53,15 @@
           <a-asset-item id="model_corner" src="./model/corner.glb"></a-asset-item>
           <a-asset-item id="model_edge"   src="./model/edge.glb"></a-asset-item>
           <a-asset-item id="model_center" src="./model/center.glb"></a-asset-item>
+
           <a-asset-item id="model_frame_edge" src="./model/frame-edge.glb"></a-asset-item>
           <a-asset-item id="model_frame_corner" src="./model/frame-corner.glb"></a-asset-item>
           <a-asset-item id="model_frame_center" src="./model/frame-center.glb"></a-asset-item>
-          <img id="frame-img" src="./img/D2.png">
+
+          <!-- <img id="mesh_1_a" src="./mesh/M_albedo.jpg">
+          <img id="mesh_1_n" src="./mesh/M_normal.jpg">
+          <img id="mesh_2_a" src="./mesh/M_albedo_2.jpg">
+          <img id="mesh_2_n" src="./mesh/M_normal_2.jpg"> -->
 
           <a-mixin id="m_ce" gltf-model="#model_center"></a-mixin>
           <a-mixin id="m_e" gltf-model="#model_edge"></a-mixin>
@@ -79,9 +84,10 @@
             
             <a-entity 
               id="frame_corner"
-              visible="false">
+              _visible="false">
               <a-entity
-                gltf-model="#model_frame_corner">
+                gltf-model="#model_frame_corner"
+                _scale="1 3 1">
               </a-entity>
             </a-entity>
           </a-entity>

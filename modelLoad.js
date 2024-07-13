@@ -69,6 +69,27 @@ const modelLoad = () => ({
     }
     root.appendChild(corner)
 
+    function name(name,ojb,index,r,map,normalMap) {
+      const texture = new THREE.TextureLoader().load(`./mesh/M_a_${name}.jpg`)
+      
+      // const {src1} = document.getElementById('mesh_1_n')
+      const texture1 = new THREE.TextureLoader().load(`./mesh/M_n_${name}.jpg`)
+      
+      f=document.getElementById(ojb).object3D.children[0].children[0].children[0].children[index]
+      const material = new THREE.MeshStandardMaterial( {
+        color: 0xffffff,
+          roughness : r,
+        // map: texture,
+        normalMap: texture1,
+        normalScale: {x:3,y:3}
+      } );
+      f.material=material
+      f.material.side=2
+      // f.material.normalMap.repeat={x:2,y:2}
+      }
+      
+
+
     this.parts = [
       center.children[5].children[0],
       edge.children[11].children[0],
@@ -81,9 +102,23 @@ const modelLoad = () => ({
       this.parts[i].addEventListener('model-loaded',(e)=>{
         this.loadedCount++
         if(this.loadedCount==3){
+
+            A=3
+            AA=["center","corner","edge"]
+            B=[6,8,12]
+            C=[1,3,2]
+
+            for(let j=0;j<A;j++){
+            for(let i=0;i<B[j];i++){
+            for(let s=0;s<C[j];s++){
+                name(2,`${AA[j]}${i}`,s,0.5,true,true)
+
+            }    
+            }   
+            }
           color_set(scrambled_state)
-          // cubeOpa(1,0,objopacty2)
-          // cubeOpa(1,0,objopacty3)
+          cubeOpa(1,0,objopacty2)
+          cubeOpa(1,0,objopacty3)
           
           root.object3D.visible = true
         }

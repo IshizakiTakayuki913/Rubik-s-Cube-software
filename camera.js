@@ -63,7 +63,7 @@ const camera = () => ({
 			if(e.target.tagName !== 'CANVAS') return
 			d = camera2.object3D.position.z
 			d += e.deltaY/200
-			d = Math.max(d,4)
+			d = Math.max(d,0)
 			camera2.object3D.position.z = d
 		})
 
