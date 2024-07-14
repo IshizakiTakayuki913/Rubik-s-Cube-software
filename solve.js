@@ -530,12 +530,12 @@ const PLL_Edge = [
 console.log(move_names)
 
 const set_color_data = [
-	{r:0,g:0.05,b:0.95},
-	{r:0.89,g:0,b:0},
-	{r:0,g:0.75,b:0},
-	{r:1,g:0.25,b:0},
-	{r:1,g:1,b:1},
-	{r:0.9,g:0.95,b:0},
+	{r:0,g:0,b:0.4},
+	{r:0.5,g:0,b:0},
+	{r:0,g:0.4,b:0},
+	{r:0.5,g:0.2,b:0},
+	{r:0.5,g:0.5,b:0.5},
+	{r:0.5,g:0.5,b:0},
 ]
 
 const gray_color_data = [
