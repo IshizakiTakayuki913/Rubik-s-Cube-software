@@ -530,12 +530,12 @@ const PLL_Edge = [
 console.log(move_names)
 
 const set_color_data = [
-	{r:0,g:0,b:0.4},
-	{r:0.5,g:0,b:0},
-	{r:0,g:0.4,b:0},
-	{r:0.5,g:0.2,b:0},
-	{r:0.5,g:0.5,b:0.5},
-	{r:0.5,g:0.5,b:0},
+	{r:0,g:0.05,b:0.95},
+	{r:0.89,g:0,b:0},
+	{r:0,g:0.75,b:0},
+	{r:1,g:0.25,b:0},
+	{r:0.9,g:0.9,b:0.9},
+	{r:0.9,g:0.95,b:0},
 ]
 
 const gray_color_data = [
@@ -620,13 +620,14 @@ const vec	= 'yxxzyzxyzxxyyzz'
 // 	[0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
 // 	[0, 1, 2, 3, 4, 5],
 // )
-let solved_state = new State(	
-	[2, 1, 3, 6, 7, 4, 5, 0],
-	[2, 0, 0, 0, 2, 1, 0, 1],
-	[0, 6, 2, 4, 1, 3, 5, 7, 8, 9, 10, 11],
-	[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 2, 3, 4, 5],
+let solved_state = new State(
+	[0,2,3,6,4,5,7,1],
+	[1,0,1,1,2,1,2,1],
+	[4,7,0,1,8,9,10,11,2,3,5,6],
+	[0,0,1,0,0,0,0,0,1,0,0,0],
+	[0,1,2,3,4,5],
 )
+
 function rotate(roates ,time = 1000,dist_time = 50){
 
 	const roat_list = roates.split(" ")
@@ -1271,7 +1272,8 @@ function motions(){
 	}
 
 	let time_tank = 0
-	time_tank += one_motion(sum_solution2[0][0], 2, 16 - sum_solution2.length)
+	time_tank += one_motion(sum_solution2[0][0], 1, 16 - sum_solution2.length)
+	time_tank += 10
 	sum_solution2[0].shift()
 
 	movementCount+=1
@@ -1290,6 +1292,9 @@ function motions(){
 	}
 	else {
 		setTimeout(() => {
+			// frame_rotate(undefined, 16 - sum_solution2.length, 0, false)
+			console.log(`frame_pos ${frame_pos}`)
+			pointM(frame_pos, false)
 			Angle_move(undefined, -1,500)
 		},time_tank)
 
@@ -1366,15 +1371,16 @@ function one_motion(sulb,speed,step){
 	
 	setTimeout(() => {
 		frame_rotate(sulb, step, parseInt(1000/speed), true)
-		// Angle_move(sulb, step, parseInt(1000/speed))
+		Angle_move(sulb, step, parseInt(1000/speed))
 		rotate(sulb, parseInt(1000/speed))
 	}, som_sovle_time)
 	return sum_time
 }
 
 const hand_xyz = []
+let frame_pos = ""
 function frame_rotate(sulb = undefined, step, time, anime = false){
-	let text = ""
+	let text = "\n\n"
 	text+=`hand_xyz [${hand_xyz.length==0?"None":hand_xyz.join(',')}]\n`
 	if(step>=12)	return 
 	const rote = {
@@ -1388,11 +1394,11 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 			"0 270 180","0 180 180","0 90 180","0 0 180"
 			],
 	}
-	// moves_face_c
 
 	parts__Angle = [
 		10,10,10,10,  6,6,6,6,  2,2,2,2,
 	]
+
 	const type = (4 <= step && step < 8)?"c":"e"
 	const ss = scrambled_state
 	let new_ang = parts__Angle[step]
@@ -1404,46 +1410,40 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	}
 	text+='\n'
 	
-	if(sulb[0]>"a"){
+	if(sulb != undefined && sulb[0]>"a"){
 		if(hand_xyz.length > 0 && hand_xyz.at(-1)[0] == sulb[0] && hand_xyz.at(-1) != sulb )
 			hand_xyz.pop()
 		else
 			hand_xyz.push(sulb)
 	}
-	// ss.data_print()
-	// console.log(`ss[].length[${ss[`${type}p`].length}] [${type}p]`)
-	// console.log(ss[`${type}p`])
 	const pos = ss[`${type}p`].indexOf(new_ang)
 
 	const index = faces.indexOf(sulb[0])
 	const mode_parts = type=="c"?moves_face_c:moves_face_e
 	const mode = mode_parts[index].indexOf(pos)
 
-	// console.log(`step[${step}] type[${type}] pos[${pos}] index[${index}] mode[${mode}]`)
-	// console.log(mode_parts[index])
-	// console.log("rote[type][pos]")
-	// console.log(rote[type][pos])
 	text += `sulb [${sulb}]  type [${type}]  mode [${mode!=-1?mode:"None"}]  pos [${pos}] rote [${rote[type][pos]}]\n`
 	// text += `[${.join(',')}]\n`
 	text += `index [${index}]\n`
 	text += `mode_parts[index] [${mode_parts[index].join(',')}]\n`
-	text += `indexOf [${mode_parts[index].indexOf(pos)}]`
+	text += `indexOf [${mode_parts[index].indexOf(pos)}]\n`
 
 	if(mode==-1){
-		// text += `index [${index}]\n`
-		// text += `mode_parts[index] [${mode_parts[index].join(',')}]\n`
-		// text += `indexOf [${mode_parts[index].indexOf(pos)}]`
-
-		// console.log(text)
+		text += `--------- NO rotation ---------\n\n`
+		console.log(text)
 		return
 	}
 
+	// if(frame_pos != "")
+	// pointM(frame_pos, false)
+
+	pointM(`${type=="c"?"corner":"edge"}${pos}`)
+
 	const frame=document.getElementById(`frame_${type=="c"?"corner":"edge"}`)
 	const Pframe=document.getElementById(`frame`)
-	// console.log(`type=="c"?"corner":"edge" ${type=="c"?"corner":"edge"}`)
-	// console.log(Pframe.classList.value)
+	
 	if(!Pframe.classList.value.includes(type=="c"?"corner":"edge")){
-		// console.log(`--------Change--------    ${type=="c"?"Corner":"Edge"}`)
+		console.log(`--------Change--------    ${type=="c"?"Corner":"Edge"}`)
 
 		frame.setAttribute("visible",true)
 		document.getElementById(type!="c"?"frame_corner":"frame_edge").setAttribute("visible",false)
@@ -1459,17 +1459,43 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	const size = (rad=='\'')?-1:((rad=='2')?2:1)
 	text+=	`anime [${anime}]  rot [rotation.${vec.charAt(index)}]  to [${faces_rad[index] * 90 * size}]`
 
+	next_pos = moves[sulb][`${type}p`].indexOf(pos)
+	frame_pos = `${type=="c"?"corner":"edge"}${next_pos}`
+
+	console.log(text+"\n\n")
 	if(anime){
 		frame.setAttribute('animation', {
 			property: 'rotation.'+vec.charAt(index),
 			dur: time,
 			from: 0,
 			to: faces_rad[index] * 90 * size,
-			// easing: 'easeOutSine',
 			easing: 'linear',
 		})
+		
+		setTimeout(() => {
+			pointM(`${type=="c"?"corner":"edge"}${pos}`,false)
+			pointM(`${type=="c"?"corner":"edge"}${next_pos}`,true)
+		},time)
 	}
-	// console.log(text)
+}
+
+function pointM(p,T = true){
+	const P = document.getElementById(p).children[0].object3D.children[0].children[0].children
+	console.log(`pointM name [${p}] ${T}`)
+	if(T){
+		for(let i=0;i<P.length-1;i++){
+			P[i].material.side=0
+			P[i].material.depthTest=false
+			P[i].renderOrder=3
+		}
+	}
+	else{
+		for(let i=0;i<P.length-1;i++){
+			P[i].material.side=2
+			P[i].material.depthTest=true
+			P[i].renderOrder=0
+		}
+	}
 }
 
 function Angle_move(sulb = undefined, step, time){

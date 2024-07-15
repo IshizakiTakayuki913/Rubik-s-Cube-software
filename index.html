@@ -69,27 +69,14 @@
           <a-mixin id="m_normal" scale="1 1 1"></a-mixin>
           <a-mixin id="m_hand"  gltf-model="#model_hand"
             animation-mixer="clip: Idole; loop: repeat" shadow visible="false"></a-mixin>
+          
+          <a-mixin id="m_f_e"  gltf-model="#model_frame_edge"></a-mixin>
+          <a-mixin id="m_f_c"  gltf-model="#model_frame_corner"></a-mixin>
         </a-assets>
 
         <a-entity id="root" position="0 0 0" rotation="0 0 0" visible="false">
 
           <a-entity id="frame" class="">
-            <a-entity
-              id="frame_edge"
-              visible="false">
-              <a-entity
-                gltf-model="#model_frame_edge">
-              </a-entity>
-            </a-entity>
-            
-            <a-entity 
-              id="frame_corner"
-              _visible="false">
-              <a-entity
-                gltf-model="#model_frame_corner"
-                _scale="1 3 1">
-              </a-entity>
-            </a-entity>
           </a-entity>
 
           <a-entity id="camera" sync-user="userId: userPosition" position="0 0 0" rotation="-30 30 0">

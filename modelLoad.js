@@ -183,6 +183,63 @@ const modelLoad = () => ({
 
     root.appendChild(sky)
     
+
+    const frame = document.getElementById('frame')
+
+    const frame_corner = document.createElement('a-entity')
+    frame_corner.id="frame_corner"
+    const f_c_in = document.createElement('a-entity')
+    f_c_in.setAttribute("mixin","m_f_c")
+    frame_corner.appendChild(f_c_in)
+    frame.appendChild(frame_corner)
+
+    f_c_in.addEventListener("model-loaded", (e)=>{
+      console.log("f_c_in model-loaded")
+      f=f_c_in.object3D.children[0].children[0].children
+
+      f[1].renderOrder=1
+      f[1].material.side=0
+      f[1].material.depthTest=false
+      f[1].material.flatShading=true
+      f[1].material.color={r:1,g:1,b:1}
+      f[0].renderOrder=2
+      f[0].material.side=0
+      f[0].material.depthTest=false
+      f[0].material.flatShading=true
+      f[0].material.color={r:0,g:0,b:0}
+    })
+    
+    
+    const frame_edge = document.createElement('a-entity')
+    frame_edge.id="frame_edge"
+    const f_e_in = document.createElement('a-entity')
+    f_e_in.setAttribute("mixin","m_f_e")
+    frame_edge.appendChild(f_e_in)
+    frame.appendChild(frame_edge)
+
+    f_e_in.addEventListener("model-loaded", (e)=>{
+      console.log("f_e_in model-loaded")
+      f=f_e_in.object3D.children[0].children[0].children
+
+      f[1].renderOrder=1
+      f[1].material.side=0
+      f[1].material.depthTest=false
+      f[1].material.flatShading=true
+      f[1].material.color={r:1,g:1,b:1}
+      f[0].renderOrder=2
+      f[0].material.side=0
+      f[0].material.depthTest=false
+      f[0].material.flatShading=true
+      f[0].material.color={r:0,g:0,b:0}
+    })
+
+    // n=corner2.children[0].object3D.children[0].children[0].children
+    // for(let i=0;i<3;i++){
+    //     n[i].material.side=0
+    //     n[i].material.depthTest=false
+    //     n[i].renderOrder=3
+    // }
+    // n[3].renderOrder=0
     // sky.setAttribute("color","#00000000")
     // src ="#umi" 
     // <a-plane id="plane" color="#CCC" height="20" width="20" position="0 -3 0" rotation="-90 0 0" visible="false" shadow></a-plane> -->
