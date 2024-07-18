@@ -86,6 +86,8 @@ class Search {
 	depth_limited_search(state,step, depth){
 		// console.log(`depth ${depth}`)
 		// state.data_print()
+		// console.log(state)
+		// console.log(step)
 		if(depth === 0 && is_solved(state,step)){
 				// console.log(`OK depth: ${depth}`)
 				// state.data_print()
@@ -124,7 +126,13 @@ class Search {
 		// 再帰関数、目標とする状態になるまで操作数を増やして探索する
 		// """
 		// # print(step)
+		if	(step.type=="pos&exp")	is_solved = is_solved_1
+		else if	(step.type=="exp")	is_solved = is_solved_2
+		else if	(step.type=="pos")	is_solved = is_solved_3
+		 
+
 		step_move_names = smn
+		// console.log(step_move_names)
 
 		for(let depth=0;depth<max_length;depth++){
 			// # print(f"# Start searching length {depth}")
@@ -187,18 +195,23 @@ let is_solved
 function is_solved_1(state,step){
 // 特定の場所の状態だけを調べる
 	// console.log(`is_solved`)
+
+
 	if(state.c[0] != 0 || state.c[1] != 1)	return false
 
-	for(let i=0;i<solv_step[step]["c"].length;i++){
-		if(state.cp[solv_step[step]["c"][i]] != solv_step[step]["c"][i] || state.co[solv_step[step]["c"][i]] != 0)
+	// console.log(`is_solved`)
+	for(let i=0;i<step["c"].length;i++){
+		if(state.cp[step["c"][i]] != step["c"][i] || state.co[step["c"][i]] != 0)
 			return false
 	}
 	
-	for(let i=0;i<solv_step[step]["e"].length;i++){
-		if(state.ep[solv_step[step]["e"][i]] != solv_step[step]["e"][i] || state.eo[solv_step[step]["e"][i]] != 0)
+	// console.log(`is_solved`)
+	for(let i=0;i<step["e"].length;i++){
+		if(state.ep[step["e"][i]] != step["e"][i] || state.eo[step["e"][i]] != 0)
 			return false
 	}
 
+	// console.log(`OK`)
 	return true
 }
 
@@ -207,23 +220,23 @@ function is_solved_2(state,step){
 		// console.log(`is_solved`)
 		if(state.c[0] != 0 || state.c[1] != 1)	return false
 	
-		for(let i=0;i<solv_step[step]["c"].length;i++){
-			if(state.cp[solv_step[step]["c"][i]] != solv_step[step]["c"][i] || state.co[solv_step[step]["c"][i]] != 0)
+		for(let i=0;i<step["c"].length;i++){
+			if(state.cp[step["c"][i]] != step["c"][i] || state.co[step["c"][i]] != 0)
 				return false
 		}
 		
-		for(let i=0;i<solv_step[step]["e"].length;i++){
-			if(state.ep[solv_step[step]["e"][i]] != solv_step[step]["e"][i] || state.eo[solv_step[step]["e"][i]] != 0)
+		for(let i=0;i<step["e"].length;i++){
+			if(state.ep[step["e"][i]] != step["e"][i] || state.eo[step["e"][i]] != 0)
 				return false
 		}
 
-		for(let i=0;i<solv_step[step]["co"].length;i++){
-			if(state.co[solv_step[step]["co"][i]] != 0)
+		for(let i=0;i<step["co"].length;i++){
+			if(state.co[step["co"][i]] != 0)
 				return false
 		}
 		
-		for(let i=0;i<solv_step[step]["eo"].length;i++){
-			if(state.eo[solv_step[step]["eo"][i]] !=  0)
+		for(let i=0;i<step["eo"].length;i++){
+			if(state.eo[step["eo"][i]] !=  0)
 				return false
 		}
 	
@@ -232,31 +245,42 @@ function is_solved_2(state,step){
 	
 function is_solved_3(state,step){
 	// 特定の場所の状態だけを調べる
-		// console.log(`is_solved`)
-		if(state.c[0] != 0 || state.c[1] != 1)	return false
-	
-		for(let i=0;i<solv_step[step]["c"].length;i++){
-			if(state.cp[solv_step[step]["c"][i]] != solv_step[step]["c"][i] || state.co[solv_step[step]["c"][i]] != 0)
-				return false
-		}
-		
-		for(let i=0;i<solv_step[step]["e"].length;i++){
-			if(state.ep[solv_step[step]["e"][i]] != solv_step[step]["e"][i] || state.eo[solv_step[step]["e"][i]] != 0)
-				return false
-		}
+	// console.log(`is_solved`)
+	// console.log(step)
+	if(state.c[0] != 0 || state.c[1] != 1)	return false
 
-		for(let i=0;i<solv_step[step]["co"].length;i++){
-			if(state.co[solv_step[step]["co"][i]] != 0)
-				return false
-		}
-		
-		for(let i=0;i<solv_step[step]["eo"].length;i++){
-			if(state.eo[solv_step[step]["eo"][i]] !=  0)
-				return false
-		}
-	
-		return true
+	// console.log(`is_solved 1`)
+	for(let i=0;i<step["c"].length;i++){
+		if(state.cp[step["c"][i]] != step["c"][i] || state.co[step["c"][i]] != 0)
+			return false
 	}
+	
+	// console.log(`is_solved 2`)
+	for(let i=0;i<step["e"].length;i++){
+		if(state.ep[step["e"][i]] != step["e"][i] || state.eo[step["e"][i]] != 0)
+			return false
+	}
+
+	// console.log(`is_solved 3`)
+	// console.log(step["cp"])
+	for(let i=0;i<step["cp"].length;i++){
+		// console.log(step["cp"][i])
+		console.log(`${state.cp[step["cp"][i][0]]} ${step["cp"][i][1]}`)
+		if(state.cp[step["cp"][i][0]] != step["cp"][i][1])
+			return false
+	}
+	
+	// console.log(`is_solved 4`)
+	for(let i=0;i<step["ep"].length;i++){
+		// console.log(step["ep"][i])
+		if(state.ep[step["ep"][i][0]] != step["ep"][i][1])
+			return false
+	}
+
+	// console.log(`OK`)
+	return true
+}
+
 moves = {
 	'U': new State(
 		[3, 0, 1, 2, 4, 5, 6, 7],
@@ -341,7 +365,7 @@ moves_face_c = [
 	[2,3,6,7],
 	[0,1,4,5],
 ]
-
+ 
 moves_face_e = [
 	[4,5,6,7],
 	[1,2,5,9],
@@ -415,118 +439,87 @@ function palms(P){
 	}
 }
 
-palms([
-	"L' U' L",
-	"L U' L'",
-	"R U R'",
-	"R U' R'",
-	"R' U R",
-	"R U R' U",
-	"R U2 R' U'",
-	"R' F' R U R U' R' F",
-	"R U' R' F R' F' R",
-	"F R' F' R U R U' R'",
-	"F R U R' U' F'",
-	"R U R' U R U2 R'",
-	"R U' R U R U R U' R' U' R2",
-	"x' U2 R2 U' L' U R2 U' L U' x",
-	"R U2 R' U' R U R'",
-
-	"L U'",
-	"L' U'",
-	"L2 U'",
-
-	"y R2 y'",
-
-	"R U",
-	"R' U",
-	"R2 U",
-	"y R2 y' U2",
-	"B2",
-	"F2 U' R' F",
-])
 
 const D_Cross = [
-	"L",
-	"L'",
-	"L2",
-	"R",
-	"R'",
-	"R2",
-
-	"L U'",
-	"L' U'",
-	"L2 U'",
-
-	"R U",
-	"R' U",
-	"R2 U",
-	"y R2 y' U2",
-
-
-	"U",
-	"U'",
-	"U2",
-	"F",
-	"F'",
-	"F2",
-	"F2 U' R' F",
+	[
+		"U","U'","U2",
+		"R","R'","R2",
+		"L","L'","L2",
+		"y R2 y'",
+		"F","F'","F2",
+	],
+	[
+		"F2","U' R' F","U' R' F R",
+	],
 ]
 
 const D_Corner = [
-	"y",
-	"y'",
-	"y2",
-	"U",
-	"U'",
-	"U2",
-	"R U R'",
-	"R U' R'",
-	"R U2 R' U' R U R'",
+	[
+		"y","y'","y2",
+		"U","U'","U2",
+		"R U R'",
+	],
+	[
+		"R U R'",
+		"U R U' R'",
+		"R U2 R' U' R U R'",
+	],
 ]
 
 const F_Edge = [
-	"y",
-	"y'",
-	"y2",
-	"U",
-	"U'",
-	"U2",
-	"R' F' R U R U' R' F",
-	"R U' R' F R' F' R",
+	[
+		"y","y'","y2",
+		"U","U'","U2",
+		"R U' R' F R' F' R",
+	],
+	[
+		"U' R' F' R U R U' R' F",
+		"U R U' R' F R' F' R",
+	],
 ]
 
 const OLL_Cross = [
-	"U",
-	"U'",
-	"U2",
-	"F R U R' U' F'",
-	// "F R' F' R U R U' R'",
+	[
+		"U",
+		"U'",
+		"U2",
+		"F R U R' U' F'",
+		// "F R' F' R U R U' R'",
+	],
 ]
 
 const OLL_Edge = [
-	"U",
-	"U'",
-	"U2",
-	"R U R' U R U2 R'",
-	// "F R' F' R U R U' R'",
+	[
+		"U",
+		"U'",
+		"U2",
+		"R U R' U R U2 R'",
+		// "F R' F' R U R U' R'",
+	],
 ]
 
 const PLL_Cross = [
-	"U",
-	"U'",
-	"U2",
-	"R U' R U R U R U' R' U' R2",
-	// "F R' F' R U R U' R'",
+	[
+		"U",
+		"U'",
+		"U2",
+		"R U' R U R U R U' R' U' R2",
+		// "F R' F' R U R U' R'",
+	],
 ]
 
 const PLL_Edge = [
-	"y",
-	"y'",
-	"y2",
-	"x' U2 R2 U' L' U R2 U' L U' x",
-	// "F R' F' R U R U' R'",
+	[
+		"y",
+		"y'",
+		"y2",
+		"x' U2 R2 U' L' U R2 U' L U' x",
+		// "F R' F' R U R U' R'",
+	],
 ]
+
+palms([D_Cross,D_Corner,F_Edge,OLL_Cross,OLL_Edge,PLL_Cross,PLL_Edge].flat(Infinity))
+
 console.log(move_names)
 
 const set_color_data = [
@@ -614,17 +607,17 @@ const vec	= 'yxxzyzxyzxxyyzz'
 //   [0,1,2,3,4,5],
 // )
 // let solved_state = new State(	
-// 	[0, 1, 3, 2, 5, 7, 4, 6],
-// 	[1, 0, 0, 0, 0, 0, 1, 1],
-// 	[4, 6, 2, 7, 1, 3, 5, 0, 10, 8, 9, 11],
-// 	[0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+// 	[0, 1, 2, 3, 4, 5, 6, 7],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+// 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 // 	[0, 1, 2, 3, 4, 5],
 // )
 let solved_state = new State(
-	[0,2,3,6,4,5,7,1],
-	[1,0,1,1,2,1,2,1],
-	[4,7,0,1,8,9,10,11,2,3,5,6],
-	[0,0,1,0,0,0,0,0,1,0,0,0],
+	[1,7,0,2,5,4,6,3],
+	[0,2,2,1,0,0,0,1],
+	[2,4,3,5,7,6,1,0,8,9,10,11],
+	[1,0,0,0,0,1,1,1,0,0,0,0],
 	[0,1,2,3,4,5],
 )
 
@@ -851,233 +844,338 @@ let sum_solution = []
 let sum_solution2 = []
 
 const solv_step = [
-	{
-	"c":[],
-	"e":[10]
-	},
-	{
-	"c":[],
-	"e":[10,11]
-	},
-	{
-	"c":[],
-	"e":[8,10,11]
-	},
-	{
-	"c":[],
-	"e":[8,9,10,11]
-	},
-	{
-	"c":[6],
-	"e":[8,9,10,11]
-	},
-	{
-	"c":[6,7],
-	"e":[8,9,10,11]
-	},
-	{
-	"c":[4,6,7],
-	"e":[8,9,10,11]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[8,9,10,11]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[2,8,9,10,11]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[2,3,8,9,10,11]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[0,2,3,8,9,10,11]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[0,1,2,3,8,9,10,11]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[0,1,2,3,8,9,10,11],
-	"co":[],
-	"eo":[4,5,6,7]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[0,1,2,3,8,9,10,11],
-	"co":[0,1,2,3],
-	"eo":[4,5,6,7]
-	},
-	{
-	"c":[4,5,6,7],
-	"e":[0,1,2,3,4,5,6,7,8,9,10,11],
-	},
-	{
-	"c":[0,1,2,3,4,5,6,7],
-	"e":[0,1,2,3,4,5,6,7,8,9,10,11],
-	},
+	[
+		{
+			"type": "pos",
+			"c":[],
+			"e":[],
+			"cp":[],
+			"ep":[
+				[6,10],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[],
+			"e":[10]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[],
+			"e":[11],
+			"cp":[],
+			"ep":[
+				[6,10],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[],
+			"e":[10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[],
+			"e":[8,11],
+			"cp":[],
+			"ep":[
+				[6,10],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[],
+			"e":[8,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[],
+			"e":[8,9,11],
+			"cp":[],
+			"ep":[
+				[6,10],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[],
+			"e":[8,9,10,11]
+		},
+	],
+
+
+	[
+		{
+			"type": "pos",
+			"c":[],
+			"e":[8,9,10,11],
+			"cp":[
+				[2,6],
+			],
+			"ep":[],
+		},
+		{
+			"type": "pos&exp",
+			"c":[6],
+			"e":[8,9,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[7],
+			"e":[8,9,10,11],
+			"cp":[
+				[2,6],
+			],
+			"ep":[],
+		},
+		{
+			"type": "pos&exp",
+			"c":[6,7],
+			"e":[8,9,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[4,7],
+			"e":[8,9,10,11],
+			"cp":[
+				[2,6],
+			],
+			"ep":[],
+		},
+		{
+			"type": "pos&exp",
+			"c":[4,6,7],
+			"e":[8,9,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[4,5,7],
+			"e":[8,9,10,11],
+			"cp":[
+				[2,6],
+			],
+			"ep":[],
+		},
+		{
+			"type": "pos&exp",
+			"c":[4,5,6,7],
+			"e":[8,9,10,11]
+		},
+	],
+
+
+	[
+		{
+			"type": "pos",
+			"c":[4,5,6,7],
+			"e":[8,9,10,11],
+			"cp":[],
+			"ep":[
+				[6,2],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[4,5,6,7],
+			"e":[2,8,9,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[4,5,6,7],
+			"e":[3,8,9,10,11],
+			"cp":[],
+			"ep":[
+				[6,2],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[4,5,6,7],
+			"e":[2,3,8,9,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[4,5,6,7],
+			"e":[0,3,8,9,10,11],
+			"cp":[],
+			"ep":[
+				[6,2],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[4,5,6,7],
+			"e":[0,2,3,8,9,10,11]
+		},
+	],
+	[
+		{
+			"type": "pos",
+			"c":[4,5,6,7],
+			"e":[0,1,3,8,9,10,11],
+			"cp":[],
+			"ep":[
+				[6,2],
+			],
+		},
+		{
+			"type": "pos&exp",
+			"c":[4,5,6,7],
+			"e":[0,1,2,3,8,9,10,11]
+		},
+	],
+
+
+	[
+		{
+			"type": "exp",
+			"c":[4,5,6,7],
+			"e":[0,1,2,3,8,9,10,11],
+			"co":[],
+			"eo":[4,5,6,7]
+		},
+	],
+	[
+		{
+			"type": "exp",
+			"c":[4,5,6,7],
+			"e":[0,1,2,3,8,9,10,11],
+			"co":[0,1,2,3],
+			"eo":[4,5,6,7]
+		},
+	],
+	[
+		{
+			"type": "pos&exp",
+			"c":[4,5,6,7],
+			"e":[0,1,2,3,4,5,6,7,8,9,10,11],
+		},
+	],
+	[
+		{
+			"type": "pos&exp",
+			"c":[0,1,2,3,4,5,6,7],
+			"e":[0,1,2,3,4,5,6,7,8,9,10,11],
+		},
+	]
 ]
-
-// {
-// 	"c":[],
-// 	"e":[]
-// 	},
-// 	{
-// 	"c":[6],
-// 	"e":[2, 8, 9, 10, 11]
-// 	},
-// 	{
-// 	"c":[6, 7],
-// 	"e":[2, 3, 8, 9, 10, 11]
-// 	},
-// 	{
-// 	"c":[4, 6, 7],
-// 	"e":[0, 2, 3, 8, 9, 10, 11]
-// 	},
-// 	{
-// 	"c":[4, 5, 6, 7],
-// 	"e":[0, 1, 2, 3, 8, 9, 10, 11]
-// 	},
-
 
 function BBB(){
 	solved_state = scrambled_state
 	sum_solution = []
 	tank = []
 
-	is_solved = is_solved_1
+	for(let i=0;i<4;i++){
+		t=[]
+		search.current_solution = []
+		search.start_search(solved_state,solv_step[i][0], 5, D_Cross[0])
+		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+		t=search.current_solution
+		// console.log("FU --")
+		// console.log(search.current_solution)
 
-	search.start_search(solved_state,0, 10, D_Cross)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
+		search.current_solution = []
+		search.start_search(solved_state,solv_step[i][1], 5, D_Cross[1])
+		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+		t=t.concat(search.current_solution)
+		// console.log("FD --")
+		// console.log(search.current_solution)
+
+		t=t.concat(["y"])
+
+		tank.push(t)
+
+		sum_solution.push(t.join(' ').split(' '))
+		solved_state = solved_state.hand_move(moves["y"])
+	}
+
+	for(let i=0;i<4;i++){
+		t=[]
+		search.current_solution = []
+		search.start_search(solved_state,solv_step[i+4][0], 10, D_Corner[0])
+		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+		t=search.current_solution
+
+		search.current_solution = []
+		search.start_search(solved_state,solv_step[i+4][1], 10, D_Corner[1])
+		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+		t=t.concat(search.current_solution)
+
+		t=t.concat(["y"])
+
+		tank.push(t)
+
+		sum_solution.push(t.join(' ').split(' '))
+		solved_state = solved_state.hand_move(moves["y"])
+	}
+
+	for(let i=0;i<4;i++){
+		t=[]
+		search.current_solution = []
+		search.start_search(solved_state,solv_step[i+8][0], 10, F_Edge[0])
+		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+		t=search.current_solution
+
+		search.current_solution = []
+		search.start_search(solved_state,solv_step[i+8][1], 10, F_Edge[1])
+		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+		t=t.concat(search.current_solution)
+
+		t=t.concat(["y"])
+
+		tank.push(t)
+
+		sum_solution.push(t.join(' ').split(' '))
+		solved_state = solved_state.hand_move(moves["y"])
+	}
+
+	t=[]
 	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,1, 10, D_Cross)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
+	search.start_search(solved_state,solv_step[12][0], 10, OLL_Cross[0])
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
+	t=t.concat(search.current_solution)
+	tank.push(t)
+	sum_solution.push(t.join(' ').split(' '))
+
+	t=[]
 	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,2, 10, D_Cross)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
+	search.start_search(solved_state,solv_step[13][0], 10, OLL_Edge[0])
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
+	t=t.concat(search.current_solution)
+	tank.push(t)
+	sum_solution.push(t.join(' ').split(' '))
+
+	t=[]
 	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,3, 10, D_Cross)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
+	search.start_search(solved_state,solv_step[14][0], 10, PLL_Cross[0])
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
+	t=t.concat(search.current_solution)
+	tank.push(t)
+	sum_solution.push(t.join(' ').split(' '))
+
+	t=[]
 	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-
-	
-	search.start_search(solved_state,4, 10, D_Corner)//["L' U' L","L'","R","R'","U","U'","U2",]
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
+	search.start_search(solved_state,solv_step[15][0], 10, PLL_Edge[0])
 	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,5, 10, D_Corner)//["L' U' L","L'","R","R'","U","U'","U2",]
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-	
-	search.start_search(solved_state,6, 10, D_Corner)//["L' U' L","L'","R","R'","U","U'","U2",]
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-	
-	search.start_search(solved_state,7, 10, D_Corner)//["L' U' L","L'","R","R'","U","U'","U2",]
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-	
-
-	search.start_search(solved_state,8, 10, F_Edge)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-
-	search.start_search(solved_state,9, 10, F_Edge)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-	
-	search.start_search(solved_state,10, 10, F_Edge)
-	sum_solution.push(search.current_solution.concat(["y"]).join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution.concat(["y"]))
-	search.current_solution = []
-
-	solved_state = solved_state.hand_move(moves["y"])
-	
-	search.start_search(solved_state,11, 10, F_Edge)
-	sum_solution.push(search.current_solution.join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution)
-	search.current_solution = []
-
-	// solved_state = solved_state.hand_move(moves["y"])
-	
-	is_solved = is_solved_2
-
-	search.start_search(solved_state,12, 10, OLL_Cross)
-	sum_solution.push(search.current_solution.join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution)
-	search.current_solution = []
-
-
-	search.start_search(solved_state,13, 10, OLL_Edge)
-	sum_solution.push(search.current_solution.join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution)
-	search.current_solution = []
-
-
-	is_solved = is_solved_1
-
-	search.start_search(solved_state,14, 10, PLL_Cross)
-	sum_solution.push(search.current_solution.join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution)
-	search.current_solution = []
-
-	search.start_search(solved_state,15, 10, PLL_Edge)
-	sum_solution.push(search.current_solution.join(' ').split(' '))
-	solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-	tank.push(search.current_solution)
-	search.current_solution = []
+	t=t.concat(search.current_solution)
+	tank.push(t)
+	sum_solution.push(t.join(' ').split(' '))
 	
 	console.log(tank)
 	setTimeout(() => {
@@ -1086,43 +1184,6 @@ function BBB(){
 	},50)
 }
 
-
-// search.start_search(solved_state,0, 20)
-// sum_solution.push(search.current_solution)
-// solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-// search.current_solution = []
-
-
-// solved_state = solved_state.hand_move(moves["y"])
-
-// search.start_search(solved_state,1, 20)
-// sum_solution.push(["y"].concat(search.current_solution))
-// solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-// search.current_solution = []
-
-
-// solved_state = solved_state.hand_move(moves["y"])
-
-// search.start_search(solved_state,2, 20)
-// sum_solution.push(["y"].concat(search.current_solution))
-// solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-// search.current_solution = []
-
-
-// solved_state = solved_state.hand_move(moves["y"])
-
-// search.start_search(solved_state,3, 20)
-// sum_solution.push(["y"].concat(search.current_solution))
-// solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-// search.current_solution = []
-
-
-// solved_state = solved_state.hand_move(moves["y"])
-
-// search.start_search(solved_state,4, 20)
-// sum_solution.push(["y"].concat(search.current_solution))
-// solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-// search.current_solution = []
 
 const Pre_movement = [
 	"B'.1",
@@ -1242,23 +1303,9 @@ let movementCount = -1
 let move180 = false
 
 let solve_preview = true
-// console.log(`f2l 1 ${(sum_solution += search.start_search(solved_state,1, 20))}`)
 
 function motions(){	
-	// for(;sum_solution2.length > 0 && sum_solution2[0].length == 0;sum_solution2.shift());
 	if(sum_solution2.length > 0 && sum_solution2[0].length == 0) sum_solution2.shift()
-
-	// if(sum_solution2.length == 0){
-		
-	// 	// console.log(`sulb no`)
-
-	// 	movementCount = -1
-	// 	move180 = false
-		
-	// 	const scene = document.getElementById('scene').components["cube-mode"]
-	// 	scene.Complete()
-	// 	return
-	// }
 	
 	if(move180){
 		movementCount -= 1
@@ -1272,18 +1319,17 @@ function motions(){
 	}
 
 	let time_tank = 0
-	time_tank += one_motion(sum_solution2[0][0], 1, 16 - sum_solution2.length)
+	time_tank += one_motion(sum_solution2[0][0], 4, 16 - sum_solution2.length)
 	time_tank += 10
 	sum_solution2[0].shift()
+
 
 	movementCount+=1
 	if(solve_preview){
 		const solveDiv = document.getElementsByClassName("img-div")
-
 		solveDiv[movementCount].classList.add('now-move')
 	}
 
-	
 	const scene = document.getElementById('scene').components["cube-mode"]
 	if(sum_solution2[0].length > 0){
 		setTimeout(() => {
@@ -1292,8 +1338,21 @@ function motions(){
 	}
 	else {
 		setTimeout(() => {
-			// frame_rotate(undefined, 16 - sum_solution2.length, 0, false)
-			console.log(`frame_pos ${frame_pos}`)
+			typeName = frame_pos.includes("corner")?"corner":"edge"
+			type = frame_pos.includes("corner")?"frame_corner":"frame_edge"
+			const frame=document.getElementById(`frame_${typeName}`)
+			const Pframe=document.getElementById(`frame`)
+			
+			// console.log(`frame_pos ${frame_pos} [${Pframe.classList.value.includes(typeName)}]`)
+			if(Pframe.classList.value.includes(typeName)){
+				// console.log(`--------Change--------    ${typeName}`)
+
+				frame.setAttribute("visible",false)
+				// document.getElementById(type).setAttribute("visible",false)
+				Pframe.classList.remove(typeName)
+				// Pframe.classList.add(typeName)
+			}
+			
 			pointM(frame_pos, false)
 			Angle_move(undefined, -1,500)
 		},time_tank)
@@ -1370,8 +1429,8 @@ function one_motion(sulb,speed,step){
 	}
 	
 	setTimeout(() => {
-		frame_rotate(sulb, step, parseInt(1000/speed), true)
 		Angle_move(sulb, step, parseInt(1000/speed))
+		frame_rotate(sulb, step, parseInt(1000/speed), true)
 		rotate(sulb, parseInt(1000/speed))
 	}, som_sovle_time)
 	return sum_time
@@ -1379,6 +1438,7 @@ function one_motion(sulb,speed,step){
 
 const hand_xyz = []
 let frame_pos = ""
+
 function frame_rotate(sulb = undefined, step, time, anime = false){
 	let text = "\n\n"
 	text+=`hand_xyz [${hand_xyz.length==0?"None":hand_xyz.join(',')}]\n`
@@ -1400,23 +1460,44 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	]
 
 	const type = (4 <= step && step < 8)?"c":"e"
+	const typeName = type=="c"?"corner":"edge"
 	const ss = scrambled_state
 	let new_ang = parts__Angle[step]
 
 	text+=`ang ${new_ang} `
-	for(han of hand_xyz){
-		new_ang = moves[han][`${type}p`].indexOf(new_ang)
-		text+=`-> ${new_ang} `
-	}
+	for(han of hand_xyz){		new_ang = moves[han][`${type}p`].indexOf(new_ang);		text+=`-> ${new_ang} `;	}
 	text+='\n'
 	
 	if(sulb != undefined && sulb[0]>"a"){
-		if(hand_xyz.length > 0 && hand_xyz.at(-1)[0] == sulb[0] && hand_xyz.at(-1) != sulb )
-			hand_xyz.pop()
-		else
-			hand_xyz.push(sulb)
+		if(hand_xyz.length > 0 && hand_xyz.at(-1)[0] == sulb[0] && hand_xyz.at(-1) != sulb )			hand_xyz.pop()
+		else			hand_xyz.push(sulb)
 	}
+
 	const pos = ss[`${type}p`].indexOf(new_ang)
+
+	const frame=document.getElementById(`frame_${typeName}`)
+	const Pframe=document.getElementById(`frame`)
+	
+	if(!Pframe.classList.value.includes(typeName)){
+		// console.log(`--------Change--------    ${typeName}`)
+
+		frame.setAttribute("visible",true)
+		document.getElementById(type!="c"?"frame_corner":"frame_edge").setAttribute("visible",false)
+		Pframe.classList.remove(type!="c"?"corner":"edge")
+		Pframe.classList.add(typeName)
+	}
+
+	frame.children[0].setAttribute("rotation",rote[type][pos])
+	frame.removeAttribute('animation')
+	frame.setAttribute('rotation', {x:0,y:0,z:0})
+
+	if(sulb == undefined){
+		pointM(`${typeName}${pos}`)
+		text += `--------- undefined NO ${typeName}${pos} ---------\n\n`
+		// console.log(text)
+		return
+	}
+
 
 	const index = faces.indexOf(sulb[0])
 	const mode_parts = type=="c"?moves_face_c:moves_face_e
@@ -1430,39 +1511,19 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 
 	if(mode==-1){
 		text += `--------- NO rotation ---------\n\n`
-		console.log(text)
+		// console.log(text)
 		return
 	}
 
-	// if(frame_pos != "")
-	// pointM(frame_pos, false)
-
-	pointM(`${type=="c"?"corner":"edge"}${pos}`)
-
-	const frame=document.getElementById(`frame_${type=="c"?"corner":"edge"}`)
-	const Pframe=document.getElementById(`frame`)
-	
-	if(!Pframe.classList.value.includes(type=="c"?"corner":"edge")){
-		console.log(`--------Change--------    ${type=="c"?"Corner":"Edge"}`)
-
-		frame.setAttribute("visible",true)
-		document.getElementById(type!="c"?"frame_corner":"frame_edge").setAttribute("visible",false)
-		Pframe.classList.remove(type!="c"?"corner":"edge")
-		Pframe.classList.add(type=="c"?"corner":"edge")
-	}
-
-	frame.children[0].setAttribute("rotation",rote[type][pos])
-	frame.removeAttribute('animation')
-	frame.setAttribute('rotation', {x:0,y:0,z:0})
 	
 	const rad = sulb[1]
 	const size = (rad=='\'')?-1:((rad=='2')?2:1)
 	text+=	`anime [${anime}]  rot [rotation.${vec.charAt(index)}]  to [${faces_rad[index] * 90 * size}]`
 
 	next_pos = moves[sulb][`${type}p`].indexOf(pos)
-	frame_pos = `${type=="c"?"corner":"edge"}${next_pos}`
+	frame_pos = `${typeName}${next_pos}`
 
-	console.log(text+"\n\n")
+	// console.log(text+"\n\n")
 	if(anime){
 		frame.setAttribute('animation', {
 			property: 'rotation.'+vec.charAt(index),
@@ -1473,15 +1534,15 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 		})
 		
 		setTimeout(() => {
-			pointM(`${type=="c"?"corner":"edge"}${pos}`,false)
-			pointM(`${type=="c"?"corner":"edge"}${next_pos}`,true)
+			pointM(`${typeName}${pos}`,false)
+			pointM(`${typeName}${next_pos}`,true)
 		},time)
 	}
 }
 
 function pointM(p,T = true){
 	const P = document.getElementById(p).children[0].object3D.children[0].children[0].children
-	console.log(`pointM name [${p}] ${T}`)
+	// console.log(`pointM name [${p}] ${T}`)
 	if(T){
 		for(let i=0;i<P.length-1;i++){
 			P[i].material.side=0
@@ -1498,7 +1559,13 @@ function pointM(p,T = true){
 	}
 }
 
+const Angle_xyz = []
+let Angle_pos = ""
+
 function Angle_move(sulb = undefined, step, time){
+	return
+	let text = "\n\n"
+	text+=`hand_xyz [${hand_xyz.length==0?"None":hand_xyz.join(',')}]\n`
 	if(step>=12)	return 
 
 	Rotation_Angle = {
@@ -1536,32 +1603,43 @@ function Angle_move(sulb = undefined, step, time){
 		10,10,10,10,  6,6,6,6,  2,2,2,2,
 	]
 
-	// const type = (4 <= step && step < 8)?"c":"e"
+
+	const type = (4 <= step && step < 8)?"c":"e"
 	let ss = scrambled_state
-	let ro  = []
+	
+	let new_ang = parts__Angle[step]
+	
+	text+=`ang ${new_ang} `
+	for(han of Angle_xyz){
+		new_ang = moves[han][`${type}p`].indexOf(new_ang)
+		text+=`-> ${new_ang} `
+	}
+	text+='\n'
+	
+	
+	if(sulb != undefined && sulb[0]>"a"){
+		if(Angle_xyz.length > 0 && Angle_xyz.at(-1)[0] == sulb[0] && Angle_xyz.at(-1) != sulb )			Angle_xyz.pop()
+		else			Angle_xyz.push(sulb)
+	}
+	
+	let pos = ss[`${type}p`].indexOf(new_ang)
+	if(sulb != undefined) pos = moves[sulb][`${type}p`].indexOf(pos)
+
+	let ro  = this.Rotation_Angle[type][pos]
+
 	if(sulb !== undefined)	ss = scamble2state(ss,sulb)
 
 	if(step == -1)	ro = this.Rotation_Angle.c[2]
-	else if(4 <= step && step < 8){
-		let pos = -1
-		for(let i=0;i<8;i++){
-			if(ss.cp[i]==this.parts__Angle[step])   pos = i
-		}
-		ro = this.Rotation_Angle.c[pos]
-	}
-	else{
-		let pos = -1
-		for(let i=0;i<12;i++){
-			if(ss.ep[i]==this.parts__Angle[step])   pos = i
-		}
-		ro = this.Rotation_Angle.e[pos]
-	}
+
+	text += `sulb [${sulb}]  type [${type}]  pos [${pos}] rote [${ro}]\n`
+	text += `parts__Angle [${parts__Angle[step]}] new_ang [${new_ang}]\n`
 
 	const camera = document.getElementById('camera')
 	let by = (camera.getAttribute("rotation").y+360)%360
 	let ay = (ro[1]+360)%360
 	
-	// console.log(`[${by}] [${ay}]`)
+	text += `[${by}] [${ay}]`
+
 	camera.setAttribute('animation', {
 		property: 'rotation',
 		dur: time,
@@ -1569,6 +1647,8 @@ function Angle_move(sulb = undefined, step, time){
 		to: {x:ro[0], y:ro[1], z:0},
 		easing: 'linear',
 	})
+	
+	console.log(text+"\n\n")
 }
 
 function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
