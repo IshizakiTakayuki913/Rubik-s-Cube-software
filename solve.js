@@ -58,7 +58,7 @@ class State {
 		}
 		
 		if(typeof move.c === "undefined"){
-			console.log(`typeof move.c === "undefined"`)
+			//console.log(`typeof move.c === "undefined"`)
 			return new State(new_cp, new_co, new_ep, new_eo, this.c)
 		}
 
@@ -69,11 +69,11 @@ class State {
 	}
 	
 	data_print() {
-		console.log(this.cp)
-		console.log(this.co)
-		console.log(this.ep)
-		console.log(this.eo)
-		console.log(this.c)
+		//console.log(this.cp)
+		//console.log(this.co)
+		//console.log(this.ep)
+		//console.log(this.eo)
+		//console.log(this.c)
 	}
 }
 
@@ -84,10 +84,10 @@ class Search {
 	}
 
 	depth_limited_search(state,step, depth){
-		// console.log(`depth ${depth}`)
-		// state.data_print()
-		// console.log(state)
-		// console.log(step)
+		//console.log(`depth ${depth}`)
+		state.data_print()
+		//console.log(state)
+		//console.log(step)
 		if(depth === 0 && is_solved(state,step)){
 				// console.log(`OK depth: ${depth}`)
 				// state.data_print()
@@ -125,17 +125,18 @@ class Search {
 		// """
 		// 再帰関数、目標とする状態になるまで操作数を増やして探索する
 		// """
-		// # print(step)
+		//console.log(step)
 		if	(step.type=="pos&exp")	is_solved = is_solved_1
 		else if	(step.type=="exp")	is_solved = is_solved_2
 		else if	(step.type=="pos")	is_solved = is_solved_3
 		 
 
 		step_move_names = smn
-		// console.log(step_move_names)
+		//console.log(step_move_names)
+		//console.log({max_length})
 
-		for(let depth=0;depth<max_length;depth++){
-			// # print(f"# Start searching length {depth}")
+		for(let depth=0;depth<max_length+1;depth++){
+			//console.log(`# Start searching length ${depth}`)
 			if(this.depth_limited_search(state,step, depth))
 				return this.current_solution.join(' ')
 		}
@@ -265,7 +266,7 @@ function is_solved_3(state,step){
 	// console.log(step["cp"])
 	for(let i=0;i<step["cp"].length;i++){
 		// console.log(step["cp"][i])
-		console.log(`${state.cp[step["cp"][i][0]]} ${step["cp"][i][1]}`)
+		// console.log(`${state.cp[step["cp"][i][0]]} ${step["cp"][i][1]}`)
 		if(state.cp[step["cp"][i][0]] != step["cp"][i][1])
 			return false
 	}
@@ -445,11 +446,11 @@ const D_Cross = [
 		"U","U'","U2",
 		"R","R'","R2",
 		"L","L'","L2",
-		"y R2 y'",
-		"F","F'","F2",
+		"y R2 y'","F2",
 	],
 	[
-		"F2","U' R' F","U' R' F R",
+		"F","F'","F2"
+		,"U' R' F","U' R' F R",
 	],
 ]
 
@@ -462,6 +463,7 @@ const D_Corner = [
 	[
 		"R U R'",
 		"U R U' R'",
+		"R U' R'",
 		"R U2 R' U' R U R'",
 	],
 ]
@@ -473,6 +475,8 @@ const F_Edge = [
 		"R U' R' F R' F' R",
 	],
 	[
+		"R' F' R U R U' R' F",
+		"R U' R' F R' F' R",
 		"U' R' F' R U R U' R' F",
 		"U R U' R' F R' F' R",
 	],
@@ -614,10 +618,10 @@ const vec	= 'yxxzyzxyzxxyyzz'
 // 	[0, 1, 2, 3, 4, 5],
 // )
 let solved_state = new State(
-	[1,7,0,2,5,4,6,3],
-	[0,2,2,1,0,0,0,1],
-	[2,4,3,5,7,6,1,0,8,9,10,11],
-	[1,0,0,0,0,1,1,1,0,0,0,0],
+	[1,7,0,3,5,4,2,6],
+	[0,0,0,2,0,0,2,2],
+	[2,4,1,6,7,5,3,0,8,9,10,11],
+	[1,0,1,0,0,1,0,1,0,0,0,0],
 	[0,1,2,3,4,5],
 )
 
@@ -1084,38 +1088,22 @@ function BBB(){
 	for(let i=0;i<4;i++){
 		t=[]
 		search.current_solution = []
-		search.start_search(solved_state,solv_step[i][0], 5, D_Cross[0])
-		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-		t=search.current_solution
-		// console.log("FU --")
-		// console.log(search.current_solution)
+		if(search.start_search(solved_state,solv_step[i][1], 1, D_Cross[1]) != undefined){
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=t.concat(search.current_solution)
+		}
+		else{
+			t=[]
+			search.current_solution = []
+			search.start_search(solved_state,solv_step[i][0], 3, D_Cross[0])
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=search.current_solution
 
-		search.current_solution = []
-		search.start_search(solved_state,solv_step[i][1], 5, D_Cross[1])
-		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-		t=t.concat(search.current_solution)
-		// console.log("FD --")
-		// console.log(search.current_solution)
-
-		t=t.concat(["y"])
-
-		tank.push(t)
-
-		sum_solution.push(t.join(' ').split(' '))
-		solved_state = solved_state.hand_move(moves["y"])
-	}
-
-	for(let i=0;i<4;i++){
-		t=[]
-		search.current_solution = []
-		search.start_search(solved_state,solv_step[i+4][0], 10, D_Corner[0])
-		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-		t=search.current_solution
-
-		search.current_solution = []
-		search.start_search(solved_state,solv_step[i+4][1], 10, D_Corner[1])
-		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-		t=t.concat(search.current_solution)
+			search.current_solution = []
+			search.start_search(solved_state,solv_step[i][1], 1, D_Cross[1])
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=t.concat(search.current_solution)
+		}
 
 		t=t.concat(["y"])
 
@@ -1128,14 +1116,50 @@ function BBB(){
 	for(let i=0;i<4;i++){
 		t=[]
 		search.current_solution = []
-		search.start_search(solved_state,solv_step[i+8][0], 10, F_Edge[0])
-		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-		t=search.current_solution
+		if(search.start_search(solved_state,solv_step[i+4][1], 1, D_Corner[1]) != undefined){
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=t.concat(search.current_solution)
+		}
+		else{
+			t=[]
+			search.current_solution = []
+			search.start_search(solved_state,solv_step[i+4][0], 4, D_Corner[0])
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=search.current_solution
 
+			search.current_solution = []
+			search.start_search(solved_state,solv_step[i+4][1], 1, D_Corner[1])
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=t.concat(search.current_solution)
+		}
+
+		t=t.concat(["y"])
+
+		tank.push(t)
+
+		sum_solution.push(t.join(' ').split(' '))
+		solved_state = solved_state.hand_move(moves["y"])
+	}
+
+	for(let i=0;i<4;i++){
+		t=[]
 		search.current_solution = []
-		search.start_search(solved_state,solv_step[i+8][1], 10, F_Edge[1])
-		solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-		t=t.concat(search.current_solution)
+		if(search.start_search(solved_state,solv_step[i+8][1], 1, F_Edge[1]) != undefined){
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=t.concat(search.current_solution)
+		}
+		else{
+			t=[]
+			search.current_solution = []
+			search.start_search(solved_state,solv_step[i+8][0], 4, F_Edge[0])
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=search.current_solution
+
+			search.current_solution = []
+			search.start_search(solved_state,solv_step[i+8][1], 1, F_Edge[1])
+			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
+			t=t.concat(search.current_solution)
+		}
 
 		t=t.concat(["y"])
 
@@ -1648,7 +1672,7 @@ function Angle_move(sulb = undefined, step, time){
 		easing: 'linear',
 	})
 	
-	console.log(text+"\n\n")
+	//console.log(text+"\n\n")
 }
 
 function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
@@ -1740,7 +1764,7 @@ function psd() {
 	t+="  ["+scrambled_state.eo.join(',')+"],\n"
 	t+="  ["+scrambled_state.c.join(',')+"],\n"
 	t+=")\n"
-	console.log(t)
+	//console.log(t)
 }
 
 function objcetText(obj) {
@@ -1828,6 +1852,6 @@ function objopacty3(ojb, op1 = 0.5, op2 = undefined) {
 	for(let s=0;s<F.length;s++){
 		F[s].renderOrder  = 10
 	}
-	console.log("function objopacty3")
+	//console.log("function objopacty3")
 }
 // cubeOpa(0.8,0)
