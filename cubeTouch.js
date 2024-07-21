@@ -214,45 +214,68 @@ const cubemode = () => ({
     // console.log(`Viewpoint [${Viewpoint.data.Viewpoint}] Rotation [${Rotation.data.Rotation}] Colorset [${Colorset.data.Colorset}]`)
   },
 
-  Ins_Complete(sum_solution){
+  Ins_Complete(Sol){
 
     // for(sum of sum_solution)
-    //   console.log(sum)
+    //   console.log(sum)   
+    
+    const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
+
   
     const rotas = document.getElementsByClassName('rotas')
   
     const imgDiv = document.createElement('div')
     imgDiv.classList.add("img-div")
-    const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
     imgDiv.style.width = imgW
     imgDiv.style.height = imgW
 
     const img = document.createElement('img')
     img.classList.add('rotate-img')
 
+
+
     const line = document.getElementsByClassName('line')[0]
     const lineCount = parseInt(line.clientWidth / imgW)
 
-    for(let i=0;i<sum_solution.length;i++){
+    for(let i=0;i<Sol.length;i++){
       rotas[i].innerHTML = ''
-      if(sum_solution[i].length == 0){
+      if(Sol[i].length == 0){
         continue
       }
-      
-      for(s=0;s<sum_solution[i].length;s++){
-        const D = imgDiv.cloneNode(), I=img.cloneNode()
-        I.src=`./img/${sum_solution[i][s]}.png`
-        D.append(I)
-        rotas[i].append(D)
+      let len = 0
+      for(s=0;s<Sol[i].length;s++){
+        if(Sol[i][s].length>2){
+          len += 1
+          const D = imgDiv.cloneNode(), I=img.cloneNode()
+          D.classList.remove("img-div")
+          I.src=`./img/(.png`
+          D.append(I)
+          rotas[i].append(D)
+        }
+        for(j of Sol[i][s].split(" ")){
+          len += 1
+          const D = imgDiv.cloneNode(), I=img.cloneNode()
+          I.src=`./img/${j}.png`
+          D.append(I)
+          rotas[i].append(D)
+        }
+        if(Sol[i][s].length>2){
+          len += 1
+          const D = imgDiv.cloneNode(), I=img.cloneNode()
+          D.classList.remove("img-div")
+          I.src=`./img/).png`
+          D.append(I)
+          rotas[i].append(D)
+        }
       }      
       // console.log(`sum_solution [${sum_solution[i].length}]  lineCount [${lineCount}]`)
-      rotas[i].style.width = `${Math.min(sum_solution[i].length, lineCount) * imgW}px`
-      rotas[i].parentElement.style.height = `${Math.ceil(sum_solution[i].length / lineCount) * imgW}px`
+      rotas[i].style.width = `${Math.min(len, lineCount) * imgW}px`
+      rotas[i].parentElement.style.height = `${Math.ceil(len / lineCount) * imgW}px`
 
     }
 
   
-    sum_solution2 = sum_solution
+    // sum_solution2 = Sol
 
     setTimeout(()=>{
       this.icon.style.display = "none"

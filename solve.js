@@ -1090,7 +1090,7 @@ function BBB(){
 		search.current_solution = []
 		if(search.start_search(solved_state,solv_step[i][1], 1, D_Cross[1]) != undefined){
 			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-			t=t.concat(search.current_solution)
+			t=search.current_solution
 		}
 		else{
 			t=[]
@@ -1118,7 +1118,7 @@ function BBB(){
 		search.current_solution = []
 		if(search.start_search(solved_state,solv_step[i+4][1], 1, D_Corner[1]) != undefined){
 			solved_state = scamble2state(solved_state,search.current_solution.join(' '))
-			t=t.concat(search.current_solution)
+			t=search.current_solution
 		}
 		else{
 			t=[]
@@ -1200,11 +1200,13 @@ function BBB(){
 	t=t.concat(search.current_solution)
 	tank.push(t)
 	sum_solution.push(t.join(' ').split(' '))
+	sum_solution2=sum_solution
 	
 	console.log(tank)
+	// console.log(sum_solution)
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
-		scene.Ins_Complete(sum_solution)
+		scene.Ins_Complete(tank)
 	},50)
 }
 

@@ -188,6 +188,7 @@ const modelLoad = () => ({
 
     const frame_corner = document.createElement('a-entity')
     frame_corner.id="frame_corner"
+    frame_corner.object3D.visible = false
     const f_c_in = document.createElement('a-entity')
     f_c_in.setAttribute("mixin","m_f_c")
     frame_corner.appendChild(f_c_in)
@@ -196,7 +197,7 @@ const modelLoad = () => ({
     f_c_in.addEventListener("model-loaded", (e)=>{
       console.log("f_c_in model-loaded")
       f=f_c_in.object3D.children[0].children[0].children
-
+      
       f[1].renderOrder=1
       f[1].material.side=0
       f[1].material.depthTest=false
@@ -212,6 +213,7 @@ const modelLoad = () => ({
     
     const frame_edge = document.createElement('a-entity')
     frame_edge.id="frame_edge"
+    frame_edge.object3D.visible = false
     const f_e_in = document.createElement('a-entity')
     f_e_in.setAttribute("mixin","m_f_e")
     frame_edge.appendChild(f_e_in)
