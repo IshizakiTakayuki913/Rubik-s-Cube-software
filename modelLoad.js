@@ -141,8 +141,8 @@ const modelLoad = () => ({
     Rhand.setAttribute("scale","-2.2 2.2 2.2")
     Rhand.setAttribute("shadow")
     
-    root.appendChild(Lhand)
-    root.appendChild(Rhand)
+    root.prepend(Lhand)
+    root.prepend(Rhand)
 
     const hands = [
       Lhand,
@@ -197,12 +197,16 @@ const modelLoad = () => ({
     f_c_in.addEventListener("model-loaded", (e)=>{
       console.log("f_c_in model-loaded")
       f=f_c_in.object3D.children[0].children[0].children
-      
+
+      f[2].material.transparent=true
+      f[2].material.opacity=0
+      f[1].material = new THREE.MeshBasicMaterial()
       f[1].renderOrder=1
       f[1].material.side=0
       f[1].material.depthTest=false
       f[1].material.flatShading=true
       f[1].material.color={r:1,g:1,b:1}
+      f[0].material = new THREE.MeshBasicMaterial()
       f[0].renderOrder=2
       f[0].material.side=0
       f[0].material.depthTest=false
@@ -223,11 +227,15 @@ const modelLoad = () => ({
       console.log("f_e_in model-loaded")
       f=f_e_in.object3D.children[0].children[0].children
 
+      f[2].material.transparent=true
+      f[2].material.opacity=0
+      f[1].material = new THREE.MeshBasicMaterial()
       f[1].renderOrder=1
       f[1].material.side=0
       f[1].material.depthTest=false
       f[1].material.flatShading=true
       f[1].material.color={r:1,g:1,b:1}
+      f[0].material = new THREE.MeshBasicMaterial()
       f[0].renderOrder=2
       f[0].material.side=0
       f[0].material.depthTest=false

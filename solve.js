@@ -618,10 +618,10 @@ const vec	= 'yxxzyzxyzxxyyzz'
 // 	[0, 1, 2, 3, 4, 5],
 // )
 let solved_state = new State(
-	[1,7,0,3,5,4,2,6],
-	[0,0,0,2,0,0,2,2],
-	[2,4,1,6,7,5,3,0,8,9,10,11],
-	[1,0,1,0,0,1,0,1,0,0,0,0],
+	[7,4,2,0,1,5,3,6],
+	[2,0,1,0,0,2,1,0],
+	[2,4,9,0,7,1,5,3,11,10,6,8],
+	[0,1,0,1,1,1,1,0,1,0,0,0],
 	[0,1,2,3,4,5],
 )
 
@@ -1329,10 +1329,10 @@ let movementCount = -1
 let move180 = false
 
 let solve_preview = true
+let rote_speed = 2
 
-function motions(){	
-	if(sum_solution2.length > 0 && sum_solution2[0].length == 0) sum_solution2.shift()
-	
+function motions(){
+
 	if(move180){
 		movementCount -= 1
 		move180 = false
@@ -1345,7 +1345,7 @@ function motions(){
 	}
 
 	let time_tank = 0
-	time_tank += one_motion(sum_solution2[0][0], 4, 16 - sum_solution2.length)
+	time_tank += one_motion(sum_solution2[0][0], rote_speed, 16 - sum_solution2.length)
 	time_tank += 10
 	sum_solution2[0].shift()
 
@@ -1370,22 +1370,22 @@ function motions(){
 			const Pframe=document.getElementById(`frame`)
 			
 			// console.log(`frame_pos ${frame_pos} [${Pframe.classList.value.includes(typeName)}]`)
-			if(Pframe.classList.value.includes(typeName)){
-				// console.log(`--------Change--------    ${typeName}`)
+			// if(Pframe.classList.value.includes(typeName)){
+			// 	// console.log(`--------Change--------    ${typeName}`)
 
-				frame.setAttribute("visible",false)
-				// document.getElementById(type).setAttribute("visible",false)
-				Pframe.classList.remove(typeName)
-				// Pframe.classList.add(typeName)
-			}
+			// 	frame.setAttribute("visible",false)
+			// 	// document.getElementById(type).setAttribute("visible",false)
+			// 	Pframe.classList.remove(typeName)
+			// 	// Pframe.classList.add(typeName)
+			// }
 			
-			pointM(frame_pos, false)
-			Angle_move(undefined, -1,500)
+			// pointM(frame_pos, false)
+			// Angle_move(undefined, -1,500)
 		},time_tank)
 
 		setTimeout(() => {
 			scene.data.step_move = false
-		},time_tank+500)
+		},time_tank)
 	}
 	if(sum_solution2.length == 1 && sum_solution2[0].length == 0){
 		movementCount = -1
@@ -1394,6 +1394,7 @@ function motions(){
 		scene.Complete()
 	}
 	
+	if(sum_solution2.length > 0 && sum_solution2[0].length == 0) sum_solution2.shift()
 }
 
 function one_motion(sulb,speed,step){
@@ -1567,6 +1568,7 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 }
 
 function pointM(p,T = true){
+	if(p=="")	return
 	const P = document.getElementById(p).children[0].object3D.children[0].children[0].children
 	// console.log(`pointM name [${p}] ${T}`)
 	if(T){
