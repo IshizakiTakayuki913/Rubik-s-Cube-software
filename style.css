@@ -214,8 +214,30 @@ a-scene {
 .root-menu p {
 	color: #fff;
 	margin: unset;
-	display: inline;
+	pointer-events: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	/* display: inline; */
 }
+
+.root-menu button {
+	margin: unset;
+	border: unset;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	/* display: inline; */
+}
+/* .root-menu p #text{
+	font-size: 1.em;
+} */
 
 .root-menu button {
 	padding: unset;
@@ -223,7 +245,7 @@ a-scene {
 
 .root-menu div {
 	height: auto;
-	max-height: 100px;
+	max-height: 250px;
 	transition: max-height .5s linear 0s;
 	overflow: hidden;
 }
@@ -236,6 +258,46 @@ a-scene {
 	width: 100%;
 	background: #faa;
 	padding: 0 0 0 10px;
+}
+
+.root-menu div :not(.folder){
+	height: 1.5em;
+}
+
+.root-menu div:has(> .meter-out){
+	display: flex;
+}
+
+.meter-out {
+	width: 60%;
+	display: block;
+	height: 1.1em !important;
+	border-radius: 0.55em;
+	margin: 0.2em 5% 0.2em 0%;
+	background: #b5b8b2;
+}
+
+.meter-in {
+	width: calc(0.5em);
+	border-radius: 0.55em;
+	height: 0.5em !important;
+	margin: 0.3em 0 0 0.3em;
+	background: #374eff;
+	position: relative;
+	/* display: none; */
+	overflow: unset !important;
+}
+
+.meter-in > div{
+	position: absolute;
+	/* transform: translate(0.2em 0.2em); */
+	width: 0.9em !important;
+	height: 0.9em !important;
+	border-radius: 50%;
+	bottom: -0.2em;
+	right: -0.2em;
+	background: #374eff; 
+	/* overflow: unset !important; */
 }
 
 .clause-folder > div:not(.folder-tile) {
@@ -253,6 +315,7 @@ a-scene {
   content: '▶';
 }
 
+
 #b {
 	background: rgb(92, 114, 100);
 }
@@ -261,6 +324,9 @@ a-scene {
 }
 #d {
 	background: rgb(124 114 114);
+}
+#e {
+	background: rgb(58, 65, 102);
 }
 
 .rotate-img {

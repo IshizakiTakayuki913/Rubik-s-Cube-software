@@ -6,6 +6,7 @@
     
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.8thwall.com/web/aframe/aframe-extras-6.1.1.min.js"></script>
+    <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
 
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,6 +24,7 @@
     <script src="./colorinput.js"></script>
     <script src="./syncuser.js"></script>
     <script src="./modelLoad.js"></script>
+    <script src="./meter.js"></script>
 
     <link rel="stylesheet" href="./style.css">
   </head>
@@ -86,6 +88,7 @@
               wasd-controls-enabled="false"
               position="0 0 10"
               fov="60"
+              _near="1"
               camera-view="rayCube: #touch-cube; rayFace: #touch-face"
               cube-rotate="ray: #view"
               color-set="ray: #view">
@@ -137,6 +140,34 @@
         </div>
         <div>
           <button class="calculation_set_buttont">実行</button>
+        </div>
+        <div id="d" class="folder">
+          <div class="folder-tile">
+            <p>再生速度</p>
+          </div>
+          <div>
+            <div class="meter-out spped-meter">
+              <div class="meter-in un-pointer-events">
+                <div>
+                </div>
+              </div>
+            </div>
+            <p>2</p>
+          </div>
+        </div>
+        <div id="e" class="folder">
+          <div class="folder-tile">
+            <p>手-透明度</p>
+          </div>
+          <div>
+            <div class="meter-out hand-opacity-meter">
+              <div class="meter-in un-pointer-events">
+                <div>
+                </div>
+              </div>
+            </div>
+            <p>1</p>
+          </div>
         </div>
       </div>
     </div>

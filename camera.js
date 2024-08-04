@@ -63,7 +63,7 @@ const camera = () => ({
 			if(e.target.tagName !== 'CANVAS') return
 			d = camera2.object3D.position.z
 			d += e.deltaY/200
-			d = Math.max(d,0)
+			d = Math.max(d,3.375)
 			camera2.object3D.position.z = d
 		})
 
@@ -121,7 +121,7 @@ const camera = () => ({
 					Math.pow( e.touches[1].clientY - e.touches[0].clientY, 2) 
 				)
 				let dx = Math.sqrt( Math.pow( this.touchPos.x, 2) + Math.pow( this.touchPos.y, 2) )
-				d = Math.max(d - ( pdx - dx )/70 , 0)
+				d = Math.max(d - ( pdx - dx )/70 , 3.375)
 				camera2.object3D.position.z	= d
 			}
 			else if(this.touchMode === "none"){}

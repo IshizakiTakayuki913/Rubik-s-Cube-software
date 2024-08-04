@@ -173,12 +173,42 @@ const cubemode = () => ({
       // console.log("")
       hand_xyz.length=0
       Angle_xyz.length = 0
-      frame_rotate(undefined, this.now_step, 500, false)
-      Angle_move(undefined, this.now_step,500)
 
-      setTimeout(() => {
-        this.data.Execution_move = true
-      },500)
+      
+      if(this.now_step==12){
+        pointM(frame_pos, false)
+        typeName = frame_pos.includes("corner")?"corner":"edge"
+        type = frame_pos.includes("corner")?"frame_corner":"frame_edge"
+        const frame=document.getElementById(`frame_${typeName}`)
+        const Pframe=document.getElementById(`frame`)
+
+        if(Pframe.classList.value.includes(typeName)){
+        	frame.setAttribute("visible",false)
+        	Pframe.classList.remove(typeName)
+        }
+      }
+      if(this.now_step<12){
+        pointM(frame_pos, false)
+        frame_rotate(undefined, this.now_step, 500, false)
+        // Angle_move(undefined, this.now_step,500)
+      }
+
+      // console.log("/////  sum_solution2[0].length==0")
+      // console.log(sum_solution2)
+      if(sum_solution2[0].length==0 || sum_solution2[0].length==1 && sum_solution2[0]=="")  {
+        // console.log("/////  sum_solution2[0].length==0")
+        sum_solution2.shift()
+        if(sum_solution2.length == 0){
+          movementCount = -1
+          move180 = false
+          this.Complete()
+        }
+      }
+      else{
+        setTimeout(() => {
+          this.data.Execution_move = true
+        },100)
+      }
     })
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
@@ -194,9 +224,48 @@ const cubemode = () => ({
       Colorset.Intiset()
 			// console.log(`mode Change Input`)
 		})
+
+    
+    a=document.getElementsByClassName("meter-out")
+    
+    rote_speed_metar = new metar(a[0].classList[1], a[0], 0.2, 10, 4, true)
+    // console.log({rote_speed_metar})
+    hnd_opacity_metar = new metar(a[1].classList[1], a[1], 0.1, 1, 1, false)
+    // console.log({rote_speed_metar})
     
     this.Mode_set("Free")
 	},
+
+  meter(data){
+    // console.log(`meter`)
+    // console.log(data)
+    switch(data.id){
+      case "spped-meter":
+        rote_speed = data.value
+        break 
+
+      case "hand-opacity-meter":
+        // console.log("asdasdasd")
+        const Lhand = document.getElementById('L-hand')
+        const Rhand = document.getElementById('R-hand')
+
+        // console.log(Lhand)
+        Lhand.object3D.traverse( (child) => {
+          if(child.type == "SkinnedMesh") {
+            // child.material.transparent = true
+            child.material.opacity = data.value
+          }
+        })
+        Rhand.object3D.traverse( (child) => {
+          if(child.type == "SkinnedMesh") {
+            // child.material.transparent = true
+            child.material.opacity = data.value
+          }
+        })
+        break 
+
+    }
+  },
     		
   Mode_set(Nmode){
     this.data.cube_mode = Nmode
@@ -305,7 +374,7 @@ const cubemode = () => ({
 
   Ins_reset(){
       // console.log(this.NextMove)
-      console.log(`計算済み　リセット`)
+      // console.log(`計算済み　リセット`)
       this.Mode_set("Free")
   },
 
