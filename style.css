@@ -1,6 +1,12 @@
 * {
 	box-sizing: border-box;
 	font-size: 16px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 body {
@@ -77,11 +83,18 @@ a-scene {
 	width: auto;
 	height: 70%;
 	margin: 0 10px;
-	background: #000e78;
+	background: #7ca2c7;
   overflow: scroll;
 	scroll-snap-type: y mandatory;
 	transition: all 1s ease-out;
 	position: relative;
+	
+	/* -webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none; */
 }
 
 
@@ -156,12 +169,12 @@ a-scene {
 
 .un-pointer-events{
 	pointer-events: none;
-	-webkit-touch-callout: none;
+	/* -webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
-	user-select: none;
+	user-select: none; */
 }
 
 
@@ -215,24 +228,24 @@ a-scene {
 	color: #fff;
 	margin: unset;
 	pointer-events: none;
-	-webkit-touch-callout: none;
+	/* -webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
-	user-select: none;
+	user-select: none; */
 	/* display: inline; */
 }
 
 .root-menu button {
 	margin: unset;
 	border: unset;
-	-webkit-touch-callout: none;
+	/* -webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
-	user-select: none;
+	user-select: none; */
 	/* display: inline; */
 }
 /* .root-menu p #text{
@@ -347,6 +360,13 @@ a-scene {
 	flex-wrap: wrap;
 	row-gap: 5%;
 	padding: 2%;
+	
+	/* -webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none; */
 }
 
 .step-mode {

@@ -1331,6 +1331,11 @@ let move180 = false
 let solve_preview = true
 let rote_speed = 2
 
+const model_centers	=new Array(6)
+const model_corners	=new Array(8)
+const model_edges		=new Array(12)
+
+
 function motions(){
 
 	if(move180){
@@ -1771,10 +1776,14 @@ function psd() {
 	//console.log(t)
 }
 
-function objcetText(obj) {
+console.hash = function(obj) {
   this.length = Object.keys(obj).length;
   this.count = 0;
   this.outText = "{\n";
+  /**
+  * @param {hash} obj 処理対象のオブジェクト
+  * @param {number} times 処理中オブジェクトの階層
+  */
   this.format = function(obj,times){
     var i = 0;
     var _objlength = Object.keys(obj).length;
@@ -1807,11 +1816,13 @@ function objcetText(obj) {
       }
     }
     if(this.length == this.count){
-      return this.outText
+      console.log(this.outText);
     }
   }
-  return this.format(obj,0);
+  this.format(obj,0);
 }
+console.hash(testObj);
+
 
 function cubeOpa(op1,op2=undefined,objfunc = objopacty) {
   const cn = document.getElementById('center').children
