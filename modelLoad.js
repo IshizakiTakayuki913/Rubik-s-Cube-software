@@ -3,71 +3,8 @@ const modelLoad = () => ({
     modelType: {type: 'string', default: ""},
   },
   init(){
-    const rote = {
-      ce: ["0 180 0","0 90 0","0 0 0","0 -90 0","-90 0 0","90 0 0"],
-      e:  [
-        "0 -90 90","0 90 -90","0 90 90","0 -90 -90","0 180 0","0 90 0",
-        "0 0 0","0 -90 0","0 180 180","0 90 180","0 0 180","0 -90 180"
-        ],
-      c: [
-        "0 180 0","0 90 0","0 0 0","0 270 0",
-        "0 270 180","0 180 180","0 90 180","0 0 180"
-        ],
-    }
     const scene = document.getElementById('scene')
     const root = document.getElementById('root')
-
-
-    const center = document.createElement('a-entity')
-    center.id="center"
-    const center_in = document.createElement('a-entity')
-    const center_in_in = document.createElement('a-entity')
-    center_in_in.setAttribute("mixin","m_ce m_normal")
-    center_in_in.classList.add("clickable","cube")
-
-    for(let i=0;i<6;i++){
-      const cin = center_in.cloneNode(true)
-      const cinin = center_in_in.cloneNode(true)
-      cinin.setAttribute("rotation",rote.ce[i])
-      cin.id=`center${i}`
-      cin.appendChild(cinin)
-      center.appendChild(cin)
-    }
-    root.appendChild(center)
-
-    const edge = document.createElement('a-entity')
-    edge.id="edge"
-    const edge_in = document.createElement('a-entity')
-    const edge_in_in = document.createElement('a-entity')
-    edge_in_in.setAttribute("mixin","m_e m_normal")
-    edge_in_in.classList.add("clickable","cube")
-
-    for(let i=0;i<12;i++){
-      const cin = edge_in.cloneNode(true)
-      const cinin = edge_in_in.cloneNode(true)
-      cinin.setAttribute("rotation",rote.e[i])
-      cin.id=`edge${i}`
-      cin.appendChild(cinin)
-      edge.appendChild(cin)
-    }
-    root.appendChild(edge)
-    
-    const corner = document.createElement('a-entity')
-    corner.id="corner"
-    const corner_in = document.createElement('a-entity')
-    const corner_in_in = document.createElement('a-entity')
-    corner_in_in.setAttribute("mixin","m_c m_normal")
-    corner_in_in.classList.add("clickable","cube")
-
-    for(let i=0;i<8;i++){
-      const cin = corner_in.cloneNode(true)
-      const cinin = corner_in_in.cloneNode(true)
-      cinin.setAttribute("rotation",rote.c[i])
-      cin.id=`corner${i}`
-      cin.appendChild(cinin)
-      corner.appendChild(cin)
-    }
-    root.appendChild(corner)
 
     function name(ojb,index,r,map = undefined,normalMap = undefined, side = 2) {
       data = {
@@ -89,42 +26,25 @@ const modelLoad = () => ({
     }
 
     function AAA(){
-      const texture = new THREE.TextureLoader().load(`./mesh/M_a_${1}.jpg`)
-      const texture1 = new THREE.TextureLoader().load(`./mesh/M_n_${1}.jpg`)
-      A=3
-      AA=["center","corner","edge"]
-      B=[6,8,12]
-      C=[1,3,2]
+      // const texture = new THREE.TextureLoader().load(`./mesh/M_a_${1}.jpg`)
+      // const texture1 = new THREE.TextureLoader().load(`./mesh/M_n_${1}.jpg`)
+      // A=3
+      // AA=["center","corner","edge"]
+      // B=[6,8,12]
+      // C=[1,3,2]
 
-      for(let j=0;j<A;j++){
-        for(let i=0;i<B[j];i++){
-          for(let s=0;s<C[j];s++){
-            name(`${AA[j]}${i}`, s, 0.5, undefined, texture1, 2)
-          }    
-        }   
-      }
+      // for(let j=0;j<A;j++){
+      //   for(let i=0;i<B[j];i++){
+      //     for(let s=0;s<C[j];s++){
+      //       name(`${AA[j]}${i}`, s, 0.5, undefined, texture1, 2)
+      //     }    
+      //   }   
+      // }
       color_set(scrambled_state)
       // cubeOpa(1,0,objopacty2)
       // cubeOpa(1,0,objopacty3)
       
       root.object3D.visible = true
-    }
-
-    this.parts = [
-      center.children[5].children[0],
-      edge.children[11].children[0],
-      corner.children[7].children[0],
-    ]
-    
-    this.loadedCount=0
-
-    for(let i=0;i<3;i++){
-      this.parts[i].addEventListener('model-loaded',(e)=>{
-        this.loadedCount++
-        if(this.loadedCount==3){
-          AAA()
-        }
-      })
     }
     
     const Lhand = document.createElement('a-entity')
@@ -170,6 +90,21 @@ const modelLoad = () => ({
           // child.material.roughness = 0
         }
       })
+
+      Lhand.object3D.traverse((e) => {
+        if(e.type == "Bone"){
+          bone_L_hand[e.name] = e
+        }
+      })
+
+      Rhand.object3D.traverse((e) => {
+        if(e.type == "Bone"){
+          bone_R_hand[e.name] = e
+        }
+      })
+
+      L_hand = Lhand
+      R_hand = Rhand
           // child.material.transparent = true;
           // child.material.opacity = 0.5;
       // hands[0].object3D.visible=true
@@ -185,7 +120,6 @@ const modelLoad = () => ({
     
 
     const frame = document.getElementById('frame')
-
     const frame_corner = document.createElement('a-entity')
     frame_corner.id="frame_corner"
     frame_corner.object3D.visible = false
@@ -243,16 +177,34 @@ const modelLoad = () => ({
       f[0].material.color={r:0,g:0,b:0}
     })
 
-    // n=corner2.children[0].object3D.children[0].children[0].children
-    // for(let i=0;i<3;i++){
-    //     n[i].material.side=0
-    //     n[i].material.depthTest=false
-    //     n[i].renderOrder=3
-    // }
-    // n[3].renderOrder=0
-    // sky.setAttribute("color","#00000000")
-    // src ="#umi" 
-    // <a-plane id="plane" color="#CCC" height="20" width="20" position="0 -3 0" rotation="-90 0 0" visible="false" shadow></a-plane> -->
+
+    const model_cube = document.createElement('a-entity')
+    model_cube.id="cube"
+    model_cube.classList.add("clickable","cube")
+    model_cube.setAttribute("mixin","m_cube")
+    model_cube.setAttribute("shadow")
+    
+    root.prepend(model_cube)
+
+    str=  {"n":model_centers, "c":model_corners,  "e":model_edges}
+    str2= {"n":bone_centers,  "c":bone_corners,   "e":bone_edges}
+    
+    model_cube.addEventListener("model-loaded", (e) => {
+      console.log("model_cube model-loaded")
+      a=model_cube.object3D.children[0].children[0].children[0].children
+      b = a.map((x) => x.children[0])
+      for(let i=0;i<b.length;i++){
+        t=b[i].userData.name[0]
+        num=b[i].userData.name[1]+b[i].userData.name[2]
+        str[t][parseInt(num)] = b[i]
+        str2[t][parseInt(num)] = b[i].parent
+      }
+      full_cube = model_cube
+      for(b of bone_corners) bone_name_model[b.name]=b
+      for(b of bone_centers) bone_name_model[b.name]=b
+      for(b of bone_edges) bone_name_model[b.name]=b
+      AAA()
+    })
 
   },
 })

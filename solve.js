@@ -144,13 +144,25 @@ class Search {
 	}
 }
 
-inv_face = {
+const inv_face = {
     "U": "D",
     "D": "U",
     "L": "R",
     "R": "L",
     "F": "B",
-    "B": "F"
+    "B": "F",
+}
+
+const move_reverse = {
+	"U": "U'",  "U'": "U",
+	"D": "D'",  "D'": "D",
+	"L": "L'",  "L'": "L",
+	"R": "R'",  "R'": "R",
+	"F": "F'",  "F'": "F",
+	"B": "B'",  "B'": "B",
+	"x": "x'",  "x'": "x",
+	"y": "y'",  "y'": "y",
+	"z": "z'",  "z'": "z",
 }
 
 function is_move_available(prev_move, move){
@@ -172,6 +184,7 @@ function is_move_available(prev_move, move){
 
 function scamble2state(S_S,scramble){
 	let scrambled_state = S_S
+	// console.log(scrambled_state)
 	if(scramble == "")
 		return scrambled_state
 	
@@ -440,7 +453,6 @@ function palms(P){
 	}
 }
 
-
 const D_Cross = [
 	[
 		"U","U'","U2",
@@ -524,7 +536,7 @@ const PLL_Edge = [
 
 palms([D_Cross,D_Corner,F_Edge,OLL_Cross,OLL_Edge,PLL_Cross,PLL_Edge].flat(Infinity))
 
-console.log(move_names)
+// console.log(move_names)
 
 const set_color_data = [
 	{r:0,g:0.05,b:0.95},
@@ -602,7 +614,20 @@ color_cn = [
 	[5],
 ]
 const vec	= 'yxxzyzxyzxxyyzz'
-
+// let solved_state = new State(
+// 	[6, 3, 0, 5, 7, 2, 4, 1],
+// 	[1, 0, 0, 2, 0, 2, 1, 0],
+// 	[6, 3, 0, 8, 10, 4, 2, 1, 9, 11, 5, 7],
+// 	[1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0],
+// 	[0, 1, 2, 3, 4, 5],
+// )
+// let solved_state = new State(
+// 	[0,1,2,3,4,5,6,7],
+// 	[0,0,0,0,0,0,0,0],
+// 	[0,1,2,3,4,5,6,7,8,9,10,11],
+// 	[0,0,0,0,0,0,0,0,0,0,0,0,],
+// 	[0,1,2,3,4,5],
+// )
 // let solved_state = new State(
 //   [2,1,7,3,4,5,0,6],
 //   [1,1,1,1,0,0,2,0],
@@ -618,11 +643,11 @@ const vec	= 'yxxzyzxyzxxyyzz'
 // 	[0, 1, 2, 3, 4, 5],
 // )
 let solved_state = new State(
-	[7,4,2,0,1,5,3,6],
-	[2,0,1,0,0,2,1,0],
-	[2,4,9,0,7,1,5,3,11,10,6,8],
-	[0,1,0,1,1,1,1,0,1,0,0,0],
-	[0,1,2,3,4,5],
+	[0, 7, 4, 3, 1, 2, 6, 5],
+	[0, 2, 1, 0, 0, 1, 2, 0],
+	[2, 9, 6, 10, 3, 7, 4, 5, 11, 1, 0, 8],
+	[0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0],
+	[0, 1, 2, 3, 4, 5],
 )
 
 function rotate(roates ,time = 1000,dist_time = 50){
@@ -670,6 +695,7 @@ function rotate(roates ,time = 1000,dist_time = 50){
 				scrambled_state = scrambled_state.hand_move(moves[roat_list[i]])
 				color_data = color_re_set(roat_list[i])
 			}
+			// console.log(roat_list[i])
 			one_rotate(scrambled_state, roat_list[i])
 		}, time_tank + time)
 		time_tank += time + dist_time
@@ -682,170 +708,87 @@ function one_rotate(sc_st,roate){
 
 	const index = faces.indexOf(roate[0])
 
-	corner = document.getElementById("corner").children
-	edge = document.getElementById("edge").children
-	center = document.getElementById("center").children
+	corner = model_corners
+	edge = model_edges
+	center = model_centers
 
-	// console.log(moves_face_c[index])
 	for(let i of moves_face_c[index]){
-		corner[i].setAttribute('rotation', {x:0,y:0,z:0})
-		corner[i].removeAttribute('animation')
-		let F = corner[i].children[0].object3D.children[0].children[0].children
+		let F = corner[i].children
 		for(let s=0;s<3;s++)
 	  	F[s].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
 	}
 
 	for(let i of moves_face_e[index]){
-		edge[i].setAttribute('rotation', {x:0,y:0,z:0})
-		edge[i].removeAttribute('animation')
-		let F = edge[i].children[0].object3D.children[0].children[0].children
+		let F = edge[i].children
 		for(let s=0;s<2;s++)
 	  	F[s].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
 	}
 
 	for(let i of moves_face_cn[index]){
-		center[i].setAttribute('rotation', {x:0,y:0,z:0})
-		center[i].removeAttribute('animation')
-		let F = center[i].children[0].object3D.children[0].children[0].children
+		let F = center[i].children
 	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
+	full_cube.removeAttribute('animation-mixer')
 	return sc_st
 }
 
 function color_set(sc_st){
 	// console.log(`----- color_set ----`)
-	corner = document.getElementById("corner").children
-	edge = document.getElementById("edge").children
-	center = document.getElementById("center").children
+	corner = model_corners
+	edge = model_edges
+	center = model_centers
+
+	// console.log(sc_st)
 
 	for(let i=0;i<corner.length;i++){
-		let F = corner[i].children[0].object3D.children[0].children[0].children
+		let F = corner[i].children
 		for(let s=0;s<3;s++)
 	  	F[s].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
 	}
 
 	for(let i=0;i<edge.length;i++){
-		let F = edge[i].children[0].object3D.children[0].children[0].children
+		let F = edge[i].children
 		for(let s=0;s<2;s++)
 	  	F[s].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
 	}
 
 	for(let i=0;i<center.length;i++){
-		let F = center[i].children[0].object3D.children[0].children[0].children
+		let F = center[i].children
 	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
 }
 
 function one_rotate_anim(roate,time = 2000){
-	const index = faces.indexOf(roate[0])
-	const rad = roate[1]
-	// console.log("roate "+roate+" len "+rotate.length+" index "+index+" rad "+rad)
-
-	corner = document.getElementById("corner").children
-	edge = document.getElementById("edge").children
-	center = document.getElementById("center").children
-
-						// URLFDB
-	let size = 1
-	if(rad == '\'')	size = -1
-	else if(rad == '2')	size = 2
-
-	// console.log(`one_rotate_anim index:${index} size:${size}`)
-	// console.log(`one_rotate_anim moves_face_c[index] [${moves_face_c[index]}]`)
-	// console.log(`vec.charAt(index) [${vec.charAt(index)}] faces_rad[index] [${faces_rad[index]}]`)
-
-	for(let i of moves_face_c[index]){
-		corner[i].setAttribute('animation', {
-			property: 'rotation.'+vec.charAt(index),
-			dur: time,
-			from: 0,
-			to: faces_rad[index] * 90 * size,
-			// easing: 'easeOutSine',
-			easing: 'linear',
-		})
-	}
-
-	for(let i of moves_face_e[index]){
-		edge[i].setAttribute('animation', {
-			property: 'rotation.'+vec.charAt(index),
-			dur: time,
-			from: 0,
-			to: faces_rad[index] * 90 * size,
-			// easing: 'easeOutSine',
-			easing: 'linear',
-		})
-	}
-
-	for(let i of moves_face_cn[index]){
-		center[i].setAttribute('animation', {
-			property: 'rotation.'+vec.charAt(index),
-			dur: time,
-			from: 0,
-			to: faces_rad[index] * 90 * size,
-			// easing: 'easeOutSine',
-			easing: 'linear',
-		})
-	}
+	full_cube.setAttribute('animation-mixer', {
+		clip: roate,
+		loop: 'once',
+		timeScale: 1000/time,
+		clampWhenFinished: true,
+	})
 }
 
-function Compensation_anim(roate,time = 5000, From, To){
-	const index = faces.indexOf(roate[0])
-	const rad = roate[1]
-	// console.log("roate "+roate+" len "+rotate.length+" index "+index+" rad "+rad)
-
-	corner = document.getElementById("corner").children
-	edge = document.getElementById("edge").children
-	center = document.getElementById("center").children
-
-						// URLFDB
-	let size = 1
-	if(rad == '\'')	size = -1
-	else if(rad == '2')	size = 2
-
-	// console.log(`one_rotate_anim index:${index} size:${size}`)
-	// console.log(`one_rotate_anim moves_face_c[index] [${moves_face_c[index]}]`)
-	// console.log(`vec.charAt(index) [${vec.charAt(index)}] faces_rad[index] [${faces_rad[index]}]`)
-
-	for(let i of moves_face_c[index]){
-		corner[i].setAttribute('animation', {
-			property: 'rotation.'+vec.charAt(index),
-			dur: time,
-			from: From,
-			to: To,
-			// easing: 'easeOutSine',
-			easing: 'linear',
-		})
+function Compensation_anim(Rota,Time = 2000, Rad){
+	roate = move_reverse[Rota]
+	rad = Math.max(Math.PI/2 - Rad, 0.001)
+	time = Time  * (Math.PI/2) / rad
+	StartAt = time - Time
+	data = {
+		clip: roate,
+		repetitions: "1",
+		timeScale: -1000/time,
+		startAt: StartAt,
+		clampWhenFinished: true,
 	}
-
-	for(let i of moves_face_e[index]){
-		edge[i].setAttribute('animation', {
-			property: 'rotation.'+vec.charAt(index),
-			dur: time,
-			from: From,
-			to: To,
-			// easing: 'easeOutSine',
-			easing: 'linear',
-		})
-	}
-
-	for(let i of moves_face_cn[index]){
-		center[i].setAttribute('animation', {
-			property: 'rotation.'+vec.charAt(index),
-			dur: time,
-			from: From,
-			to: To,
-			// easing: 'easeOutSine',
-			easing: 'linear',
-		})
-	}
+	full_cube.removeAttribute('animation-mixer')
+	full_cube.setAttribute('animation-mixer', data)
 }
-
 
 let scrambled_state = solved_state
 
 let search = new Search()
 let sum_solution = []
 let sum_solution2 = []
+
 
 const solv_step = [
 	[
@@ -1202,8 +1145,11 @@ function BBB(){
 	sum_solution.push(t.join(' ').split(' '))
 	sum_solution2=sum_solution
 	
-	console.log(tank)
+	// console.log(tank)
+
 	// console.log(sum_solution)
+	// console.log(timeList)
+	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)))
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
 		scene.Ins_Complete(tank)
@@ -1331,10 +1277,23 @@ let move180 = false
 let solve_preview = true
 let rote_speed = 2
 
+let full_cube = undefined
 const model_centers	=new Array(6)
 const model_corners	=new Array(8)
 const model_edges		=new Array(12)
 
+const bone_centers	=new Array(6)
+const bone_corners	=new Array(8)
+const bone_edges		=new Array(12)
+
+
+let L_hand = undefined
+let R_hand = undefined
+
+const bone_L_hand	= {}
+const bone_R_hand	= {}
+
+let bone_name_model={}
 
 function motions(){
 
@@ -1369,8 +1328,8 @@ function motions(){
 	}
 	else {
 		setTimeout(() => {
-			typeName = frame_pos.includes("corner")?"corner":"edge"
-			type = frame_pos.includes("corner")?"frame_corner":"frame_edge"
+			typeName = frame_pos[0]=="corner"?"corner":"edge"
+			type = frame_pos[0]=="corner"?"frame_corner":"frame_edge"
 			const frame=document.getElementById(`frame_${typeName}`)
 			const Pframe=document.getElementById(`frame`)
 			
@@ -1469,7 +1428,7 @@ function one_motion(sulb,speed,step){
 }
 
 const hand_xyz = []
-let frame_pos = ""
+let frame_pos = ["",""]
 
 function frame_rotate(sulb = undefined, step, time, anime = false){
 	let text = "\n\n"
@@ -1524,7 +1483,7 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	frame.setAttribute('rotation', {x:0,y:0,z:0})
 
 	if(sulb == undefined){
-		pointM(`${typeName}${pos}`)
+		pointM([typeName,pos])
 		text += `--------- undefined NO ${typeName}${pos} ---------\n\n`
 		// console.log(text)
 		return
@@ -1553,7 +1512,7 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 	text+=	`anime [${anime}]  rot [rotation.${vec.charAt(index)}]  to [${faces_rad[index] * 90 * size}]`
 
 	next_pos = moves[sulb][`${type}p`].indexOf(pos)
-	frame_pos = `${typeName}${next_pos}`
+	frame_pos = [typeName, next_pos]
 
 	// console.log(text+"\n\n")
 	if(anime){
@@ -1566,15 +1525,18 @@ function frame_rotate(sulb = undefined, step, time, anime = false){
 		})
 		
 		setTimeout(() => {
-			pointM(`${typeName}${pos}`,false)
-			pointM(`${typeName}${next_pos}`,true)
+			pointM([typeName,pos],false)
+			pointM([typeName,next_pos],true)
 		},time)
 	}
 }
 
 function pointM(p,T = true){
-	if(p=="")	return
-	const P = document.getElementById(p).children[0].object3D.children[0].children[0].children
+	if(p[0]=="")	return
+	// console.log(p)
+	const A = p[0]=="corner"?model_corners:(p[0]=="center"?model_centers:model_edges)
+	const P = A[p[1]].children
+	// document.getElementById(p).children[0].object3D.children[0].children[0].children
 	// console.log(`pointM name [${p}] ${T}`)
 	if(T){
 		for(let i=0;i<P.length-1;i++){
@@ -1723,24 +1685,59 @@ function one_hand_move(sulb, speed, hand, hdvec, influence, Su){
 	return {time,sovle_time,move_schedule}
 }
 
-function raycast_rotate(roate,rad){
-	const index = faces.indexOf(roate[0])
-	corner = document.getElementById("corner").children
-	edge = document.getElementById("edge").children
-	center = document.getElementById("center").children
+function raycast_rotate(rote, rad) {
+		// if(rad>Math.PI-0.00001)	return
+		time = Math.min(Math.floor(rad/(Math.PI/2)*23),23)
+		rote_name = [
+			"B",			"B'",			"big",			"D",			"D'",
+			"F",			"F'",			"Idole",			"L",			"L'",
+			"R",			"R'",			"spring",			"U",			"U'",
+			"x",			"x'",			"y",			"y'",			"z",			"z'"
+	]
+		animations = cube.object3D.children[0].animations[rote_name.indexOf(rote)]
+		for(ani of animations.tracks){
+				if(ani.times.length <= 2) continue
+				names = ani.name.split(".")
+				bone = names[0]
+				// type = names[1]
+				bone_name_model[bone].quaternion.set(
+						ani.values[time*4],
+						ani.values[time*4+1],
+						ani.values[time*4+2],
+						ani.values[time*4+3]
+				)
+		}
+}
 
-	for(let i of moves_face_c[index]){
-		corner[i].object3D.rotation[vec[index]] = rad
-	}
-
-	for(let i of moves_face_e[index]){
-		edge[i].object3D.rotation[vec[index]] = rad
-	}
-
-	for(let i of moves_face_cn[index]){
-		center[i].object3D.rotation[vec[index]] = rad
+function hand_raycast_rotate(rote, frame, bone) {
+	// if(rad>Math.PI-0.00001)	return
+	// time = Math.min(Math.floor(rad/(Math.PI/2)*23),23)
+	rote_name = [
+		"B'.1", "B'.1.b", "B'.1.f", 'B.1', 'B.1.f', 
+		'Change.1', 'Change.2', "D'.1", "D'.1.b",
+		"D'.1.f", 'D.1', 'D.1.f', "F'.1", "F'.1.f",
+		"F'.2", "F'.2.b", "F'.2.f", 'F.1', 'F.1.b',
+		'F.1.f', 'Idole', "L'.1", "L'.1.f", 'L.1',
+		'L.1.f', "U'.1", "U'.1.f", 'U.1', 'U.1.b',
+		'U.1.f', 'U.2', 'U.2.b', 'U.2.f', "y'.1",
+		"y'.1.b", 'y.1', 'y.1.b'
+	]
+	animations = L_hand.object3D.children[0].animations[rote_name.indexOf(rote)]
+	for(ani of animations.tracks){
+			if(ani.times.length <= 2) continue
+			names = ani.name.split(".")
+			index = names[0]
+			type = names[1][0]=="p"?3:4
+			bone[index][names[1]].set(
+					ani.values[frame*type],
+					ani.values[frame*type+1],
+					ani.values[frame*type+2],
+					ani.values[frame*type+3]
+			)
 	}
 }
+
+
 
 function remove_animation(roate){
 	const index = faces.indexOf(roate[0])
@@ -1821,24 +1818,208 @@ console.hash = function(obj) {
   }
   this.format(obj,0);
 }
-console.hash(testObj);
+// console.hash(testObj);
+function cubeOpa() {
+	corner = model_corners
+	edge = model_edges
+	center = model_centers
 
+	// console.log(model_corners)
+	// console.log(corner.length)
 
-function cubeOpa(op1,op2=undefined,objfunc = objopacty) {
-  const cn = document.getElementById('center').children
-  for(let i=0;i<cn.length;i++)
-    objfunc(cn[i].children[0], op1,op2)
-      
-  const c = document.getElementById('corner').children
-  for(let i=0;i<c.length;i++)
-    objfunc(c[i].children[0], op1,op2)
-      
-  const e = document.getElementById('edge').children
-  for(let i=0;i<e.length;i++)
-    objfunc(e[i].children[0], op1,op2)
+	for(let i=0;i<corner.length;i++){
+		let F = corner[i]
+		objopacty2(F)
+	}
+
+	for(let i=0;i<edge.length;i++){
+		let F = edge[i]
+		objopacty2(F)
+	}
+
+	for(let i=0;i<center.length;i++){
+		let F = center[i]
+		objopacty2(F)
+	}
 }
-function objopacty(ojb, op1 = 0.5, op2 = undefined) {
-  const F = ojb.object3D.children[0].children[0].children
+
+function cubeOpa2(step) {
+	vis_p = [
+		[
+			[0,0,0,0,0,0,0,0,],
+			[0,0,0,0,0,0,0,0,0,0,0,0,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,0,0,0,0,],
+			[0,0,0,0,0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[0,0,0,0,0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[1,1,1,1,0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+	]
+
+	vis = [
+		[
+			[0,0,0,0,0,0,0,0,],
+			[0,0,0,0,1,1,1,1,0,0,0,0,],
+			[0,0,0,0,0,0,],
+		],
+		[
+			[1,1,1,1,0,0,0,0,],
+			[0,0,0,0,1,1,1,1,0,0,0,0,],
+			[0,0,0,0,0,0,],
+		],
+		[
+			[1,1,1,1,0,0,0,0,],
+			[0,0,0,0,0,0,0,0,0,0,0,0,],
+			[0,0,0,0,0,0,],
+		],
+	]
+
+
+	corner = model_corners
+	edge = model_edges
+	center = model_centers
+
+	// console.log(model_corners)
+	// console.log(corner.length)
+
+	for(let i=0;i<corner.length;i++){
+		let F = corner[i]
+		objopacty4(F, vis_p[step][0][i])
+	}
+
+	for(let i=0;i<edge.length;i++){
+		let F = edge[i]
+		objopacty4(F, vis_p[step][1][i])
+	}
+
+	for(let i=0;i<center.length;i++){
+		let F = center[i]
+		objopacty4(F, vis_p[step][2][i])
+	}
+	
+	if(step == 4 || step == 5 || step == 6){
+		for(let i=0;i<corner.length;i++){
+			let F = corner[i]
+			if(vis[step - 4][0][i] == 0)	continue
+			objopacty5(F, vis_p[step][0][i])
+		}
+
+		for(let i=0;i<edge.length;i++){
+			let F = edge[i]
+			if(vis[step - 4][1][i] == 0)	continue
+			objopacty5(F, vis_p[step][1][i])
+		}
+	}
+}
+
+
+function cubeOpa3(step) {
+	vis_p = [
+		[
+			[0,0,0,0,0,0,0,0,],
+			[0,0,0,0,0,0,0,0,0,0,0,0,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,0,0,0,0,],
+			[0,0,0,0,0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[0,0,0,0,0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[1,1,1,1,0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[0,0,0,0,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+		[
+			[1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,1,1,1,1,1,1,],
+			[1,1,1,1,1,1,],
+		],
+	]
+
+
+
+	corner = model_corners
+	edge = model_edges
+	center = model_centers
+
+	// console.log(model_corners)
+	// console.log(corner.length)
+
+	for(let i=0;i<corner.length;i++){
+		let F = corner[i]
+		objopacty4(F, vis_p[step][0][i])
+	}
+
+	for(let i=0;i<edge.length;i++){
+		let F = edge[i]
+		objopacty4(F, vis_p[step][1][i])
+	}
+
+	for(let i=0;i<center.length;i++){
+		let F = center[i]
+		objopacty4(F, vis_p[step][2][i])
+	}
+
+
+
+	
+}
+
+
+function objopacty(ojb, op1 = 0.5, step, op2 = undefined) {
+  const F = ojb.children
   for(let s=0;s<F.length;s++){
       F[s].material.opacity = op1
       F[s].material.transparent = true
@@ -1849,24 +2030,34 @@ function objopacty(ojb, op1 = 0.5, op2 = undefined) {
 	}
 }
 
-function objopacty2(ojb, op1 = 0.5, op2 = undefined) {
-  const F = ojb.object3D.children[0].children[0].children
-	if(op1 != 1){
-		for(let s=0;s<F.length;s++){
-				F[s].material.opacity = op1
-				F[s].material.transparent = true
-		}
+function objopacty2(ojb) {
+  const F = ojb.children
+	for(let s=0;s<F.length;s++){
+		F[s].visible = true
 	}
-	if(op2 != undefined){
 		F[F.length-1].visible = false
-	}
 }
 
 function objopacty3(ojb, op1 = 0.5, op2 = undefined) {
-  const F = ojb.object3D.children[0].children[0].children
+  const F = ojb.children
 	for(let s=0;s<F.length;s++){
 		F[s].renderOrder  = 10
 	}
 	//console.log("function objopacty3")
 }
+
 // cubeOpa(0.8,0)
+function objopacty4(ojb, vis) {
+  const F = ojb.children
+	for(let s=0;s<F.length-1;s++){
+		F[s].visible = (vis == 1? true:false)
+	}
+}
+
+function objopacty5(ojb) {
+  const F = ojb.children
+	for(let s=0;s<F.length-1;s++){
+		F[s].visible = false
+	}
+	ojb.children[0].visible = true
+}

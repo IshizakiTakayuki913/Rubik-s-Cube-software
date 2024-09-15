@@ -362,25 +362,26 @@ const colorinput = () => ({
       console.log("no Color")
       return
     }
-    
-    const choice_parts = parts.object.el.parentElement.id
+    console.log(parts)
+
+    const choice_parts = this.parts.object.parent.name
     const regex = /[^a-z]/g;
     const regex2 = /[^0-9]/g;
     const parts_type = choice_parts.replace(regex, "")
-    const be = choice_parts.replace(regex2, "")
-    if(!(parts_type === "edge" || parts_type === "corner"))	return
+    const be = parseInt(choice_parts.replace(regex2, ""))
+    if(!(parts_type === "e" || parts_type === "c"))	return
 
     const pos = parts
 
     let num = 0
-    if(parts_type === "edge"	)
+    if(parts_type === "e"	)
       num = pos.face.normal.y > 0.707 ? 0 : 1
-    else if(parts_type === "corner")
+    else if(parts_type === "c")
       num = pos.face.normal.y > 0.707 ? 0 : (pos.face.normal.x > 0.707 ? 1 : 2)
 
     // console.log(`Color_set type [${parts_type}] num [${be}]index [${num}]`)
-    face = {parts: parts.object.el, type: parts_type, Pindex: parseInt(be), Findex: num}
-    // console.log(face)
+    face = {parts: choice_parts, type: parts_type, Pindex: be, Findex: num}
+    console.log(face)
 
     
     if(this.cData[face.type[0]][face.Pindex][face.Findex]  == this.color_index[this.choiceColor]) return
@@ -388,9 +389,9 @@ const colorinput = () => ({
       this.cData.count[this.cData[face.type[0]][face.Pindex][face.Findex]] += 1
 
     
-    const f = face.parts.object3D.children[0].children[0].children
+    const f = this.parts.object
     let Check_ans = false
-    f[face.Findex].material.color = set_color_data[this.choiceColor]
+    f.material.color = set_color_data[this.choiceColor]
     // console.log(`type [${face.type[0]}] Pin [${[face.Pindex]}] Fin [${face.Findex}]`)
     // console.log(this.cData)
 
@@ -421,19 +422,19 @@ const colorinput = () => ({
       count: [8,8,8,8,8,8],
     }
     
-    corner = document.getElementById("corner").children
-    edge = document.getElementById("edge").children
+    corner = model_corners
+    edge = model_edges
 
     const gray = {r:0.5,g:0.5,b:0.5}
   
     for(let i=0;i<corner.length;i++){
-      let F = corner[i].children[0].object3D.children[0].children[0].children
+      let F = corner[i].children
       for(let s=0;s<3;s++)
         F[s].material.color = gray
     }
   
     for(let i=0;i<edge.length;i++){
-      let F = edge[i].children[0].object3D.children[0].children[0].children
+      let F = edge[i].children
       for(let s=0;s<2;s++)
         F[s].material.color = gray
     }

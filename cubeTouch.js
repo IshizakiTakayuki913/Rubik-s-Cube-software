@@ -177,8 +177,8 @@ const cubemode = () => ({
       
       if(this.now_step==12){
         pointM(frame_pos, false)
-        typeName = frame_pos.includes("corner")?"corner":"edge"
-        type = frame_pos.includes("corner")?"frame_corner":"frame_edge"
+        typeName = frame_pos[0]=="corner"?"corner":"edge"
+        type = frame_pos[0]=="corner"?"frame_corner":"frame_edge"
         const frame=document.getElementById(`frame_${typeName}`)
         const Pframe=document.getElementById(`frame`)
 
@@ -435,10 +435,10 @@ const cubemode = () => ({
     this.Mode_set("Free")
   },
 
-	tick() {
-    if(this.data.Execution_move){
-			motions()
-			this.data.Execution_move = false
-    }
-	},
+	// tick() {
+  //   if(this.data.Execution_move){
+	// 		motions()
+	// 		this.data.Execution_move = false
+  //   }
+	// },
 })

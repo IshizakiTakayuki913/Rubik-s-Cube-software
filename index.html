@@ -4,9 +4,10 @@
     <meta charset="utf-8" />
     <title>sample</title>
     
+    <!-- <script src="./node_modules2/aframe/dist/aframe-v1.6.0.min.js"></script>
+    <script src="./node_modules/aframe-extras/dist/aframe-extras.min.js"></script> -->
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-    <script src="https://cdn.8thwall.com/web/aframe/aframe-extras-6.1.1.min.js"></script>
-    <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.4.0/dist/aframe-extras.min.js"></script>
 
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -25,6 +26,7 @@
     <script src="./syncuser.js"></script>
     <script src="./modelLoad.js"></script>
     <script src="./meter.js"></script>
+    <script src="./motionList.js"></script>
 
     <link rel="stylesheet" href="./style.css">
   </head>
@@ -52,25 +54,25 @@
       >
         <a-assets >
           <a-asset-item id="model_hand"   src="./model/sub-hand.glb"></a-asset-item>
-          <a-asset-item id="model_corner" src="./model/corner.glb"></a-asset-item>
+          <!-- <a-asset-item id="model_corner" src="./model/corner.glb"></a-asset-item>
           <a-asset-item id="model_edge"   src="./model/edge.glb"></a-asset-item>
-          <a-asset-item id="model_center" src="./model/center.glb"></a-asset-item>
+          <a-asset-item id="model_center" src="./model/center.glb"></a-asset-item> -->
 
           <a-asset-item id="model_frame_edge" src="./model/frame-edge.glb"></a-asset-item>
           <a-asset-item id="model_frame_corner" src="./model/frame-corner.glb"></a-asset-item>
           <a-asset-item id="model_frame_center" src="./model/frame-center.glb"></a-asset-item>
 
-          <a-asset-item id="model_run" src="./model/normal-box.glb"></a-asset-item>
+          <!-- <a-asset-item id="model_run" src="./model/normal-box.glb"></a-asset-item> -->
           <a-asset-item id="model_cube_full" src="./model/cube-full.glb"></a-asset-item>
 
-          <a-mixin id="m_ce" gltf-model="#model_center"></a-mixin>
+          <!-- <a-mixin id="m_ce" gltf-model="#model_center"></a-mixin>
           <a-mixin id="m_e" gltf-model="#model_edge"></a-mixin>
-          <a-mixin id="m_c" gltf-model="#model_corner"></a-mixin>
+          <a-mixin id="m_c" gltf-model="#model_corner"></a-mixin> -->
           <a-mixin id="m_normal" scale="1 1 1"></a-mixin>
           <a-mixin id="m_hand"  gltf-model="#model_hand"
             animation-mixer="clip: Idole; loop: repeat" shadow visible="false"></a-mixin>
           
-          <a-mixin id="m_cube"  gltf-model="#model_cube_full" geometry></a-mixin>
+          <a-mixin id="m_cube"  gltf-model="#model_cube_full" geometry animation-mixer></a-mixin>
 
           <a-mixin id="m_f_e"  gltf-model="#model_frame_edge"></a-mixin>
           <a-mixin id="m_f_c"  gltf-model="#model_frame_corner"></a-mixin>

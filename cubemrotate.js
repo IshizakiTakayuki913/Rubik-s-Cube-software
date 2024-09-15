@@ -16,16 +16,33 @@
 		this.faces_rad = {
 			"U":-1, "D":1, "L":1, "R":-1, "B":1, "F":-1, "y":-1, "x":-1, "z":-1, 
 		}
+
 		this.scene = document.getElementById('scene')
 
     const tile_out = document.createElement('a-entity')
     const tile_in = document.createElement('a-plane')
     tile_out.id="tile-out"
+
+    // const tile_box = document.createElement('a-box')
+    // tile_box.id="cub-box"
+    // tile_box.classList.add("clickable","cube")
+    // tile_box.setAttribute("position","0 0 0")
+    // tile_box.setAttribute("width","3.1")
+    // tile_box.setAttribute("height","3.1")
+    // tile_box.setAttribute("depth","3.1")
+    // tile_box.setAttribute("material",{
+    //    _visible: false, opacity:0.2, color: "#F00", side: 2 
+    // })
+    // document.getElementById("root").appendChild(tile_box)
+    // tile_box.object3D.width=0.05
+    // tile_box.object3D.height=0.05
+    // tile_box.object3D.deep=4
+
     tile_in.id="tile"
     tile_in.setAttribute("width","50")
     tile_in.setAttribute("height","50")
     tile_in.setAttribute("material",{
-      visible: false, //opacity:0.5, color: "#AAF", 
+       visible: false, //opacity:0.3, color: "#AAF", side: 2 
     })
     tile_in.classList.add("clickable","tile")
     
@@ -40,10 +57,10 @@
 			if(e.target.tagName !== 'CANVAS') return
       if(this.mousePress || this.touchPress) return
       this.parts = this.hit({x:e.offsetX , y:e.offsetY},".cube, .sky", "cube")
+      // console.log(this.parts.point)
 			if(!this.parts) return
       this.search_parts()	
       this.mousePress = true
-      // console.log(this.parts.object.el.parentElement.id)
 			this.mousePos = {x:e.offsetX , y:e.offsetY}
 		})
 
@@ -74,7 +91,7 @@
 		this.scene.addEventListener('touchend', (e) => {
 			if(!this.touchPress)	return
 			if(e.changedTouches[0].identifier ==this.touchId){
-        console.log("identifier touchend")
+      //  console.log("identifier touchend")
         this.touchId = undefined
         this.touchPress = false
         
@@ -128,8 +145,19 @@
 		
     if(intersects.length == 0) return false
 
-		if(intersects[0].object.el.classList[1]===hitName)
+		else if(intersects[0].object.el.classList[1]==hitName){
+      if(hitName=="cube"){
+        text=["\n"]
+        for(t of intersects){
+            a=""
+            a+=`id [${t.object.el.id}] `
+            a+=`point [x:${Math.round(t.point.x*100)/100} y:${Math.round(t.point.y*100)/100} z:${Math.round(t.point.z*100)/100} ] `
+            text.push(a)
+        }
+        // console.log(text.join(",\n"))
+      }
 			return intersects[0]
+    } 
 
 		// else if(mode == 1){
     //   for(let Int of intersects){
@@ -150,7 +178,7 @@
       ["z", "x"],
       ["z'","x"],
       
-      ["L"],["B`"],
+      ["L"],["B'"],
       ["R"],["B'"],
       ["R"],["F'"],
       ["L"],["F'"],
@@ -174,7 +202,7 @@
       ["U'","B"],
 
       ["F","R"],     //Corner normal
-      ["U'","F`"],
+      ["U'","F'"],
       ["U'","R"],
 
       ["L","F"],
@@ -198,64 +226,126 @@
       ["D'","F'"],
       ["D'","L"],
     ]
+    const parts_rot = {
+      c:[
+        {x:0, y:180, z:0},
+        {x:0, y:90, z:0},
+        {x:0, y:0, z:0},
+        {x:0, y:-90, z:0},
+        {x:0, y:-90, z:180},
+        {x:0, y:180, z:180},
+        {x:0, y:90, z:180},
+        {x:0, y:0, z:180},
+      ],
+      n:[
+        {x:0, y:180, z:0},
+        {x:0, y:90, z:0},
+        {x:0, y:0, z:0},
+        {x:0, y:-90, z:0},
+        {x:-90, y:0, z:0},
+        {x:90, y:0, z:0},
+      ],
+      e:[
+        {x:0, y:-90, z:90},
+        {x:0, y:90, z:-90},
+        {x:0, y:90, z:90},
+        {x:0, y:-90, z:-90},
 
-    // console.log("search_parts")
+        {x:0, y:180, z:0},
+        {x:0, y:90, z:0},
+        {x:0, y:0, z:0},
+        {x:0, y:-90, z:0},
+        
+        {x:0, y:180, z:180},
+        {x:0, y:90, z:180},
+        {x:0, y:0, z:180},
+        {x:0, y:-90, z:180},
+      ],
+    }
+
+  //  console.log(`search_part ${this.parts.object.parent.name}`)
+  //  console.log(this.parts)
 
     const regex = /[^a-z]/g;
     const regex2 = /[^0-9]/g;
-    const parts_type = this.parts.object.el.parentElement.id.replace(regex, "")
-    const be = this.parts.object.el.parentElement.id.replace(regex2, "")
-    if(!(parts_type === "edge" || parts_type === "center" || parts_type === "corner"))	return
+    const parts_type = this.parts.object.parent.name.replace(regex, "")
+    const be = parseInt(this.parts.object.parent.name.replace(regex2, ""))
+    if(!(parts_type === "c" || parts_type === "n" || parts_type === "e"))	return
 
     const pos = this.parts
     let face = 0
 
     let num = 0
-    if(parts_type === "center"){
+    
+    text=""
+
+    if(parts_type === "n"){
       num = be
       // console.log(`center num [${num}]`)
+      text+=`center num [${num}] face [${face}]\n`
     }
-    else if(parts_type === "edge"	){
+    else if(parts_type === "e"	){
       num = be*2 + 6
-      face = pos.face.normal.y > 0.707 ? 0 : 1
+      face = pos.normal.y > 0.707 ? 0 : 1
       num += face
       
       // console.log(`edge num [${num}]`)
+      text+=`edge num [${num}] face [${face}]\n`
     }
-    else if(parts_type === "corner"){
+    else if(parts_type === "c"){
       num = be*3 + 30
-      face = pos.face.normal.y > 0.707 ? 0 : (pos.face.normal.x > 0.707 ? 1 : 2)
+      face = pos.normal.y > 0.707 ? 0 : (pos.normal.x > 0.707 ? 1 : 2)
       num += face
       // console.log(`corner num [${num}]`)
+      text+=`corner num [${num}] face [${face}]\n`
     }
+
     this.parts_type = parts_type
     this.parts_face = face
     this.moves = cubeTileMove[num]
 
-    const prot = this.parts.object.el.object3D.rotation
-    const np = this.set_position(pos.point, prot)
+    const prot = {
+      x:parts_rot[parts_type][be].x*Math.PI/180,
+      y:parts_rot[parts_type][be].y*Math.PI/180,
+      z:parts_rot[parts_type][be].z*Math.PI/180,
+    }
+  //  console.log("set_position cube.posi")
+    const np = this.set_position({...pos.point}, prot)
 
-    // console.log(np)
-    this.tile.object3D.position.copy(np)
+  //  console.log(prot)
+  //  console.log(np)
+
+
     this.start_pos = np
     this.partsRot = prot
     
     let nrot = {x:0, y:0, z:0}
-    if(parts_type === "center"){
+    if(parts_type === "n"){
     }
-    else if(parts_type === "edge"	){
-      if(face==0) nrot.x = -Math.PI / 2
+    else if(parts_type === "e"	){
+      if(face==0) nrot.x = -90
     }
-    else if(parts_type === "corner"){
-      if(face==0) nrot.x = -Math.PI / 2
-      else if(face==1) nrot.y = Math.PI / 2
+    else if(parts_type === "c"){
+      if(face==0) nrot.x = -90
+      else if(face==1) nrot.y = 90
     }
-    this.tile.object3D.rotation.x=nrot.x
-    this.tile.object3D.rotation.y=nrot.y
-    this.tile.object3D.rotation.z=nrot.z
+    this.tile.setAttribute("rotation", {...nrot})
 
+    this.tile.parentElement.setAttribute("rotation", {...parts_rot[parts_type][be]})
+    this.tile.parentElement.setAttribute("position", {...pos.point})
 
-    this.tile.parentElement.object3D.rotation.copy(prot)
+    text+=`out\n`
+    text+=`  pos x[${this.tile.parentElement.object3D.position.x}] y[${this.tile.parentElement.object3D.position.y}] z[${this.tile.parentElement.object3D.position.z}]\n`
+    text+=`  rot x[${this.tile.parentElement.object3D.rotation.x}] y[${this.tile.parentElement.object3D.rotation.y}] z[${this.tile.parentElement.object3D.rotation.z}]\n`
+
+    text+=`in\n`
+    text+=`  pos x[${this.tile.object3D.position.x}] y[${this.tile.object3D.position.y}] z[${this.tile.object3D.position.z}]\n`
+    text+=`  rot x[${this.tile.object3D.rotation.x}] y[${this.tile.object3D.rotation.y}] z[${this.tile.object3D.rotation.z}]\n`
+    
+    text+=`tile\n`
+    text+=`  rot x[${nrot.x}] y[${nrot.y}] z[${nrot.z}]\n`
+    
+  //  console.log(text)
 
     this.new_move = undefined
     this.new_rad = undefined
@@ -265,7 +355,7 @@
   set_position(NP, PROT){
 
     const prot = PROT
-    let np = NP
+    let np = {...NP}
     nx = np.z, ny = np.x
     np.z = this.XX(-prot.y,nx, ny)
     np.x = this.YY(-prot.y,nx, ny)
@@ -278,11 +368,17 @@
     np.x = this.XX(-prot.z,nx, ny)
     np.y = this.YY(-prot.z,nx, ny)
 
+  //  console.log(
+    //   `point x ${Math.round(NP.x*100)/100} y ${Math.round(NP.y*100)/100} z ${Math.round(NP.z*100)/100}\n`,
+    //   `rotat x ${Math.round(PROT.x*100)/100} y ${Math.round(PROT.y*100)/100} z ${Math.round(PROT.z*100)/100}\n`,
+    //   `new p x ${Math.round(np.x*100)/100} y ${Math.round(np.y*100)/100} z ${Math.round(np.z*100)/100}`,
+    // )
     return np
   },
 
   Progress_rotate(){
     if(!this.tilePos) return
+    // console.log("set_position tile.posi")
     const np = this.set_position(this.tilePos.point, this.partsRot)
 
     const pnp = this.start_pos
@@ -291,24 +387,33 @@
     const parts_type = this.parts_type
     const parts_face = this.parts_face
 
+    // console.log(
+    //   `GP x ${Math.round(np.x*100)/100} y ${Math.round(np.y*100)/100} z ${Math.round(np.z*100)/100}\n`,
+    //   `SP x ${Math.round(pnp.x*100)/100} y ${Math.round(pnp.y*100)/100} z ${Math.round(pnp.z*100)/100}\n`,
+    //   `-d x ${Math.round(dist.x*100)/100} y ${Math.round(dist.y*100)/100} z ${Math.round(dist.z*100)/100}`,
+    // )
+
+    // console.log(`type [${parts_type}] face [${parts_face}]`)
+
     let nrot = {x:0, y:0, z:0}
-    if(parts_type === "center"){
+    if(parts_type === "n"){
     }
-    else if(parts_type === "edge"	){
+    else if(parts_type === "e"	){
       if(parts_face==0) nrot.x = -Math.PI / 2
     }
-    else if(parts_type === "corner"){
+    else if(parts_type === "c"){
       if(parts_face==0) nrot.x = -Math.PI / 2
       else if(parts_face==1) nrot.y = Math.PI / 2
     }
 
+    // console.log("set_position dist.posi")
     dist = this.set_position(dist,nrot)
     // console.log(dist)
     
     let roteInde = -1
     let value = 0
     //  = (Math.abs(dist.x)>Math.abs(dist.y)?0:1)
-    direi = 0.3
+    direi = 0.2
 
     if(Math.abs(dist.x) > direi){
       roteInde = 0
@@ -318,21 +423,19 @@
       roteInde = 1
       value = dist.y
     }
-    
     if(roteInde == -1)  return
 
-    a = (value == Math.abs(value) ? -1 : 1 )
-    // console.log(`value [${value}] direi [${direi* a}`)
-    value += direi * a
+    let move = this.moves[roteInde]
+    if(value < 0) move = move_reverse[move]
+    value=Math.abs(value) - direi
+    value = Math.max(Math.min(value/1.5,Math.PI/2),-Math.PI/2)
 
-    let raycast_rotate_T = true
+    // console.log(
+    //   `  name [${this.moves[roteInde]}] value ${value}\n`,
+    //   `N name [${move}] value ${Math.abs(value)}`,
+    // )
 
-    let faces_rad = this.faces_rad[this.moves[roteInde][0]]
-    const RAD = Math.max(Math.min(value/1.5,Math.PI/2),-Math.PI/2)
-
-    if(this.moves[roteInde].length>1) faces_rad *= -1
-
-    if(this.raycast_rotate_T && this.new_move !== undefined && this.new_move != this.moves[roteInde]){
+    if(this.raycast_rotate_T && this.new_move !== undefined && this.new_move[0] != move[0]){
       // this.new_move
       // console.log()
       raycast_rotate(this.new_move, 0)
@@ -349,53 +452,42 @@
       // },1010)
     }
 
-    // this.new_rad = undefined
+    this.new_rad = undefined
     // const vec = this.moves[roteInde].length>1?-1:1
 
-    if(this.raycast_rotate_T)raycast_rotate(this.moves[roteInde], faces_rad * RAD)
-    this.new_move = this.moves[roteInde]
-    this.new_rad = RAD
+    if(this.raycast_rotate_T){
+      raycast_rotate(move, value)
+    //  console.log(`moves ${move} rad ${value}`)
+    }
+    this.new_move = move
+    this.new_rad = value
   },
 
   Decision_rotate(){
     if(this.new_move !== undefined){
       const rad = this.new_rad
-      let faces_rad = this.faces_rad[this.new_move[0]]
-      if(this.new_move.length>1) faces_rad *= -1
-      const Move_rad = faces_rad * rad * 180 / Math.PI
+      const move = this.new_move
 
-      if(Math.abs(rad) < 0.3){
-        // raycast_rotate(this.new_move, 0)
-        // console.log(`rad [${rad}] `)
-        Compensation_anim(this.new_move,100, Move_rad, 0)
+      // console.log(`\n ******** Decision_rotate rad ${rad}`)
+      if(rad < Math.PI/8){
+        // console.log(`             d < 0.2`)
+        raycast_rotate(move, 0)
+        Compensation_anim(move_reverse[move],100, Math.PI/2-rad)
         return
       }
 
-      // console.log(`rad [${rad}]`)
-      let vec = rad>0?"":"'"
-      if(this.new_move.length>1){
-        if(rad>0) vec = "'"
-        else      vec = ""
+      // console.log(`move [${move}] solv [${move}]move [${move[0]}] vec [${vec}]`)
+
+      if(move[0] > "Z"){
+        scrambled_state = scrambled_state.hand_move(moves[move])
+        color_data = color_re_set(move)
       }
       else{
-        if(rad>0) vec = ""
-        else      vec = "'"
+        scrambled_state = scamble2state(scrambled_state,move)
       }
-
-
-
-      // console.log(`this.new_move [${this.new_move}] solv [${this.new_move[0]+vec}]move [${this.new_move[0]}] vec [${vec}]`)
-
-      if(this.new_move[0] > "Z"){
-        scrambled_state = scrambled_state.hand_move(moves[this.new_move[0]+vec])
-        color_data = color_re_set(this.new_move[0]+vec)
-      }
-      else{
-        scrambled_state = scamble2state(scrambled_state,this.new_move[0]+vec)
-      }
-      one_rotate(scrambled_state, this.new_move[0]+vec)
-      a = (Move_rad)>0?-90:90
-      Compensation_anim(this.new_move,100, a + Move_rad, 0)
+      one_rotate(scrambled_state, move)
+      raycast_rotate(move, 0)
+      Compensation_anim(move,100, rad)
 
       
       const mode  = document.getElementById("scene").components["cube-mode"]
