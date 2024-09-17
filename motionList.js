@@ -22,15 +22,13 @@ class motionList{
     this.L_time_index = -1
     this.R_time_index = -1
     this.Cube_time_index = -1
+    
+    this.colorData = []
+    this.color_data = [0,1,2,3,4,5]
+
+    this.frameCubeData = []
 
     const root = document.getElementById('root')
-
-    console.log("---------------\nload motionList\n---------------")
-
-    // root.addEventListener("animation-finished", (e) => {
-    //   console.log("animation-finished")
-    //   console.log({e})
-    // })
   }
   one_hand_move(sulb, speed, hdvec, influence, Su){
     const Pre_movement2 = {
@@ -106,7 +104,6 @@ class motionList{
       data.time = time
     return data
   }
-
   one_motion(sulb,speed,step){
     let data1 = {moveMode:-1, time:-1}
     
@@ -246,6 +243,158 @@ class motionList{
     // 	timeScale: s.timeScale,
     // 	clampWhenFinished: true,
     // })
+  } 
+  frame_rotate(sulb, scrambled_state, step, time, anime = false){
+    let data = {
+      rote: false,
+      type: undefined,
+      innerVec: undefined,
+      aniData: {},
+    }
+
+    // let hand_xyz = this.hand_xyz
+    // let frame_pos = this.frame_pos
+
+    let text = "\n\n"
+    // text+=`hand_xyz [${hand_xyz.length==0?"None":hand_xyz.join(',')}]\n`
+    
+    if(step>=12)	return data
+
+    const moves_face_c = [
+      [0,1,2,3],
+      [1,2,5,6],
+      [0,3,4,7],
+      [2,3,6,7],
+      [4,5,6,7],
+      [0,1,4,5],
+      [0,1,2,3,4,5,6,7],
+      [0,1,2,3,4,5,6,7],
+      [0,1,2,3,4,5,6,7],
+      [1,2,5,6],
+      [0,3,4,7],
+      [0,1,2,3],
+      [4,5,6,7],
+      [2,3,6,7],
+      [0,1,4,5],
+    ]
+     
+    const moves_face_e = [
+      [4,5,6,7],
+      [1,2,5,9],
+      [0,3,7,11],
+      [2,3,6,10],
+      [8,9,10,11],
+      [0,1,4,8],
+      [0,1,2,3,4,5,6,7,8,9,10,11],
+      [0,1,2,3,4,5,6,7,8,9,10,11],
+      [0,1,2,3,4,5,6,7,8,9,10,11],
+      [1,2,4,5,6,8,9,10],
+      [0,3,4,6,7,8,10,11],
+      [0,1,2,3,4,5,6,7],
+      [0,1,2,3,8,9,10,11],
+      [2,3,5,6,7,9,10,11],
+      [0,1,4,5,7,8,9,11],
+    ]
+    
+    const moves_face_cn = [
+      [4],
+      [1],
+      [3],
+      [2],
+      [5],
+      [0],
+      [0,1,2,3,4,5],
+      [0,1,2,3,4,5],
+      [0,1,2,3,4,5],
+      [0,1,2,4,5],
+      [0,2,3,4,5],
+      [0,1,2,3,4],
+      [0,1,2,3,5],
+      [1,2,3,4,5],
+      [0,1,3,4,5],
+    ]
+
+    const rote = {
+      ce: ["0 180 0","0 90 0","0 0 0","0 -90 0","-90 0 0","90 0 0"],
+      e:  [
+        "0 -90 90","0 90 -90","0 90 90","0 -90 -90","0 180 0","0 90 0",
+        "0 0 0","0 -90 0","0 180 180","0 90 180","0 0 180","0 -90 180"
+        ],
+      c: [
+        "0 180 0","0 90 0","0 0 0","0 270 0",
+        "0 270 180","0 180 180","0 90 180","0 0 180"
+        ],
+    }
+
+    const parts__Angle = [
+      10,10,10,10,  6,6,6,6,  2,2,2,2,
+    ]
+
+    const type = (4 <= step && step < 8)?"c":"e"
+    const typeName = type=="c"?"corner":"edge"
+    const ss = scrambled_state
+    let new_ang = parts__Angle[step]
+
+    text+=`ang ${new_ang} `
+    // for(let han of hand_xyz){		new_ang = moves[han][`${type}p`].indexOf(new_ang);		text+=`-> ${new_ang} `;	}
+    text+='\n'
+    
+    // if(sulb != undefined && sulb[0]>"a"){
+    //   if(hand_xyz.length > 0 && hand_xyz.at(-1)[0] == sulb[0] && hand_xyz.at(-1) != sulb )			hand_xyz.pop()
+    //   else			hand_xyz.push(sulb)
+    // }
+
+    const pos = ss[`${type}p`].indexOf(new_ang)
+
+    data.innerVec = rote[type][pos]
+    data.type = typeName
+    data.frameParts = pos
+  
+  
+  //  console.log({sulb})
+    const index = faces.indexOf(sulb[0])
+    const mode_parts = type=="c"?moves_face_c:moves_face_e
+    // console.log(mode_parts)
+    // console.log(mode_parts[index])
+    const mode = mode_parts[index].indexOf(pos)
+  
+    text += `sulb [${sulb}]  type [${type}]  mode [${mode!=-1?mode:"None"}]  pos [${pos}] rote [${rote[type][pos]}]\n`
+    // text += `[${.join(',')}]\n`
+    text += `index [${index}]\n`
+    text += `mode_parts[index] [${mode_parts[index].join(',')}]\n`
+    text += `indexOf [${mode_parts[index].indexOf(pos)}]\n`
+  
+    if(mode==-1){
+      text += `--------- NO rotation ---------\n\n`
+    //  console.log(text)
+      return data
+    }
+  
+    data.rote = true
+    
+    const rad = sulb[1]
+    const size = (rad=='\'')?-1:((rad=='2')?2:1)
+    text+=	`anime [${anime}]  rot [rotation.${vec.charAt(index)}]  to [${faces_rad[index] * 90 * size}]`
+  
+    const next_pos = moves[sulb][`${type}p`].indexOf(pos)
+    // data.frameParts_next = next_pos
+  
+  //  console.log(text+"\n\n")
+      // frame.setAttribute('animation', )
+    data.aniData = {
+      property: 'rotation.'+vec.charAt(index),
+      dur: time,
+      from: 0,
+      to: faces_rad[index] * 90 * size,
+      easing: 'linear',
+    }
+    
+    return data
+    //   setTimeout(() => {
+    //     pointM([typeName,pos],false)
+    //     pointM([typeName,next_pos],true)
+    //   },time)
+    // }
   }
   set_timeList(_Rotes){
     for(let i=0;i<_Rotes.length;i++){
@@ -257,11 +406,40 @@ class motionList{
     // let sum = this.moveList.reduce((a, c) => a + c.time, 0)
     // console.log(`sum time ${sum}`)
   }
+  color_re_set(sulb){
+    let new_color = new Array(this.color_data.length)
+    for(let i=0;i<this.color_data.length;i++){
+      new_color[i] = this.color_data[color_modes[sulb][i]]
+    }
+    return new_color
+  }
+  pointM(p,T = true){
+    // console{p, T})
+    if(p[0]=="")	return
+    // console.log(p)
+    const A = p[0]=="corner"?model_corners:(p[0]=="center"?model_centers:model_edges)
+    const P = A[p[1]].children
+    // document.getElementById(p).children[0].object3D.children[0].children[0].children
+    // console.log(`pointM name [${p}] ${T}`)
+    if(T){
+      for(let i=0;i<P.length-1;i++){
+        P[i].material.side=0
+        P[i].material.depthTest=false
+        P[i].renderOrder=3
+      }
+    }
+    else{
+      for(let i=0;i<P.length-1;i++){
+        P[i].material.side=2
+        P[i].material.depthTest=true
+        P[i].renderOrder=0
+      }
+    }
+  }
   ins(_Datas, _Rotes){
     let towRotes = [], groupRotes = [0]
-
-    let _R = _Rotes.filter((line) => line[0] != "")
-
+    let _R = _Rotes
+ 
     for(let lindex=0;lindex<_R.length;lindex++){
       for(let rindex=0;rindex<_R[lindex].length;rindex++){
         let dx = 0
@@ -271,11 +449,18 @@ class motionList{
           _R[lindex][rindex] = [_R[lindex][rindex][0],_R[lindex][rindex][0]]
         }
       }
-      groupRotes.push(groupRotes.at(-1) + _R[lindex].flat(Infinity).length)
+      _R[lindex] = _R[lindex].flat(Infinity)
+      groupRotes.push(groupRotes.at(-1) + _R[lindex].length)
     }
+
+    let _nR = JSON.parse(JSON.stringify(_R))
+  //  console.log(_nR)
+
+    _R = _R.filter((line) => line[0] != "")
+
     _R = _R.flat(Infinity)
     // console.log(_R)
-    console.log(groupRotes)
+  //  console.log(groupRotes)
     // console.log(towRotes)
     this.groupRotesCube = groupRotes
 
@@ -342,15 +527,68 @@ class motionList{
     this.Datas = []
     this.Datas.push(_Datas)
     
-    for(let R=0;R<this.Rotes.length;R++){
-      // console.log(scamble2state(this.Datas.at(-1), R))
-      this.Datas.push(scamble2state(this.Datas[R], this.Rotes[R]))
-    }
+    this.color_data = [0,1,2,3,4,5]
+    this.colorData = []
+    this.colorData.push(this.color_data)
+    
+    // this.hand_xyz = []
 
-    // console.log(this.Datas)
+    // this.frame_pos = ["",""]
+
+  //  console.log(_nR)
+
+    this.frameRotesData = []
+    for(let lindex=0;lindex<_nR.length;lindex++){
+    //  console.log({rindexMax , rotes: _nR[lindex], len: _nR[lindex].length + rindexMax})
+      for(let rindex=0;rindex<_nR[lindex].length;rindex++){
+      //  console.log(` index: [${rindex}]`)
+        // console.log(_nR[lindex][rindex])
+        this.frameRotesData.push(this.frame_rotate(_nR[lindex][rindex], this.Datas.at(-1), lindex, 0))
+        let scmbl = undefined
+        if(_nR[lindex][rindex] > "Z"){
+          this.color_data = this.color_re_set(_nR[lindex][rindex])
+          scmbl = this.Datas.at(-1).hand_move(moves[_nR[lindex][rindex]])
+        }
+        else{
+          scmbl = scamble2state(this.Datas.at(-1), _nR[lindex][rindex])
+        }
+
+        this.Datas.push(scmbl)
+        this.colorData.push(this.color_data)
+      }
+      if(lindex == 12)  this.frameRotesData.at(-_nR[lindex].length).Previous = true //
+    }
+  //  console.log(this.frameRotesData)
 
     tnkTime += 1000 / this.cubeRotesData.at(-1).timeScale
-    console.log(`tnkTime [${tnkTime}]`)
+  //  console.log(`tnkTime [${tnkTime}]`)
+  }
+  color_set(sc_st, _colorData){
+    // console.log(`----- color_set ----`)
+    const corner = model_corners
+    const edge = model_edges
+    const center = model_centers
+
+    const colorData = _colorData
+
+    // console.log(sc_st)
+
+    for(let i=0;i<corner.length;i++){
+      let F = corner[i].children
+      for(let s=0;s<3;s++)
+        F[s].material.color = set_color_data[colorData[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
+    }
+
+    for(let i=0;i<edge.length;i++){
+      let F = edge[i].children
+      for(let s=0;s<2;s++)
+        F[s].material.color = set_color_data[colorData[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
+    }
+
+    for(let i=0;i<center.length;i++){
+      let F = center[i].children
+      F[0].material.color = set_color_data[colorData[color_cn[sc_st.c[i]][0]]]
+    }
   }
   rote_start(){
     this.L_time_index = -1
@@ -367,22 +605,21 @@ class motionList{
       L_hand.removeAttribute('animation-mixer')
       L_hand.setAttribute('animation-mixer', data)
     })
-
     L_hand.addEventListener("animation-finished",(e)=>{
       const Lti = this.L_time_index
       if(Lti == this.LhandRotesData.length-1){
-        console.log("L_hand アニメーション　終了")
+      //  console.log("L_hand アニメーション　終了")
         return
       }
 
       const index = this.LstartIndex.indexOf(Lti + 1)
       if(index != -1){
-        console.log(`L_hand 区切りのアニメーション`)
+      //  console.log(`L_hand 区切りのアニメーション`)
         return
       }
       
       if(this.groupRotesLhand.indexOf(Lti + 1) != -1){
-        console.log(`L_hand 区切りのアニメーション`)
+      //  console.log(`L_hand 区切りのアニメーション`)
         return
       } 
 
@@ -405,11 +642,10 @@ class motionList{
       R_hand.removeAttribute('animation-mixer')
       R_hand.setAttribute('animation-mixer', data)
     })
-
     R_hand.addEventListener("animation-finished",(e)=>{
       const Rti = this.R_time_index
       if(Rti == this.RhandRotesData.length-1){
-        console.log("R_hand アニメーション　終了")
+      //  console.log("R_hand アニメーション　終了")
         return
       }
 
@@ -419,9 +655,9 @@ class motionList{
         return
       }
 
-      console.log(`Rti [${Rti}] gRRh [${this.groupRotesRhand.indexOf(Rti + 1)}]`)
+      //  console.log(`Rti [${Rti}] gRRh [${this.groupRotesRhand.indexOf(Rti + 1)}]`)
       if(this.groupRotesRhand.indexOf(Rti + 1) != -1){
-        console.log(`R_hand 区切りのアニメーション`)
+      //  console.log(`R_hand 区切りのアニメーション`)
         return
       } 
 
@@ -437,11 +673,11 @@ class motionList{
     full_cube.addEventListener("animation-finished",(e)=>{
       const Cti = this.Cube_time_index
       if(Cti == this.cubeRotesData.length-1){
-        console.log("full_cube アニメーション　終了")
+      //  console.log("full_cube アニメーション　終了")
         return
       }
       if(this.groupRotesCube.slice(1).indexOf(Cti+1) != -1){
-        console.log("ステップ　アニメーション　終了")
+      //  console.log("ステップ　アニメーション　終了")
         return
       }
 
@@ -453,9 +689,8 @@ class motionList{
         full_cube.dispatchEvent(new Event( "animation-start"))
       },full_c)
     })
-
     full_cube.addEventListener("animation-start",(e)=>{
-      color_set(this.Datas[this.Cube_time_index+1])
+      this.color_set(this.Datas[this.Cube_time_index+1], this.colorData[this.Cube_time_index+1])
 
       this.Cube_time_index += 1
       const Cti = this.Cube_time_index
@@ -463,9 +698,42 @@ class motionList{
       const data = {...this.cubeRotesData[Cti]}
       data.loop = 'once'
       data.clampWhenFinished = true
-
       full_cube.removeAttribute('animation-mixer')
       full_cube.setAttribute('animation-mixer', data)
+
+      const fdata = {...this.frameRotesData[Cti]}
+      // console.log(fdata)
+      if(fdata.type != undefined){
+        frameObj[fdata.type=="corner"?"edge":"corner"].out.object3D.visible = false
+        
+        frameObj[fdata.type].in.setAttribute("rotation", fdata.innerVec)
+        frameObj[fdata.type].out.removeAttribute('animation')
+        frameObj[fdata.type].out.setAttribute('rotation',"0 0 0")
+        frameObj[fdata.type].out.object3D.visible = true
+
+        // console.log({fdata})
+        this.pointM([fdata.type, fdata.frameParts], true)
+
+        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
+        // console.log({data: this.frameRotesData.slice(0, Cti), pdata})
+        if(pdata != undefined){
+          // const pdata = this.frameRotesData[pindex]
+          // console.log({type: pdata.type, frameParts: pdata.frameParts})
+          this.pointM([pdata.type, pdata.frameParts], false)
+        }
+
+        if(fdata.rote){
+          fdata.aniData.dur = 1000 / data.timeScale
+          frameObj[fdata.type].out.setAttribute('animation', fdata.aniData) 
+        }
+      }
+
+      if(Object.hasOwn(fdata, "Previous")){
+      // console.log(`----------\n Previous \n----------`)
+        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
+        frameObj[pdata.type].out.object3D.visible = false
+        this.pointM([pdata.type, pdata.frameParts], false)
+      }
 
       const Lti = this.L_time_index + 1
       const Lindex = this.LstartIndex.indexOf(Lti)

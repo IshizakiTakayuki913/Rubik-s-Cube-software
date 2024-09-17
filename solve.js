@@ -686,6 +686,7 @@ function rotate(roates ,time = 1000,dist_time = 50){
 				// scrambled_state = scrambled_state.hand_move(moves[roat_list[i]])
 				// color_data = color_re_set(V+cr[size+1])
 
+
 				scrambled_state = scamble2state(scrambled_state,nr+cr[size+1])
 				scrambled_state = scrambled_state.hand_move(moves[V+cr[(dist*size)+1]])
 				color_data = color_re_set(V+cr[(dist*size)+1])
@@ -1145,10 +1146,10 @@ function BBB(){
 	sum_solution.push(t.join(' ').split(' '))
 	sum_solution2=sum_solution
 	
-	// console.log(tank)
+	console.log(tank)
 
-	// console.log(sum_solution)
-	// console.log(timeList)
+	console.log(sum_solution)
+	console.log(timeList)
 	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)))
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
@@ -1294,6 +1295,17 @@ const bone_L_hand	= {}
 const bone_R_hand	= {}
 
 let bone_name_model={}
+
+let frameObj = {
+	edge:{
+		out: undefined,
+		in: undefined,
+	},
+	corner:{
+		out: undefined,
+		in: undefined,
+	}
+}
 
 function motions(){
 

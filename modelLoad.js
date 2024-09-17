@@ -70,7 +70,7 @@ const modelLoad = () => ({
     ]
 
     hands[1].addEventListener("model-loaded", (e) => {
-      console.log("hands[1] model-loaded")
+      // console"hands[1] model-loaded")
       c = {r:1,g:0.8,b:0.6}
       hands[0].object3D.traverse( (child) => {
         if(child.type == "SkinnedMesh") {
@@ -129,7 +129,7 @@ const modelLoad = () => ({
     frame.appendChild(frame_corner)
 
     f_c_in.addEventListener("model-loaded", (e)=>{
-      console.log("f_c_in model-loaded")
+      // console"f_c_in model-loaded")
       f=f_c_in.object3D.children[0].children[0].children
 
       f[2].material.transparent=true
@@ -146,6 +146,11 @@ const modelLoad = () => ({
       f[0].material.depthTest=false
       f[0].material.flatShading=true
       f[0].material.color={r:0,g:0,b:0}
+
+      frameObj.corner = {
+        out: frame_corner,
+        in: f_c_in
+      }
     })
     
     
@@ -158,7 +163,7 @@ const modelLoad = () => ({
     frame.appendChild(frame_edge)
 
     f_e_in.addEventListener("model-loaded", (e)=>{
-      console.log("f_e_in model-loaded")
+      // console"f_e_in model-loaded")
       f=f_e_in.object3D.children[0].children[0].children
 
       f[2].material.transparent=true
@@ -175,6 +180,11 @@ const modelLoad = () => ({
       f[0].material.depthTest=false
       f[0].material.flatShading=true
       f[0].material.color={r:0,g:0,b:0}
+      
+      frameObj.edge = {
+        out: frame_edge,
+        in: f_e_in
+      }
     })
 
 
@@ -190,7 +200,7 @@ const modelLoad = () => ({
     str2= {"n":bone_centers,  "c":bone_corners,   "e":bone_edges}
     
     model_cube.addEventListener("model-loaded", (e) => {
-      console.log("model_cube model-loaded")
+      // console"model_cube model-loaded")
       a=model_cube.object3D.children[0].children[0].children[0].children
       b = a.map((x) => x.children[0])
       for(let i=0;i<b.length;i++){
