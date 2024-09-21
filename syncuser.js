@@ -23,8 +23,11 @@ const syncuser = () => ({
   },
   tick() {
     if ((typeof this.user !== "undefined") && (this.user != null)) {
-      var rot = this.camera.object3D.rotation
-      this.user.object3D.rotation.copy(rot)
+      try {
+        var rot = this.camera.object3D.rotation
+        this.user.object3D.rotation.copy(rot)
+      } catch (error) {
+      }
     }
     else if(this.data.load){this.load()}
   },

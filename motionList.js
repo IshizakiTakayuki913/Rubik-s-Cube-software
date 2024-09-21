@@ -1,5 +1,10 @@
 class motionList{
   constructor(){
+    // const root = document.getElementById('root')
+  }
+  ins(_Datas, _Rotes){
+    // this.constructor()
+
     this.Rotes = []
     this.Hnad_v = [0,0]
     this.moveList=[]
@@ -23,12 +28,363 @@ class motionList{
     this.R_time_index = -1
     this.Cube_time_index = -1
     
+    this.stepAnimationEnd = 0
+    
     this.colorData = []
     this.color_data = [0,1,2,3,4,5]
 
-    this.frameCubeData = []
+    let towRotes = [], groupRotes = [0], stepSkip = []
+    let _R = _Rotes
+    
+    let roteCount = 0
 
-    const root = document.getElementById('root')
+    stepSkip = _R.map((e) => e[0].length > 0)
+
+    console.log(_R)
+    _R = _R.filter((e) => e[0].length > 0)
+    console.log(_R)
+
+    for(let lindex=0;lindex<_R.length;lindex++){
+      for(let rindex=0;rindex<_R[lindex].length;rindex++){
+        // let dx = 0
+        if(_R[lindex][rindex].length > 1 && _R[lindex][rindex][1] == "2"){
+          towRotes.push(roteCount)
+          // dx += 1
+          _R[lindex][rindex] = [_R[lindex][rindex][0],_R[lindex][rindex][0]]
+          roteCount ++
+        }
+        roteCount ++
+      }
+      _R[lindex] = _R[lindex].flat(Infinity)
+      console.log(_R[lindex])
+      if(_R[lindex][0].length > 0)
+        groupRotes.push(groupRotes.at(-1) + _R[lindex].length)
+    }
+
+    let _nR = JSON.parse(JSON.stringify(_R))
+    console.log(_nR)
+
+    _R = _R.filter((line) => line[0] != "")
+
+    _R = _R.flat(Infinity)
+    console.log(_R)
+    console.log(groupRotes)
+    console.log(towRotes)
+
+    this.towRotes = towRotes
+    this.stepSkip = stepSkip
+    
+
+
+    this.groupRotesCube = groupRotes
+
+    this.Rotes = _R
+
+    this.set_timeList(this.Rotes)
+
+    this.groupRotesLhand = []
+    this.groupRotesRhand = []
+
+    let tnkTime = 0
+    this.moveList.forEach((m, index) => {
+      if(this.groupRotesCube.indexOf(index) != -1){
+        console.log(`index ${index}`)
+        if(this.groupRotesLhand.length == 0 || this.groupRotesLhand.at(-1) < this.LhandRotesData.length)
+          this.groupRotesLhand.push(this.LhandRotesData.length)
+        if(this.groupRotesRhand.length == 0 || this.groupRotesRhand.at(-1) < this.RhandRotesData.length)
+          this.groupRotesRhand.push(this.RhandRotesData.length)
+      }
+
+      if(m.moveMode != 1){
+        m.L.move_schedule.forEach((m2) => {
+          this.LhandRotesTime.push(tnkTime + m2.time)
+          this.LhandRotesData.push({clip: m2.clip,  timeScale:  m2.timeScale, })
+        })
+      }
+      if(m.moveMode > 0){
+        m.R.move_schedule.forEach((m2) => {
+          this.RhandRotesTime.push(tnkTime + m2.time)
+          this.RhandRotesData.push({clip: m2.clip,  timeScale:  m2.timeScale, })
+        })
+      }
+      this.cubeRotesTime.push(tnkTime  + m[m.moveMode==0?"L":"R"].sovle_time)
+      this.cubeRotesData .push({
+        clip: this.Rotes[index],
+        timeScale:  m[m.moveMode==0?"L":"R"].move_schedule[m[m.moveMode==0?"L":"R"].roteIndex].timeScale,
+      })
+      
+      tnkTime += m.time
+    })
+    this.groupRotesLhand.push(this.LhandRotesData.length)
+    this.groupRotesRhand.push(this.RhandRotesData.length)
+
+    console.log(this.groupRotesLhand)
+
+    let hi = this.LstartIndex
+    let ci = this.LcubeIndex
+    let handi = 0
+    this.cubeRotesTime.forEach((d, i) => {
+      if(d > this.LhandRotesTime[handi]){
+          hi.push(handi)
+          ci.push(i - 1)
+      }
+      for(;this.LhandRotesTime[handi]<d;handi++);
+    })
+
+    hi = this.RstartIndex
+    ci = this.RcubeIndex
+    handi = 0
+    this.cubeRotesTime.forEach((d, i) => {
+      if(d > this.RhandRotesTime[handi]){
+          hi.push(handi)
+          ci.push(i - 1)
+      }
+      for(;this.RhandRotesTime[handi]<d;handi++);
+    })
+
+    this.Datas = []
+    this.Datas.push(_Datas)
+
+    this.colorData = []
+    this.colorData.push(this.color_data)
+    
+    // this.hand_xyz = []
+
+    // this.frame_pos = ["",""]
+
+    console.log(_nR)
+
+    this.frameRotesData = []
+    for(let lindex=0;lindex<_nR.length;lindex++){
+      // console.log({rindexMax , rotes: _nR[lindex], len: _nR[lindex].length + rindexMax})
+      for(let rindex=0;rindex<_nR[lindex].length;rindex++){
+        console.log(` index: [${rindex}]`)
+        console.log(_nR[lindex][rindex])
+        this.frameRotesData.push(this.frame_rotate(_nR[lindex][rindex], this.Datas.at(-1), lindex, 0))
+        let scmbl = undefined
+        if(_nR[lindex][rindex] > "Z"){
+          this.color_data = this.color_re_set(_nR[lindex][rindex])
+          scmbl = this.Datas.at(-1).hand_move(moves[_nR[lindex][rindex]])
+        }
+        else{
+          scmbl = scamble2state(this.Datas.at(-1), _nR[lindex][rindex])
+        }
+
+        this.Datas.push(scmbl)
+        this.colorData.push(this.color_data)
+      }
+      if(lindex == 12)  this.frameRotesData.at(-_nR[lindex].length).Previous = true //
+    }
+    console.log(this.frameRotesData)
+
+    tnkTime += 1000 / this.cubeRotesData.at(-1).timeScale
+    console.log(`tnkTime [${tnkTime}]`)
+
+    this.L_time_index = -1
+    this.R_time_index = -1
+    this.Cube_time_index = -1
+
+    this.mew_motion = false
+
+    if(model_event_check){
+      L_hand.addEventListener("animation-start",(e) => {
+        this.L_time_index += 1
+        const Lti = this.L_time_index
+        const data = {...this.LhandRotesData[Lti]}
+        data.loop = 'once'
+        data.clampWhenFinished = true
+        data.timeScale *= rote_speed
+    
+        L_hand.removeAttribute('animation-mixer')
+        L_hand.setAttribute('animation-mixer', data)
+      })
+    
+      L_hand.addEventListener("animation-finished",(e)=>{
+        if(this.mew_motion) return
+
+        const Lti = this.L_time_index
+        // if(Lti == this.LhandRotesData.length-1){
+        // // console.log("L_hand アニメーション　終了")
+        //   return
+        // }
+        
+        if(this.groupRotesLhand.indexOf(Lti + 1) != -1){
+          console.log(`L_hand ステップの区切りのアニメーション`)
+          this.stepAnimationEnd += 1
+          this.animationEnd()
+          return
+        } 
+        
+        const index = this.LstartIndex.indexOf(Lti + 1)
+        if(index != -1){
+          console.log(`L_hand 回転 区切りのアニメーション`)
+          return
+        }
+
+        let handL = this.LhandRotesTime[Lti+1]
+        handL -= this.LhandRotesTime[Lti]
+        handL -= 1000 / this.LhandRotesData[Lti].timeScale
+        
+        setTimeout(()=>{
+          L_hand.dispatchEvent(new Event( "animation-start"))
+        },handL / rote_speed)
+      })
+
+      R_hand.addEventListener("animation-start",(e)=>{
+        this.R_time_index += 1
+        const Rti = this.R_time_index
+        const data = {...this.RhandRotesData[Rti]}
+        data.loop = 'once'
+        data.clampWhenFinished = true
+        data.timeScale *= rote_speed
+
+        R_hand.removeAttribute('animation-mixer')
+        R_hand.setAttribute('animation-mixer', data)
+      })
+      R_hand.addEventListener("animation-finished",(e)=>{
+        if(this.mew_motion) return
+
+        const Rti = this.R_time_index
+        // if(Rti == this.RhandRotesData.length-1){
+        // // console.log("R_hand アニメーション　終了")
+        //   return
+        // }
+
+        console.log(`Rti [${Rti}] gRRh [${this.groupRotesRhand.indexOf(Rti + 1)}]`)
+        if(this.groupRotesRhand.indexOf(Rti + 1) != -1){
+          console.log(`R_hand ステップの区切りのアニメーション`)
+          this.stepAnimationEnd += 1
+          this.animationEnd()
+          return
+        } 
+
+        const index = this.RstartIndex.indexOf(Rti + 1)
+        if(index != -1){  //  && this.RcubeIndex[index] != -1
+          console.log(`R_hand 回転 区切りのアニメーション`)
+          return
+        }
+
+        let handR = this.RhandRotesTime[Rti+1]
+        handR -= this.RhandRotesTime[Rti]
+        handR -= 1000 / this.RhandRotesData[Rti].timeScale
+        
+        setTimeout(()=>{
+          R_hand.dispatchEvent(new Event( "animation-start"))
+        },handR / rote_speed)
+      })
+
+      full_cube.addEventListener("animation-finished",(e)=>{
+        if(this.mew_motion) return
+
+        const Cti = this.Cube_time_index
+        if(this.groupRotesCube.indexOf(Cti+1) != -1){
+          console.log("ステップ　アニメーション　終了")
+          this.stepAnimationEnd += 1
+          this.animationEnd()
+          return
+        }
+
+        // if(Cti == this.cubeRotesData.length-1){
+        //   console.log("full_cube アニメーション　終了")
+        //   return
+        // }
+
+        let full_c = this.cubeRotesTime[Cti+1]
+        full_c -= this.cubeRotesTime[Cti]
+        full_c -= 1000 / this.cubeRotesData[Cti].timeScale
+        
+        setTimeout(()=>{
+          full_cube.dispatchEvent(new Event( "animation-start"))
+        },full_c / rote_speed)
+      })
+      full_cube.addEventListener("animation-start",(e)=>{
+
+        this.Cube_time_index += 1
+        const Cti = this.Cube_time_index
+
+        console.log({Cti, Datas: this.Datas[Cti], colorData: this.colorData[Cti]})
+        this.color_set(this.Datas[Cti], this.colorData[Cti])
+
+        const data = {...this.cubeRotesData[Cti]}
+        data.loop = 'once'
+        data.clampWhenFinished = true
+        data.timeScale *= rote_speed
+        full_cube.removeAttribute('animation-mixer')
+        full_cube.setAttribute('animation-mixer', data)
+
+        const solveDiv = document.querySelectorAll(".img-div-back")
+        const twoIndex = this.towRotes.indexOf(Cti)
+        const twoCount = this.towRotes.findLastIndex((e) => Cti > e) + 1
+
+        console.log({Cti, twoIndex, twoCount})
+
+        this.imgSpeed.style.transition = `all ${1 / rote_speed}s linear`  
+        if(twoIndex == -1){
+          solveDiv[Cti - twoCount].style.maxWidth = "100%"
+        }
+        else{
+          solveDiv[Cti - twoCount].style.maxWidth = "50%"
+        } 
+
+        const fdata = {...this.frameRotesData[Cti]}
+        console.log(fdata)
+        if(fdata.type != undefined){
+          frameObj[fdata.type=="corner"?"edge":"corner"].out.object3D.visible = false
+          
+          frameObj[fdata.type].in.setAttribute("rotation", fdata.innerVec)
+          frameObj[fdata.type].out.removeAttribute('animation')
+          frameObj[fdata.type].out.setAttribute('rotation',"0 0 0")
+          frameObj[fdata.type].out.object3D.visible = true
+
+          console.log({fdata})
+          this.pointM([fdata.type, fdata.frameParts], true)
+
+          let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
+          console.log({data: this.frameRotesData.slice(0, Cti), pdata})
+          if(pdata != undefined){
+            // const pdata = this.frameRotesData[pindex]
+            console.log({type: pdata.type, frameParts: pdata.frameParts})
+            this.pointM([pdata.type, pdata.frameParts], false)
+          }
+
+          if(fdata.rote){
+            fdata.aniData.dur = 1000 / data.timeScale
+            frameObj[fdata.type].out.setAttribute('animation', fdata.aniData) 
+          }
+        }
+
+        if(Object.hasOwn(fdata, "Previous")){
+        console.log(`----------\n Previous \n----------`)
+          let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
+          frameObj[pdata.type].out.object3D.visible = false
+          this.pointM([pdata.type, pdata.frameParts], false)
+        }
+
+        const Lti = this.L_time_index + 1
+        const Lindex = this.LstartIndex.indexOf(Lti)
+        if(Lindex != -1 && this.LcubeIndex[Lindex] == Cti){
+          let handL = this.LhandRotesTime[Lti]
+          handL -= this.cubeRotesTime[Cti]
+        
+          setTimeout(()=>{
+            L_hand.dispatchEvent(new Event( "animation-start"))
+          },handL / rote_speed)
+        }
+
+        const Rti = this.R_time_index + 1
+        const Rindex = this.RstartIndex.indexOf(Rti)
+        if(Rindex != -1 && this.RcubeIndex[Rindex] == Cti){
+          let handR = this.RhandRotesTime[Rti]
+          handR -= this.cubeRotesTime[Cti]
+        
+          setTimeout(()=>{
+            R_hand.dispatchEvent(new Event( "animation-start"))
+          },handR / rote_speed)
+        }
+      })
+      model_event_check = false
+
+    }
   }
   one_hand_move(sulb, speed, hdvec, influence, Su){
     const Pre_movement2 = {
@@ -163,7 +519,6 @@ class motionList{
       "r"		:1 ,
       "r'"  :0 ,
     }
-    
                                        
     let Rtime = this.one_hand_move(sulb, speed, Rhandv, 1, Rhands[sulb])
     let Ltime = this.one_hand_move(sulb, speed, Lhandv, 0, Lhands[sulb])
@@ -186,7 +541,7 @@ class motionList{
     if(Rtime.handIndex != -1 && Ltime.handIndex != -1 &&
       Rtime.move_schedule[Rtime.handIndex].clip == Ltime.move_schedule[Ltime.handIndex].clip){
   
-      const dis = Rtime.move_schedule[Rtime.handIndex].timeScale * 1000
+      const dis = 1000 / Rtime.move_schedule[Rtime.handIndex].timeScale
       for(let i=Rtime.handIndex+1;i<Rtime.move_schedule.length;i++)
         Rtime.move_schedule[i].time += dis
       Rtime.time += dis
@@ -198,14 +553,14 @@ class motionList{
       Ltime.sovle_time += dis
     }
     else if(Rtime.handIndex != -1 && Rtime.move_schedule[Rtime.handIndex].clip){
-      const dis = Rtime.move_schedule[Rtime.handIndex].timeScale * 1000
+      const dis = 1000 / Rtime.move_schedule[Rtime.handIndex].timeScale
       for(let i=0;i<Ltime.move_schedule.length;i++)
         Ltime.move_schedule[i].time += dis
       Ltime.time += dis
       Ltime.sovle_time += dis
     }
     else if(Ltime.handIndex != -1 && Rtime.move_schedule[Rtime.handIndex].clip){
-      const dis = Ltime.move_schedule[Ltime.handIndex].timeScale * 1000
+      const dis = 1000 / Ltime.move_schedule[Ltime.handIndex].timeScale
       for(let i=0;i<Rtime.move_schedule.length;i++)
         Rtime.move_schedule[i].time += dis
       Rtime.time += dis
@@ -235,8 +590,8 @@ class motionList{
     data1.moveMode = 2
     return data1
       
-      // console.log(JSON.parse(JSON.stringify({L:Ltime, R:Rtime})))
-      // console.log({L:Ltime, R:Rtime})
+      console.log(JSON.parse(JSON.stringify({L:Ltime, R:Rtime})))
+      console.log({L:Ltime, R:Rtime})
     // Lhand.setAttribute('animation-mixer', {
     // 	clip: s.clip,
     // 	loop: 'once',
@@ -351,11 +706,11 @@ class motionList{
     data.frameParts = pos
   
   
-  //  console.log({sulb})
+    console.log({sulb})
     const index = faces.indexOf(sulb[0])
     const mode_parts = type=="c"?moves_face_c:moves_face_e
-    // console.log(mode_parts)
-    // console.log(mode_parts[index])
+    console.log(mode_parts)
+    console.log(mode_parts[index])
     const mode = mode_parts[index].indexOf(pos)
   
     text += `sulb [${sulb}]  type [${type}]  mode [${mode!=-1?mode:"None"}]  pos [${pos}] rote [${rote[type][pos]}]\n`
@@ -366,7 +721,7 @@ class motionList{
   
     if(mode==-1){
       text += `--------- NO rotation ---------\n\n`
-    //  console.log(text)
+      console.log(text)
       return data
     }
   
@@ -379,8 +734,8 @@ class motionList{
     const next_pos = moves[sulb][`${type}p`].indexOf(pos)
     // data.frameParts_next = next_pos
   
-  //  console.log(text+"\n\n")
-      // frame.setAttribute('animation', )
+    console.log(text+"\n\n")
+    // frame.setAttribute('animation', )
     data.aniData = {
       property: 'rotation.'+vec.charAt(index),
       dur: time,
@@ -398,11 +753,11 @@ class motionList{
   }
   set_timeList(_Rotes){
     for(let i=0;i<_Rotes.length;i++){
-      let a= this.one_motion(_Rotes[i],1,0)
-      // console.log(a)
+      let a= this.one_motion(_Rotes[i], 1, 0)
+      console.log(a)
       this.moveList.push(a)
     }
-    // console.log(this.moveList)
+    console.log(this.moveList)
     // let sum = this.moveList.reduce((a, c) => a + c.time, 0)
     // console.log(`sum time ${sum}`)
   }
@@ -414,13 +769,13 @@ class motionList{
     return new_color
   }
   pointM(p,T = true){
-    // console{p, T})
+    // console.log({p, T})
     if(p[0]=="")	return
-    // console.log(p)
+    console.log(p)
     const A = p[0]=="corner"?model_corners:(p[0]=="center"?model_centers:model_edges)
     const P = A[p[1]].children
     // document.getElementById(p).children[0].object3D.children[0].children[0].children
-    // console.log(`pointM name [${p}] ${T}`)
+    console.log(`pointM name [${p}] ${T}`)
     if(T){
       for(let i=0;i<P.length-1;i++){
         P[i].material.side=0
@@ -436,142 +791,24 @@ class motionList{
       }
     }
   }
-  ins(_Datas, _Rotes){
-    let towRotes = [], groupRotes = [0]
-    let _R = _Rotes
- 
-    for(let lindex=0;lindex<_R.length;lindex++){
-      for(let rindex=0;rindex<_R[lindex].length;rindex++){
-        let dx = 0
-        if(_R[lindex][rindex].length > 1 && _R[lindex][rindex][1] == "2"){
-          towRotes.push([lindex,rindex+dx])
-          dx += 1
-          _R[lindex][rindex] = [_R[lindex][rindex][0],_R[lindex][rindex][0]]
-        }
-      }
-      _R[lindex] = _R[lindex].flat(Infinity)
-      groupRotes.push(groupRotes.at(-1) + _R[lindex].length)
-    }
+  animationEnd(){
+    console.log(`animationEnd [${this.stepAnimationEnd}]`)
+    if(this.stepAnimationEnd < 3) return
 
-    let _nR = JSON.parse(JSON.stringify(_R))
-  //  console.log(_nR)
+    console.log(`ステップのアニメーションが全て終了`)
 
-    _R = _R.filter((line) => line[0] != "")
-
-    _R = _R.flat(Infinity)
-    // console.log(_R)
-  //  console.log(groupRotes)
-    // console.log(towRotes)
-    this.groupRotesCube = groupRotes
-
-    this.Rotes = _R
-
-    this.set_timeList(this.Rotes)
-
-    this.groupRotesLhand = []
-    this.groupRotesRhand = []
-
-    let tnkTime = 0
-    this.moveList.forEach((m, index) => {
-      if(this.groupRotesCube.indexOf(index) != -1){
-        // console.log(`index ${index}`)
-        this.groupRotesLhand.push(this.LhandRotesData.length)
-        this.groupRotesRhand.push(this.RhandRotesData.length)
-      }
-
-      if(m.moveMode != 1){
-        m.L.move_schedule.forEach((m2) => {
-          this.LhandRotesTime.push(tnkTime + m2.time)
-          this.LhandRotesData.push({clip: m2.clip,  timeScale:  m2.timeScale, })
-        })
-      }
-      if(m.moveMode > 0){
-        m.R.move_schedule.forEach((m2) => {
-          this.RhandRotesTime.push(tnkTime + m2.time)
-          this.RhandRotesData.push({clip: m2.clip,  timeScale:  m2.timeScale, })
-        })
-      }
-      this.cubeRotesTime.push(tnkTime  + m[m.moveMode==0?"L":"R"].sovle_time)
-      this.cubeRotesData .push({
-        clip: this.Rotes[index],
-        timeScale:  m[m.moveMode==0?"L":"R"].move_schedule[m[m.moveMode==0?"L":"R"].roteIndex].timeScale,
-      })
-      
-      tnkTime += m.time
-    })
-
-    // console.log(this.groupRotesLhand)
-
-    let hi = this.LstartIndex
-    let ci = this.LcubeIndex
-    let handi = 0
-    this.cubeRotesTime.forEach((d, i) => {
-      if(d > this.LhandRotesTime[handi]){
-          hi.push(handi)
-          ci.push(i - 1)
-      }
-      for(;this.LhandRotesTime[handi]<d;handi++);
-    })
-
-    hi = this.RstartIndex
-    ci = this.RcubeIndex
-    handi = 0
-    this.cubeRotesTime.forEach((d, i) => {
-      if(d > this.RhandRotesTime[handi]){
-          hi.push(handi)
-          ci.push(i - 1)
-      }
-      for(;this.RhandRotesTime[handi]<d;handi++);
-    })
-
-    this.Datas = []
-    this.Datas.push(_Datas)
-    
-    this.color_data = [0,1,2,3,4,5]
-    this.colorData = []
-    this.colorData.push(this.color_data)
-    
-    // this.hand_xyz = []
-
-    // this.frame_pos = ["",""]
-
-  //  console.log(_nR)
-
-    this.frameRotesData = []
-    for(let lindex=0;lindex<_nR.length;lindex++){
-    //  console.log({rindexMax , rotes: _nR[lindex], len: _nR[lindex].length + rindexMax})
-      for(let rindex=0;rindex<_nR[lindex].length;rindex++){
-      //  console.log(` index: [${rindex}]`)
-        // console.log(_nR[lindex][rindex])
-        this.frameRotesData.push(this.frame_rotate(_nR[lindex][rindex], this.Datas.at(-1), lindex, 0))
-        let scmbl = undefined
-        if(_nR[lindex][rindex] > "Z"){
-          this.color_data = this.color_re_set(_nR[lindex][rindex])
-          scmbl = this.Datas.at(-1).hand_move(moves[_nR[lindex][rindex]])
-        }
-        else{
-          scmbl = scamble2state(this.Datas.at(-1), _nR[lindex][rindex])
-        }
-
-        this.Datas.push(scmbl)
-        this.colorData.push(this.color_data)
-      }
-      if(lindex == 12)  this.frameRotesData.at(-_nR[lindex].length).Previous = true //
-    }
-  //  console.log(this.frameRotesData)
-
-    tnkTime += 1000 / this.cubeRotesData.at(-1).timeScale
-  //  console.log(`tnkTime [${tnkTime}]`)
+    const mode  = document.getElementById("scene").components["cube-mode"]
+    mode.step_completion()
   }
   color_set(sc_st, _colorData){
-    // console.log(`----- color_set ----`)
+    console.log(`----- color_set ----`)
     const corner = model_corners
     const edge = model_edges
     const center = model_centers
 
     const colorData = _colorData
 
-    // console.log(sc_st)
+    console.log(sc_st)
 
     for(let i=0;i<corner.length;i++){
       let F = corner[i].children
@@ -589,201 +826,34 @@ class motionList{
       let F = center[i].children
       F[0].material.color = set_color_data[colorData[color_cn[sc_st.c[i]][0]]]
     }
-  }
-  rote_start(){
-    this.L_time_index = -1
-    this.R_time_index = -1
-    this.Cube_time_index = -1
-
-    L_hand.addEventListener("animation-start",(e)=>{
-      this.L_time_index += 1
-      const Lti = this.L_time_index
-      const data = {...this.LhandRotesData[Lti]}
-      data.loop = 'once'
-      data.clampWhenFinished = true
-
-      L_hand.removeAttribute('animation-mixer')
-      L_hand.setAttribute('animation-mixer', data)
-    })
-    L_hand.addEventListener("animation-finished",(e)=>{
-      const Lti = this.L_time_index
-      if(Lti == this.LhandRotesData.length-1){
-      //  console.log("L_hand アニメーション　終了")
-        return
-      }
-
-      const index = this.LstartIndex.indexOf(Lti + 1)
-      if(index != -1){
-      //  console.log(`L_hand 区切りのアニメーション`)
-        return
-      }
-      
-      if(this.groupRotesLhand.indexOf(Lti + 1) != -1){
-      //  console.log(`L_hand 区切りのアニメーション`)
-        return
-      } 
-
-      let handL = this.LhandRotesTime[Lti+1]
-      handL -= this.LhandRotesTime[Lti]
-      handL -= this.LhandRotesData[Lti].timeScale * 1000
-      
-      setTimeout(()=>{
-        L_hand.dispatchEvent(new Event( "animation-start"))
-      },handL)
-    })
-
-    R_hand.addEventListener("animation-start",(e)=>{
-      this.R_time_index += 1
-      const Rti = this.R_time_index
-      const data = {...this.RhandRotesData[Rti]}
-      data.loop = 'once'
-      data.clampWhenFinished = true
-
-      R_hand.removeAttribute('animation-mixer')
-      R_hand.setAttribute('animation-mixer', data)
-    })
-    R_hand.addEventListener("animation-finished",(e)=>{
-      const Rti = this.R_time_index
-      if(Rti == this.RhandRotesData.length-1){
-      //  console.log("R_hand アニメーション　終了")
-        return
-      }
-
-      const index = this.RstartIndex.indexOf(Rti + 1)
-      if(index != -1){  //  && this.RcubeIndex[index] != -1
-        // console.log(`R_hand 区切りのアニメーション`)
-        return
-      }
-
-      //  console.log(`Rti [${Rti}] gRRh [${this.groupRotesRhand.indexOf(Rti + 1)}]`)
-      if(this.groupRotesRhand.indexOf(Rti + 1) != -1){
-      //  console.log(`R_hand 区切りのアニメーション`)
-        return
-      } 
-
-      let handR = this.RhandRotesTime[Rti+1]
-      handR -= this.RhandRotesTime[Rti]
-      handR -= this.RhandRotesData[Rti].timeScale * 1000
-      
-      setTimeout(()=>{
-        R_hand.dispatchEvent(new Event( "animation-start"))
-      },handR)
-    })
-
-    full_cube.addEventListener("animation-finished",(e)=>{
-      const Cti = this.Cube_time_index
-      if(Cti == this.cubeRotesData.length-1){
-      //  console.log("full_cube アニメーション　終了")
-        return
-      }
-      if(this.groupRotesCube.slice(1).indexOf(Cti+1) != -1){
-      //  console.log("ステップ　アニメーション　終了")
-        return
-      }
-
-      let full_c = this.cubeRotesTime[Cti+1]
-      full_c -= this.cubeRotesTime[Cti]
-      full_c -= this.cubeRotesData[Cti].timeScale * 1000
-      
-      setTimeout(()=>{
-        full_cube.dispatchEvent(new Event( "animation-start"))
-      },full_c)
-    })
-    full_cube.addEventListener("animation-start",(e)=>{
-      this.color_set(this.Datas[this.Cube_time_index+1], this.colorData[this.Cube_time_index+1])
-
-      this.Cube_time_index += 1
-      const Cti = this.Cube_time_index
-
-      const data = {...this.cubeRotesData[Cti]}
-      data.loop = 'once'
-      data.clampWhenFinished = true
-      full_cube.removeAttribute('animation-mixer')
-      full_cube.setAttribute('animation-mixer', data)
-
-      const fdata = {...this.frameRotesData[Cti]}
-      // console.log(fdata)
-      if(fdata.type != undefined){
-        frameObj[fdata.type=="corner"?"edge":"corner"].out.object3D.visible = false
-        
-        frameObj[fdata.type].in.setAttribute("rotation", fdata.innerVec)
-        frameObj[fdata.type].out.removeAttribute('animation')
-        frameObj[fdata.type].out.setAttribute('rotation',"0 0 0")
-        frameObj[fdata.type].out.object3D.visible = true
-
-        // console.log({fdata})
-        this.pointM([fdata.type, fdata.frameParts], true)
-
-        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
-        // console.log({data: this.frameRotesData.slice(0, Cti), pdata})
-        if(pdata != undefined){
-          // const pdata = this.frameRotesData[pindex]
-          // console.log({type: pdata.type, frameParts: pdata.frameParts})
-          this.pointM([pdata.type, pdata.frameParts], false)
-        }
-
-        if(fdata.rote){
-          fdata.aniData.dur = 1000 / data.timeScale
-          frameObj[fdata.type].out.setAttribute('animation', fdata.aniData) 
-        }
-      }
-
-      if(Object.hasOwn(fdata, "Previous")){
-      // console.log(`----------\n Previous \n----------`)
-        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
-        frameObj[pdata.type].out.object3D.visible = false
-        this.pointM([pdata.type, pdata.frameParts], false)
-      }
-
-      const Lti = this.L_time_index + 1
-      const Lindex = this.LstartIndex.indexOf(Lti)
-      if(Lindex != -1 && this.LcubeIndex[Lindex] == Cti){
-        let handL = this.LhandRotesTime[Lti]
-        handL -= this.cubeRotesTime[Cti]
-      
-        setTimeout(()=>{
-          L_hand.dispatchEvent(new Event( "animation-start"))
-        },handL)
-      }
-
-      const Rti = this.R_time_index + 1
-      const Rindex = this.RstartIndex.indexOf(Rti)
-      if(Rindex != -1 && this.RcubeIndex[Rindex] == Cti){
-        let handR = this.RhandRotesTime[Rti]
-        handR -= this.cubeRotesTime[Cti]
-      
-        setTimeout(()=>{
-          R_hand.dispatchEvent(new Event( "animation-start"))
-        },handR)
-      }
-    })
-
-    if(this.LcubeIndex[0] == -1){
-      setTimeout(()=>{
-        L_hand.dispatchEvent(new Event("animation-start"))
-      },this.LhandRotesTime[0])
-    }
-
-    if(this.RcubeIndex[0] == -1){
-      setTimeout(()=>{
-        R_hand.dispatchEvent(new Event("animation-start"))
-      },this.RhandRotesTime[0])
-    }
-    
-    setTimeout(()=>{
-      full_cube.dispatchEvent(new Event("animation-start"))
-    },this.cubeRotesTime[0])
-  }
+  } 
   rote_re_start(){
-    let text = ""
+    console.log(`モーションリスト　rote_re_start`)
+
+    this.stepAnimationEnd = 0
+
+    let text = []
+    const Rspeed = rote_speed
 
     const Cti = this.Cube_time_index + 1
+    const Cindex =  this.groupRotesCube.indexOf(Cti)
+
 
     const Lti = this.L_time_index + 1
     const Lindex = this.LstartIndex.indexOf(Lti)
+    const LCindex = this.LcubeIndex[Lindex]
 
     const Rti = this.R_time_index + 1
     const Rindex = this.RstartIndex.indexOf(Rti)
+    const RCindex = this.RcubeIndex[Rindex]
+
+    const Lsi = this.LstartIndex.findIndex((e) => Lti <= e)
+    const Lci = this.LcubeIndex[Lsi]
+    const LgC = this.groupRotesCube.findLastIndex((e) => e <= Lci)
+
+    const Rsi = this.RstartIndex.findIndex((e) => Rti <= e)
+    const Rci = this.RcubeIndex[Rsi]
+    const RgC = this.groupRotesCube.findLastIndex((e) => e <= Rci)
 
     let handC = this.cubeRotesTime[Cti]
     handC -= Math.min(
@@ -792,44 +862,65 @@ class motionList{
       this.RhandRotesTime[Rti]
     )
 
-    // text += JSON.stringify({
-    //   cRT: this.cubeRotesTime[Cti], LhRT: this.LhandRotesTime[Lti], RhRT: this.RhandRotesTime[Rti]
-    // }) + "\n"
-    // text += JSON.stringify({
-    //   Cti, Lti, Lindex, Rti, Rindex, handC
-    // })
+    text.push({handC})
+    text.push({Cti, Cindex, Lti, Lsi, Lci, LgC, Rti, Rsi, Rci, RgC})
 
     setTimeout(()=>{
       full_cube.dispatchEvent(new Event("animation-start"))
-    },handC)
+    },handC / Rspeed)
 
-    if(Lindex == -1 && this.LstartIndex.findIndex((e) => e > Lti) < Cti){
+    text.push({Lindex, LCindex, Lti, startIndex: this.LcubeIndex[this.LstartIndex.findLastIndex((e) => e < Lti)], Cti})
+
+
+    if(LCindex == -1 || (Lindex == -1 && this.LcubeIndex[this.LstartIndex.findLastIndex((e) => e < Lti)] < Cti)){
       let handL = handC
       handL -= (this.cubeRotesTime[Cti] - this.LhandRotesTime[Lti])
+      text.at(-1).handL = handL
       // text += `\n{handL: ${handL}}`
       setTimeout(()=>{
         L_hand.dispatchEvent(new Event("animation-start"))
-      },handL)
+      },handL / Rspeed)
+    }
+    else if(Cindex < LgC){
+      console.log(`L_hand このステップ内でのアニメーションは無し`)
+      this.stepAnimationEnd += 1
+      this.animationEnd()
     }
 
-    if(Rindex == -1 && this.RstartIndex.findIndex((e) => e > Rti) < Cti){
+
+    text.push({Rindex, RCindex, Rti, startIndex: this.RstartIndex.findIndex((e) => e > Rti), Rti})
+
+    if(RCindex == -1 || (Rindex == -1  && this.RcubeIndex[this.RstartIndex.findLastIndex((e) => e < Rti)] < Cti)){
       let handR = handC
       handR -= (this.cubeRotesTime[Cti] - this.RhandRotesTime[Rti])
+      text.at(-1).handR = handR
       // text += `\n{handR: ${handR}}`
       setTimeout(()=>{
         R_hand.dispatchEvent(new Event("animation-start"))
-      },handR)
+      },handR / Rspeed)
     }
-    // console.log(text)
+    else if(Cindex < RgC){
+      console.log(`R_hand このステップ内でのアニメーションは無し`)
+      this.stepAnimationEnd += 1
+      this.animationEnd()
+    }
+
+    console.log(text)
+  }
+  animation_re_set(){
+    this.mew_motion = true
   }
 }
-const timeList = new motionList()
+
+let timeList = new motionList()
+
+let model_event_check = true
 
 
     // this.el.addEventListener("mousedown", (e)=>{
     //   if(!e.currentTarget.classList[0]=="meter-out")  return
     //   if(this.meter_on) return
-    //   // console.log("mousedown")
+    //   console.log("mousedown")
     //   this.meter_on=true
     //   this.meter_updata(e)
     // })

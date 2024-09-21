@@ -32,9 +32,6 @@ const cubemode = () => ({
 	},	
 
 	init() {
-
-
-
     // center.children[2].children[0].removeAttribute("gltf-model")
     // center.children[2].children[0].setAttribute("gltf-model","#model_frame_edge")
 
@@ -122,9 +119,9 @@ const cubemode = () => ({
     map.append(list)
 
     
-    const next = document.createElement('div')
-    next.classList.add('next-step')
-    map.append(next)
+    const next = document.querySelector('.next-step-div')
+    // next.classList.add('next-step')
+    // map.append(next)
 
     
     // const pointer = document.createElement('div')
@@ -137,7 +134,7 @@ const cubemode = () => ({
     this.calculation_set_buttont = document.getElementsByClassName("calculation_set_buttont")[0]
 
     const folderTile = document.getElementsByClassName("folder-tile")
-    console.log(folderTile)
+    // console.log(folderTile)
     for(let i=0; i<folderTile.length; i++){
       folderTile[i].addEventListener("click", (e) => {
         // console.log(folderTile[i].parentElement)
@@ -152,13 +149,18 @@ const cubemode = () => ({
 			if(this.data.cube_mode !== "Execution")	return
       if(this.data.Execution_move)  return
       if(this.data.step_move) return
+      if(this.now_step == 15){
+        console.log(`next_step_buttont 既に完成している`)
+        return
+      }
 
-      const _list = document.getElementsByClassName("list")[0]
+      const _list = document.querySelector(".list")
 
       this.now_step += 1
+      
       hei = _list.children[this.now_step].offsetTop
 
-      St = document.getElementsByClassName(`step${this.now_step}`)
+      St = document.querySelectorAll(`.step${this.now_step}`)
       for(let i=0;i<St.length;i++)
         St[i].classList.add("now-step")
 
@@ -168,53 +170,61 @@ const cubemode = () => ({
         behavior: "smooth",
       })
       
+      console.log(`\n\n [${this.now_step}] ステップ`)
+      if(!timeList.stepSkip[this.now_step]){
+        console.log(`スキップ [${this.now_step}]`)
+        return
+      }
+
       this.data.step_move = true
 
+      timeList.rote_re_start()
+
       // console.log("")
-      hand_xyz.length=0
-      Angle_xyz.length = 0
+      // hand_xyz.length=0
+      // Angle_xyz.length = 0
 
       
-      if(this.now_step==12){
-        pointM(frame_pos, false)
-        typeName = frame_pos[0]=="corner"?"corner":"edge"
-        type = frame_pos[0]=="corner"?"frame_corner":"frame_edge"
-        const frame=document.getElementById(`frame_${typeName}`)
-        const Pframe=document.getElementById(`frame`)
+      // if(this.now_step==12){
+      //   pointM(frame_pos, false)
+      //   typeName = frame_pos[0]=="corner"?"corner":"edge"
+      //   type = frame_pos[0]=="corner"?"frame_corner":"frame_edge"
+      //   const frame=document.getElementById(`frame_${typeName}`)
+      //   const Pframe=document.getElementById(`frame`)
 
-        if(Pframe.classList.value.includes(typeName)){
-        	frame.setAttribute("visible",false)
-        	Pframe.classList.remove(typeName)
-        }
-      }
-      if(this.now_step<12){
-        pointM(frame_pos, false)
-        frame_rotate(undefined, this.now_step, 500, false)
-        // Angle_move(undefined, this.now_step,500)
-      }
+      //   if(Pframe.classList.value.includes(typeName)){
+      //   	frame.setAttribute("visible",false)
+      //   	Pframe.classList.remove(typeName)
+      //   }
+      // }
+      // if(this.now_step<12){
+      //   pointM(frame_pos, false)
+      //   frame_rotate(undefined, this.now_step, 500, false)
+      //   // Angle_move(undefined, this.now_step,500)
+      // }
 
       // console.log("/////  sum_solution2[0].length==0")
       // console.log(sum_solution2)
-      if(sum_solution2[0].length==0 || sum_solution2[0].length==1 && sum_solution2[0]=="")  {
-        // console.log("/////  sum_solution2[0].length==0")
-        sum_solution2.shift()
-        if(sum_solution2.length == 0){
-          movementCount = -1
-          move180 = false
-          this.Complete()
-        }
-      }
-      else{
-        setTimeout(() => {
-          this.data.Execution_move = true
-        },100)
-      }
+      // if(sum_solution2[0].length==0 || sum_solution2[0].length==1 && sum_solution2[0]=="")  {
+      //   // console.log("/////  sum_solution2[0].length==0")
+      //   sum_solution2.shift()
+      //   if(sum_solution2.length == 0){
+      //     movementCount = -1
+      //     move180 = false
+      //     this.Complete()
+      //   }
+      // }
+      // else{
+      //   setTimeout(() => {
+      //     this.data.Execution_move = true
+      //   },100)
+      // }
     })
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
 			if(this.data.cube_mode !== "Free")	return
       this.Mode_set("Calculation")
-			this.Button(e)
+			this.Calculation()
 		})
 
 		this.color_set_buttont.addEventListener('click', (e) => {
@@ -235,6 +245,16 @@ const cubemode = () => ({
     
     this.Mode_set("Free")
 	},
+
+  step_completion(){
+    // console.log(`cube mode step_completion`)
+    this.data.step_move = false
+
+    if(this.now_step == 15){
+      console.log(`cubemode 全て完成`)
+      this.Complete()
+    }
+  },
 
   meter(data){
     // console.log(`meter`)
@@ -284,13 +304,8 @@ const cubemode = () => ({
   },
 
   Ins_Complete(Sol){
-
-    // for(sum of sum_solution)
-    //   console.log(sum)   
-    
     const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
 
-  
     const rotas = document.getElementsByClassName('rotas')
   
     const imgDiv = document.createElement('div')
@@ -298,10 +313,12 @@ const cubemode = () => ({
     imgDiv.style.width = imgW
     imgDiv.style.height = imgW
 
+    const pimgDiv = document.createElement('div')
+    pimgDiv.classList.add("img-div-back")
+    imgDiv.append(pimgDiv)
+
     const img = document.createElement('img')
     img.classList.add('rotate-img')
-
-
 
     const line = document.getElementsByClassName('line')[0]
     const lineCount = parseInt(line.clientWidth / imgW)
@@ -309,6 +326,13 @@ const cubemode = () => ({
     for(let i=0;i<Sol.length;i++){
       rotas[i].innerHTML = ''
       if(Sol[i].length == 0){
+        const D = imgDiv.cloneNode(), I=img.cloneNode()
+        // D.classList.remove("img-div")
+        I.src=`./img/skip.png`
+        I.style.width = `${3 * imgW}px`
+        rotas[i].parentElement.style.height = `${imgW}px`
+        // D.append(I)
+        rotas[i].append(I)
         continue
       }
       let len = 0
@@ -323,7 +347,7 @@ const cubemode = () => ({
         }
         for(j of Sol[i][s].split(" ")){
           len += 1
-          const D = imgDiv.cloneNode(), I=img.cloneNode()
+          const D = imgDiv.cloneNode(true), I=img.cloneNode()
           I.src=`./img/${j}.png`
           D.append(I)
           rotas[i].append(D)
@@ -343,8 +367,9 @@ const cubemode = () => ({
 
     }
 
-  
-    // sum_solution2 = Sol
+    
+    timeList.imgSpeed = getRuleBySelector(".img-div-back")
+    console.log(timeList.imgSpeed)
 
     setTimeout(()=>{
       this.icon.style.display = "none"
@@ -363,6 +388,8 @@ const cubemode = () => ({
   },
 
   Complete(){
+    timeList.animation_re_set()
+    
 		// this.btn1.children[0].innerHTML = 'Complete'
     const Lhand = document.getElementById("L-hand")
     const Rhand = document.getElementById("R-hand")
@@ -378,39 +405,11 @@ const cubemode = () => ({
       this.Mode_set("Free")
   },
 
-  Button(e){
+  Calculation(){
     this.icon.classList.add("rotate-ani")
     this.icon.style.display = "block"
 
-    setTimeout(() =>{BBB()},2000)
-
-    // else if(this.data.btn_mode === 1)	{
-    //   // this.btn1.classList.add("un-pointer-events")
-    //   solve_preview = true
-    //   // this.btn1.children[0].innerHTML = 'moveing'
-    //   this.data.one_sul_mode = false
-    //   this.data.all_sul_mode = true
-      
-    //   const Lhand = document.getElementById("L-hand")
-    //   const Rhand = document.getElementById("R-hand")
-    //   Lhand.object3D.visible = true
-    //   Rhand.object3D.visible = true
-
-    //   this.Mode_set("Execution")
-    //   // btn_mode = -1
-    // }
-    // else if(this.data.btn_mode === 0)	{
-    //   console.log('Calculating')
-    //   this.data.btn_mode = -1
-
-    //   this.icon.style.display = "block"
-    //   this.icon.classList.add("rotate-ani")
-
-    //   this.Mode_set("Calculation")
-
-    //   setTimeout(() =>{BBB()},20000)
-    // }
-    // console.log(e)
+    setTimeout(() =>{BBB()},100)
   },
 
   hand_move(moves){

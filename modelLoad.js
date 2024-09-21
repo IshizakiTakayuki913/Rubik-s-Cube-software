@@ -6,47 +6,6 @@ const modelLoad = () => ({
     const scene = document.getElementById('scene')
     const root = document.getElementById('root')
 
-    function name(ojb,index,r,map = undefined,normalMap = undefined, side = 2) {
-      data = {
-        color: 0xffffff,
-        roughness : r,
-        normalScale: {x:3,y:3}
-      }
-
-      if(map != undefined)  data.map = map
-      if(normalMap != undefined)  data.normalMap = normalMap
-      
-      f=document.getElementById(ojb).object3D.children[0].children[0].children[0].children[index]
-
-      const material = new THREE.MeshStandardMaterial(data)
-
-      f.material=material
-      f.material.side=side
-      // f.material.normalMap.repeat={x:2,y:2}
-    }
-
-    function AAA(){
-      // const texture = new THREE.TextureLoader().load(`./mesh/M_a_${1}.jpg`)
-      // const texture1 = new THREE.TextureLoader().load(`./mesh/M_n_${1}.jpg`)
-      // A=3
-      // AA=["center","corner","edge"]
-      // B=[6,8,12]
-      // C=[1,3,2]
-
-      // for(let j=0;j<A;j++){
-      //   for(let i=0;i<B[j];i++){
-      //     for(let s=0;s<C[j];s++){
-      //       name(`${AA[j]}${i}`, s, 0.5, undefined, texture1, 2)
-      //     }    
-      //   }   
-      // }
-      color_set(scrambled_state)
-      // cubeOpa(1,0,objopacty2)
-      // cubeOpa(1,0,objopacty3)
-      
-      root.object3D.visible = true
-    }
-    
     const Lhand = document.createElement('a-entity')
     const Rhand = document.createElement('a-entity')
     Lhand.id="L-hand"
@@ -213,7 +172,9 @@ const modelLoad = () => ({
       for(b of bone_corners) bone_name_model[b.name]=b
       for(b of bone_centers) bone_name_model[b.name]=b
       for(b of bone_edges) bone_name_model[b.name]=b
-      AAA()
+
+      color_set(scrambled_state)
+      root.object3D.visible = true
     })
 
   },
