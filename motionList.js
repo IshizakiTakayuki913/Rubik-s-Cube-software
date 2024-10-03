@@ -354,7 +354,7 @@ class motionList{
         }
 
         if(Object.hasOwn(fdata, "Previous")){
-        console.log(`----------\n Previous \n----------`)
+          console.log(`----------\n Previous \n----------`)
           let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
           frameObj[pdata.type].out.object3D.visible = false
           this.pointM([pdata.type, pdata.frameParts], false)
@@ -440,15 +440,15 @@ class motionList{
     this.Hnad_v [influence] = vec_count % 2
   
     for(let i=0; i<Pre_movement2[Su].length; i++){
-        let  da = {
+      let  da = {
         clip: `${Su + Pre_movement2[Su][i]}`,
         timeScale: speed,
         time : time,
-              hand: false,
-              rote: false,
+        hand: false,
+        rote: false,
       }
       if(Pre_movement2[Su][i] == ""){
-              da.rote = true
+        da.rote = true
         sovle_time = time
       }
       move_schedule.push(da)
@@ -588,16 +588,11 @@ class motionList{
     data1.R = Rtime
     data1.time = Math.max(Ltime.time, Rtime.time)
     data1.moveMode = 2
+
+    console.log(JSON.parse(JSON.stringify({L:Ltime, R:Rtime})))
+    console.log({L:Ltime, R:Rtime})
+
     return data1
-      
-      console.log(JSON.parse(JSON.stringify({L:Ltime, R:Rtime})))
-      console.log({L:Ltime, R:Rtime})
-    // Lhand.setAttribute('animation-mixer', {
-    // 	clip: s.clip,
-    // 	loop: 'once',
-    // 	timeScale: s.timeScale,
-    // 	clampWhenFinished: true,
-    // })
   } 
   frame_rotate(sulb, scrambled_state, step, time, anime = false){
     let data = {
@@ -705,6 +700,7 @@ class motionList{
     data.type = typeName
     data.frameParts = pos
   
+    const faces = ['U', 'R', 'L', 'F', 'D', 'B', 'x', 'y', 'z', 'r', 'l', 'u', 'd', 'f', 'b']
   
     console.log({sulb})
     const index = faces.indexOf(sulb[0])

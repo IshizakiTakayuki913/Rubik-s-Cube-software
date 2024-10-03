@@ -683,3 +683,305 @@ for ( let i = 0; i < intersects.length; i ++ ) {
 // 		center[i].removeAttribute('animation')
 // 	}
 // }
+
+
+// console.hash = function(obj) {
+//   this.length = Object.keys(obj).length;
+//   this.count = 0;
+//   this.outText = "{\n";
+//   /**
+//   * @param {hash} obj 処理対象のオブジェクト
+//   * @param {number} times 処理中オブジェクトの階層
+//   */
+//   this.format = function(obj,times){
+//     var i = 0;
+//     var _objlength = Object.keys(obj).length;
+//     for(key in obj){
+//       i++;
+//       //階層分のタブを追加
+//       var tabs = "";
+//       for(var j = 0; j < times+1; j++){
+//         tabs += "\t";
+//       }
+//       this.outText += tabs + key + ":";
+//       if(typeof obj[key] == "object"){
+//         this.outText += "{" + "\n";
+//         //下層のオブジェクト数を足す
+//         this.length += Object.keys(obj[key]).length;
+//         //再帰処理
+//         this.format(obj[key],times+1);
+//         if(i == _objlength){
+//           this.outText += tabs.replace(/(\t?).$/,'$1') + "}\n";
+//         }
+//         this.count++;
+//       }else{
+//         this.outText += obj[key];
+//         if(i != _objlength){
+//           this.outText += ",\n";
+//         }else{
+//           this.outText += "\n" + tabs.replace(/(\t?).$/,'$1') + "}\n";
+//         }
+//         this.count++;
+//       }
+//     }
+//     if(this.length == this.count){
+//       console.log(this.outText);
+//     }
+//   }
+//   this.format(obj,0);
+// }
+
+// function cubeOpa() {
+// 	corner = model_corners
+// 	edge = model_edges
+// 	center = model_centers
+
+// 	// console.log(model_corners)
+// 	// console.log(corner.length)
+
+// 	for(let i=0;i<corner.length;i++){
+// 		let F = corner[i]
+// 		objopacty2(F)
+// 	}
+
+// 	for(let i=0;i<edge.length;i++){
+// 		let F = edge[i]
+// 		objopacty2(F)
+// 	}
+
+// 	for(let i=0;i<center.length;i++){
+// 		let F = center[i]
+// 		objopacty2(F)
+// 	}
+// }
+
+// function cubeOpa2(step) {
+// 	vis_p = [
+// 		[
+// 			[0,0,0,0,0,0,0,0,],
+// 			[0,0,0,0,0,0,0,0,0,0,0,0,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,0,0,0,0,],
+// 			[0,0,0,0,0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[0,0,0,0,0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 	]
+
+// 	vis = [
+// 		[
+// 			[0,0,0,0,0,0,0,0,],
+// 			[0,0,0,0,1,1,1,1,0,0,0,0,],
+// 			[0,0,0,0,0,0,],
+// 		],
+// 		[
+// 			[1,1,1,1,0,0,0,0,],
+// 			[0,0,0,0,1,1,1,1,0,0,0,0,],
+// 			[0,0,0,0,0,0,],
+// 		],
+// 		[
+// 			[1,1,1,1,0,0,0,0,],
+// 			[0,0,0,0,0,0,0,0,0,0,0,0,],
+// 			[0,0,0,0,0,0,],
+// 		],
+// 	]
+
+
+// 	corner = model_corners
+// 	edge = model_edges
+// 	center = model_centers
+
+// 	// console.log(model_corners)
+// 	// console.log(corner.length)
+
+// 	for(let i=0;i<corner.length;i++){
+// 		let F = corner[i]
+// 		objopacty4(F, vis_p[step][0][i])
+// 	}
+
+// 	for(let i=0;i<edge.length;i++){
+// 		let F = edge[i]
+// 		objopacty4(F, vis_p[step][1][i])
+// 	}
+
+// 	for(let i=0;i<center.length;i++){
+// 		let F = center[i]
+// 		objopacty4(F, vis_p[step][2][i])
+// 	}
+	
+// 	if(step == 4 || step == 5 || step == 6){
+// 		for(let i=0;i<corner.length;i++){
+// 			let F = corner[i]
+// 			if(vis[step - 4][0][i] == 0)	continue
+// 			objopacty5(F, vis_p[step][0][i])
+// 		}
+
+// 		for(let i=0;i<edge.length;i++){
+// 			let F = edge[i]
+// 			if(vis[step - 4][1][i] == 0)	continue
+// 			objopacty5(F, vis_p[step][1][i])
+// 		}
+// 	}
+// }
+
+
+// function cubeOpa3(step) {
+// 	vis_p = [
+// 		[
+// 			[0,0,0,0,0,0,0,0,],
+// 			[0,0,0,0,0,0,0,0,0,0,0,0,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,0,0,0,0,],
+// 			[0,0,0,0,0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[0,0,0,0,0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[0,0,0,0,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 		[
+// 			[1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,1,1,1,1,1,1,],
+// 			[1,1,1,1,1,1,],
+// 		],
+// 	]
+
+
+
+// 	corner = model_corners
+// 	edge = model_edges
+// 	center = model_centers
+
+// 	// console.log(model_corners)
+// 	// console.log(corner.length)
+
+// 	for(let i=0;i<corner.length;i++){
+// 		let F = corner[i]
+// 		objopacty4(F, vis_p[step][0][i])
+// 	}
+
+// 	for(let i=0;i<edge.length;i++){
+// 		let F = edge[i]
+// 		objopacty4(F, vis_p[step][1][i])
+// 	}
+
+// 	for(let i=0;i<center.length;i++){
+// 		let F = center[i]
+// 		objopacty4(F, vis_p[step][2][i])
+// 	}
+
+
+
+	
+// }
+
+
+// function objopacty(ojb, op1 = 0.5, step, op2 = undefined) {
+//   const F = ojb.children
+//   for(let s=0;s<F.length;s++){
+//       F[s].material.opacity = op1
+//       F[s].material.transparent = true
+//   }
+// 	if(op2 != undefined){
+// 		F[F.length-1].material.opacity = op2
+// 		F[F.length-1].material.transparent = true
+// 	}
+// }
+
+// function objopacty2(ojb) {
+//   const F = ojb.children
+// 	for(let s=0;s<F.length;s++){
+// 		F[s].visible = true
+// 	}
+// 		F[F.length-1].visible = false
+// }
+
+// function objopacty3(ojb, op1 = 0.5, op2 = undefined) {
+//   const F = ojb.children
+// 	for(let s=0;s<F.length;s++){
+// 		F[s].renderOrder  = 10
+// 	}
+// 	//console.log("function objopacty3")
+// }
+
+// // cubeOpa(0.8,0)
+// function objopacty4(ojb, vis) {
+//   const F = ojb.children
+// 	for(let s=0;s<F.length-1;s++){
+// 		F[s].visible = (vis == 1? true:false)
+// 	}
+// }
+
+// function objopacty5(ojb) {
+//   const F = ojb.children
+// 	for(let s=0;s<F.length-1;s++){
+// 		F[s].visible = false
+// 	}
+// 	ojb.children[0].visible = true
+// }
+
+
+// function psd() {
+// 	let t="let solved_state = new State(\n"
+// 	t+="  ["+scrambled_state.cp.join(',')+"],\n"
+// 	t+="  ["+scrambled_state.co.join(',')+"],\n"
+// 	t+="  ["+scrambled_state.ep.join(',')+"],\n"
+// 	t+="  ["+scrambled_state.eo.join(',')+"],\n"
+// 	t+="  ["+scrambled_state.c.join(',')+"],\n"
+// 	t+=")\n"
+// 	//console.log(t)
+// }

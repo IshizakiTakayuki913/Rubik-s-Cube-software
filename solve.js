@@ -1149,6 +1149,7 @@ let solve_preview = true
 let rote_speed = 2
 
 let full_cube = undefined
+
 const model_centers	=new Array(6)
 const model_corners	=new Array(8)
 const model_edges		=new Array(12)

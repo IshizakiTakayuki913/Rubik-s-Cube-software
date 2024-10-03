@@ -504,24 +504,26 @@ a-scene {
 
 .step-in-step {
 	position: absolute;
-	width: 40%;
+	width: 50%;
 	height: 1.5em;
-	left: 0.5vmin;
-	bottom: 0.5vmin;
+	left: 1.5vmin;
+	bottom: 1.5vmin;
 	background: #dacdcd;
 	display: flex;
 	flex-wrap: wrap;
-	border: 1px solid #000;
+	/* border: 1px solid #000; */
 }
+
 
 .step-in-step > div {
 	width: 25%;
 	height: auto;
-	border-right: 1px solid #000;
+	border: 1px solid #000;
+	border-right: unset;
 }
 
 .step-in-step > div:last-child {
-	border-right: none;
+	border-right: 1px solid;
 }
 
 .step-in-step > div > p {

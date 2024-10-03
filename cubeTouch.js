@@ -95,11 +95,9 @@ const cubemode = () => ({
     this.icon = canvas
 
 
-
     const iframe = document.getElementById('iframe')
     iframe.width = 100
     iframe.height = 100
-
 
 
     const map = document.getElementsByClassName('sulves-map')[0]
@@ -138,10 +136,14 @@ const cubemode = () => ({
     for(let i=0; i<folderTile.length; i++){
       folderTile[i].addEventListener("click", (e) => {
         // console.log(folderTile[i].parentElement)
-        if(folderTile[i].parentElement.classList.value.includes("clause-folder"))
+        if(folderTile[i].parentElement.classList.value.includes("clause-folder")){
           folderTile[i].parentElement.classList.remove('clause-folder')
-        else
+          
+        }
+        else{
           folderTile[i].parentElement.classList.add('clause-folder')
+
+        }
       })
     }
 
