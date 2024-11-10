@@ -5,8 +5,8 @@
 	},		
 
 	init() {
-		const camera = document.getElementById("camera")
-		const camera2 = document.getElementById("camera2")
+		const camOut = document.getElementById("camOut")
+		const camIn = document.getElementById("camIn")
 		
 		this.mousePress = false
 		this.touchPress = false
@@ -428,17 +428,19 @@
     let move = this.moves[roteInde]
     if(value < 0) move = move_reverse[move]
     value=Math.abs(value) - direi
-    value = Math.max(Math.min(value/1.5,Math.PI/2),-Math.PI/2)
+    value = Math.max(Math.min(value/2.5,1),-1)
 
     // console.log(
     //   `  name [${this.moves[roteInde]}] value ${value}\n`,
     //   `N name [${move}] value ${Math.abs(value)}`,
     // )
 
-    if(this.raycast_rotate_T && this.new_move !== undefined && this.new_move[0] != move[0]){
+    if(this.raycast_rotate_T && this.new_move !== undefined && this.new_move != move){
       // this.new_move
       // console.log()
-      raycast_rotate(this.new_move, 0)
+      // raycast_rotate(this.new_move, 0)
+      full_cube.removeAttribute("my-animation")
+      full_cube.setAttribute("my-animation",{clip: move, frame: value})
       // this.raycast_rotate_T = false
       // const Prad = this.new_rad
       // let Pfr = this.faces_rad[this.new_move[0]]
@@ -451,12 +453,17 @@
       //   this.Progress_rotate()
       // },1010)
     }
+    if(this.raycast_rotate_T && this.new_move == undefined){
+      full_cube.removeAttribute("my-animation")
+      full_cube.setAttribute("my-animation",{clip: move, frame: value})
+    }
 
     this.new_rad = undefined
     // const vec = this.moves[roteInde].length>1?-1:1
 
     if(this.raycast_rotate_T){
-      raycast_rotate(move, value)
+      // raycast_rotate(move, value)
+      full_cube.components["my-animation"].setFrame(value)
     //  console.log(`moves ${move} rad ${value}`)
     }
     this.new_move = move
@@ -469,10 +476,13 @@
       const move = this.new_move
 
       // console.log(`\n ******** Decision_rotate rad ${rad}`)
-      if(rad < Math.PI/8){
+      if(rad < 0.125){
         // console.log(`             d < 0.2`)
-        raycast_rotate(move, 0)
-        Compensation_anim(move_reverse[move],100, Math.PI/2-rad)
+        // raycast_rotate(move, 0)
+        full_cube.removeAttribute("my-animation")
+        full_cube.setAttribute("my-animation",{clip: move, start: rad, end: 0, timeScale: 0.1})
+        // Compensation_anim(move_reverse[move],100, 1 - rad)
+
         return
       }
 
@@ -486,8 +496,11 @@
         scrambled_state = scamble2state(scrambled_state,move)
       }
       one_rotate(scrambled_state, move)
-      raycast_rotate(move, 0)
-      Compensation_anim(move,100, rad)
+      full_cube.removeAttribute("my-animation")
+      full_cube.setAttribute("my-animation",{
+        clip: move_reverse[move], start: 1 - rad, end: 0, timeScale: 0.1})
+      // raycast_rotate(move, 0)
+      // Compensation_anim(move,100, rad)
 
       
       const mode  = document.getElementById("scene").components["cube-mode"]

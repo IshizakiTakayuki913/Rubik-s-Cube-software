@@ -1,31 +1,44 @@
-
 const camera = () => ({
 	schema: {
-		Viewpoint: {type: 'boolean', default: false},
-		ray: { type: 'selector' },
+		Viewpoint: {type: 'boolean', default: true},
+		scene: {type: 'string', default: ""},
+		camOut: {type: 'string', default: ""},
+		camIn: {type: 'string', default: ""},
 	},		
 
 
 	init() {
-		const camera = document.getElementById("camera")
-		const camera2 = document.getElementById("camera2")
+		// this.scene = document.querySelector(`#${this.data.scene}`)
+		// this.camOut = document.querySelector(`#${this.data.camOut}`)
+		// this.camIn = document.querySelector(`#${this.data.camIn}`)
+
+		this.scene = document.getElementById(this.data.scene)
+		this.camOut = document.getElementById(this.data.camOut)
+		this.camIn = document.getElementById(this.data.camIn)
 		
 		this.mousePress = false
 		this.touchPress = false
 		this.touchMode = undefined
 
-		this.scene = document.getElementById('scene')
+		// console.log(`カメラ　ーーーー`)
+
+		// console.log(this.scene)
 		// this.setpos = this.scene.getBounndingClientRect()
 
 		this.scene.addEventListener('mousedown', (e) => {
+			// console.log(`カメラ　ーーーー　mousedown　0`)
 			if(!this.data.Viewpoint) return
+			// console.log(`カメラ　ーーーー　mousedown　1`)
 			if(e.target.tagName !== 'CANVAS') return
+			// console.log(`カメラ　ーーーー　mousedown　2`)
 			if(!this.hit({
 				x:e.clientX - this.scene.getBoundingClientRect().left,
 				y:e.clientY - this.scene.getBoundingClientRect().top
 			})) return
-
+			// console.log(`カメラ　ーーーー　mousedown　3`)
 			this.mousePress = true
+
+			// console.log(`camOut DOWN ${this.el.id}`)
 			
 			if(this.touchPress || this.touchMode !== undefined){
 				this.touchPress =false
@@ -37,7 +50,7 @@ const camera = () => ({
 				x:e.clientX - this.scene.getBoundingClientRect().left,
 				y:e.clientY - this.scene.getBoundingClientRect().top
 			}
-			this.sceneRot = {x:camera.object3D.rotation.x, y:camera.object3D.rotation.y}
+			this.sceneRot = {x:this.camOut.object3D.rotation.x, y:this.camOut.object3D.rotation.y}
 		})
 		
 		document.addEventListener('mousemove', (e) => {
@@ -45,12 +58,15 @@ const camera = () => ({
 			if(!this.mousePress)	return
 			// console.log(`target [${e.target.tagName}] current [${e.currentTarget.tagName}]`)
 			
+			// console.log(`camOut MOVE ${this.el.id}`)
 			let dx = {
 				x:e.clientX - this.scene.getBoundingClientRect().left - this.mousePos.x,
 				y:e.clientY - this.scene.getBoundingClientRect().top - this.mousePos.y
 			}
-			camera.object3D.rotation.y = (this.sceneRot.y - dx.x/150) % (2*Math.PI)
-			camera.object3D.rotation.x = Math.max(Math.min(this.sceneRot.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
+			this.camOut.object3D.rotation.y = (this.sceneRot.y - dx.x/150) % (2*Math.PI)
+			this.camOut.object3D.rotation.x = Math.max(Math.min(this.sceneRot.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
+
+			// console.log(`rotation ${JSON.stringify(this.camOut.object3D.rotation)}`)
 		})
 		
 		document.addEventListener('mouseup', (e) => {
@@ -61,10 +77,12 @@ const camera = () => ({
 
 		this.scene.addEventListener('wheel', (e) => {
 			if(e.target.tagName !== 'CANVAS') return
-			d = camera2.object3D.position.z
+			d = this.camIn.object3D.position.z
 			d += e.deltaY/200
 			d = Math.max(d,0)
-			camera2.object3D.position.z = d
+			this.camIn.object3D.position.z = d
+			
+			// console.log(`camOut WHEEL ${this.el.id} scene ${this.scene.id} camIn ${this.camIn.id}`)
 		})
 
 		this.scene.addEventListener('touchstart', (e) => {
@@ -90,7 +108,7 @@ const camera = () => ({
 					x:e.touches[0].clientX - this.scene.getBoundingClientRect().left,
 					y:e.touches[0].clientY - this.scene.getBoundingClientRect().top
 				}
-				this.sceneRot = {x:camera.object3D.rotation.x, y:camera.object3D.rotation.y}
+				this.sceneRot = {x:this.camOut.object3D.rotation.x, y:this.camOut.object3D.rotation.y}
 			}
 			else if(e.touches.length == 2){
 				this.touchMode = "two"
@@ -98,7 +116,7 @@ const camera = () => ({
 					x:e.touches[1].clientX - e.touches[0].clientX ,
 					y:e.touches[1].clientY - e.touches[0].clientY
 				}
-				this.touchSetPos = camera2.object3D.position.z
+				this.touchSetPos = this.camIn.object3D.position.z
 			}
 		})
 		
@@ -111,8 +129,8 @@ const camera = () => ({
 					x:e.touches[0].clientX - this.scene.getBoundingClientRect().left - this.touchPos.x,
 					y:e.touches[0].clientY - this.scene.getBoundingClientRect().top - this.touchPos.y
 				}
-				camera.object3D.rotation.y = (this.sceneRot.y - dx.x/150) % (2*Math.PI)
-				camera.object3D.rotation.x = Math.max(Math.min(this.sceneRot.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
+				this.camOut.object3D.rotation.y = (this.sceneRot.y - dx.x/150) % (2*Math.PI)
+				this.camOut.object3D.rotation.x = Math.max(Math.min(this.sceneRot.x - dx.y/150,85*Math.PI/180),-85*Math.PI/180)
 			}
 			else if(this.touchMode === "two"){
 				d = this.touchSetPos
@@ -122,7 +140,7 @@ const camera = () => ({
 				)
 				let dx = Math.sqrt( Math.pow( this.touchPos.x, 2) + Math.pow( this.touchPos.y, 2) )
 				d = Math.max(d - ( pdx - dx )/70 , 3.375)
-				camera2.object3D.position.z	= d
+				this.camIn.object3D.position.z	= d
 			}
 			else if(this.touchMode === "none"){}
 		})
@@ -139,6 +157,7 @@ const camera = () => ({
 	},
 	
 	hit(p) {
+		// console.log(p)
 		const raycaster = new THREE.Raycaster();
 		const pointer = new THREE.Vector2();
 		pointer.x = ( p.x / this.scene.clientWidth ) * 2 - 1;
@@ -161,7 +180,7 @@ const camera = () => ({
 		// console.log(intersects[0].object.el.classList)
 		if(intersects.length == 0) return false
 
-		if(intersects[0].object.el.classList[1]==="sky")
+		if(intersects[0].object.el.classList.value.indexOf("sky") != -1)
 			return true
 
 		return false

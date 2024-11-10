@@ -35,6 +35,7 @@ const cubemode = () => ({
     // center.children[2].children[0].removeAttribute("gltf-model")
     // center.children[2].children[0].setAttribute("gltf-model","#model_frame_edge")
 
+    this.load_end = true
     this.Rotation_Angle = {
       e: [
         [-30,-160],
@@ -232,7 +233,7 @@ const cubemode = () => ({
 		this.color_set_buttont.addEventListener('click', (e) => {
 			if(this.data.cube_mode !== "Free") return
       this.Mode_set("Input")
-      const Colorset  = document.getElementById("camera2").components["color-set"]
+      const Colorset  = document.getElementById("camIn").components["color-set"]
       Colorset.Intiset()
 			// console.log(`mode Change Input`)
 		})
@@ -249,7 +250,7 @@ const cubemode = () => ({
 	},
 
   step_completion(){
-    // console.log(`cube mode step_completion`)
+    console.log(`cube mode step_completion`)
     this.data.step_move = false
 
     if(this.now_step == 15){
@@ -291,9 +292,9 @@ const cubemode = () => ({
     		
   Mode_set(Nmode){
     this.data.cube_mode = Nmode
-    const Viewpoint = document.getElementById("camera2").components["camera-view"]
-    const Rotation  = document.getElementById("camera2").components["cube-rotate"]
-    const Colorset  = document.getElementById("camera2").components["color-set"]
+    const Viewpoint = document.getElementById("camIn").components["camera-view"]
+    const Rotation  = document.getElementById("camIn").components["cube-rotate"]
+    const Colorset  = document.getElementById("camIn").components["color-set"]
     const presskey  = document.getElementById("scene").components["press-key-board"]
     
 
@@ -435,11 +436,66 @@ const cubemode = () => ({
     // set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
     this.Mode_set("Free")
   },
+  modeleData(
+    _full_cube, _model_centers, _model_corners, _model_edges,
+    _bone_centers, _bone_corners, _bone_edges,
+    _L_hand, _R_hand,
+    _bone_L_hand, _bone_R_hand, 
+    _bone_name_model, _frameObj
+  ){
+    
+    full_cube = _full_cube
+    model_centers = _model_centers
+    model_corners = _model_corners
+    model_edges = _model_edges
+    bone_centers = _bone_centers
+    bone_corners = _bone_corners
+    bone_edges = _bone_edges
+    L_hand = _L_hand
+    R_hand = _R_hand
+    bone_L_hand = _bone_L_hand
+    bone_R_hand = _bone_R_hand, 
+    bone_name_model = _bone_name_model
+    frameObj = _frameObj
 
-	// tick() {
-  //   if(this.data.Execution_move){
-	// 		motions()
-	// 		this.data.Execution_move = false
-  //   }
-	// },
+    timeList = new motionList(
+      _full_cube, _model_centers, _model_corners, _model_edges,
+      _bone_centers, _bone_corners, _bone_edges,
+      _L_hand, _R_hand,
+      _bone_L_hand, _bone_R_hand, 
+      _bone_name_model, _frameObj
+    )
+
+    timeList.color_set(scrambled_state, color_data)
+    // timeList.ins(
+    //   scrambled_state,
+    //   [
+    //     [ "R","U","F2","y" ],
+    //     [ "F2","y" ],
+    //     [ "U2","F2","y" ],
+    //     [ "U'","F2","y" ],
+    //     [ "y" ],
+    //     [ "y2","R","U","R'","y2","U","R","U","R'","y" ],
+    //     [ "R","U","R'","U'","R","U","R'","y" ],
+    //     [ "U2","R","U2","R'","U'","R","U","R'","y" ],
+    //     [ "U2","U","R","U'","R'","F","R'","F'","R","y" ],
+    //     [ "U'","R'","F'","R","U","R","U'","R'","F","y" ],
+    //     [ "y","R","U'","R'","F","R'","F'","R","y'","U'","U'","R'","F'","R","U","R","U'","R'","F","y" ],
+    //     [ "U2","U'","R'","F'","R","U","R","U'","R'","F","y" ],
+    //     [ "U'","F","R","U","R'","U'","F'","F","R","U","R'","U'","F'" ],
+    //     [ "U","R","U","R'","U","R","U2","R'","R","U","R'","U","R","U2","R'" ],
+    //     [ "U2" ],
+    //     [ "y'","x'","U2","R2","U'","L'","U","R2","U'","L","U'","x","y","x'","U2","R2","U'","L'","U","R2","U'","L","U'","x" ],
+    //   ],
+    // )
+
+
+
+    this.load_end = false
+  },
+  timeLise_push(){
+    if(this.load_end) return undefined
+    console.log("frameCube timeLise_push")
+    return timeList
+  },
 })

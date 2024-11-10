@@ -44,7 +44,7 @@ const presskeyboard = () => ({
 		window.addEventListener("keydown", (e) => {
 			if(!this.data.Rotation) return
 			if(e.code == "KeyP"){
-				const camera = document.getElementById('camera').components["sync-user"]
+				const camera = document.getElementById('camOut').components["sync-user"]
 				camera.load()
 			}
 			const A = e.code

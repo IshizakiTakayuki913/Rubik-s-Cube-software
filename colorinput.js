@@ -5,8 +5,8 @@ const colorinput = () => ({
 	},		
 
 	init() {
-		const camera = document.getElementById("camera")
-		const camera2 = document.getElementById("camera2")
+		const camOut = document.getElementById("camOut")
+		const camIn = document.getElementById("camIn")
 		const btn2 = document.getElementById('btn2')
 		this.scene = document.getElementById('scene')
 		

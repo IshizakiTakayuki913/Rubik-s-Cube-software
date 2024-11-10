@@ -26,6 +26,26 @@ body {
 	/* margin: 2vmin; */
 }
 
+.main-display {
+	border: unset;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background: rgb(132, 0, 0);
+}
+
+.display-paly {
+	border: unset;
+	position: absolute;
+	width: 30vmin;
+	height: 30vmin;
+	top: 5%;
+	left: 5%;
+	border-radius: 0% 0% 100% 0%;
+	background: #ffffff;
+	opacity: 0.8;
+}
+
 a-scene {
 	position: absolute;
 	width: 100%;

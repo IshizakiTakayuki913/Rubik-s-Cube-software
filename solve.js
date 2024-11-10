@@ -646,10 +646,6 @@ function rotate(roates ,time = 1000,dist_time = 50){
 	let time_tank = 0
 	for(let i=0;i<roat_list.length;i++){
 		setTimeout(() => {
-			one_rotate_anim(roat_list[i],time)
-		}, time_tank)
-
-		setTimeout(() => {
 			if(roat_list[i][0] <= "Z"){
 				// console.log(`A~~Z [${roat_list[i]}]`)
 				scrambled_state = scamble2state(scrambled_state,roat_list[i])
@@ -688,7 +684,8 @@ function rotate(roates ,time = 1000,dist_time = 50){
 			}
 			// console.log(roat_list[i])
 			one_rotate(scrambled_state, roat_list[i])
-		}, time_tank + time)
+			one_rotate_anim(move_reverse[roat_list[i]],time)
+		}, time_tank)
 		time_tank += time + dist_time
 	}
 }
@@ -719,7 +716,7 @@ function one_rotate(sc_st,roate){
 		let F = center[i].children
 	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
-	full_cube.removeAttribute('animation-mixer')
+	// full_cube.removeAttribute('my-animation')
 	return sc_st
 }
 
@@ -750,29 +747,55 @@ function color_set(sc_st){
 }
 
 function one_rotate_anim(roate,time = 2000){
-	full_cube.setAttribute('animation-mixer', {
+	full_cube.removeAttribute('my-animation')
+	full_cube.setAttribute('my-animation', {
 		clip: roate,
-		loop: 'once',
-		timeScale: 1000/time,
-		clampWhenFinished: true,
+		timeScale: time/1000,
+		start: 1,
+		end: 0,
+		// loop: 'once',
+		// timeScale: 1000/time,
+		// clampWhenFinished: true,
 	})
 }
 
 function Compensation_anim(Rota,Time = 2000, Rad){
-	roate = move_reverse[Rota]
-	rad = Math.max(Math.PI/2 - Rad, 0.001)
-	time = Time  * (Math.PI/2) / rad
-	StartAt = time - Time
-	data = {
+	const roate = move_reverse[Rota]
+	const rad = Math.max(Math.PI/2 - Rad, 0.001)
+	const time = Time / 1000
+	const StartAt = Rad
+	const data = {
 		clip: roate,
-		repetitions: "1",
-		timeScale: -1000/time,
-		startAt: StartAt,
-		clampWhenFinished: true,
+		timeScale: time,
+		start: StartAt,
+
+		// repetitions: "1",
+		// timeScale: -1000/time,
+		// startAt: StartAt,
+		// clampWhenFinished: true,
 	}
-	full_cube.removeAttribute('animation-mixer')
-	full_cube.setAttribute('animation-mixer', data)
+	full_cube.removeAttribute('my-animation')
+	full_cube.setAttribute('my-animation', data)
 }
+
+// function Compensation_anim(Rota,Time = 2000, Rad){
+// 	roate = move_reverse[Rota]
+// 	rad = Math.max(Math.PI/2 - Rad, 0.001)
+// 	time = Time  * (Math.PI/2) / rad
+// 	StartAt = time - Time
+// 	data = {
+// 		clip: roate,
+// 		timeScale: time/1000,
+// 		start: StartAt,
+
+// 		// repetitions: "1",
+// 		// timeScale: -1000/time,
+// 		// startAt: StartAt,
+// 		// clampWhenFinished: true,
+// 	}
+// 	full_cube.removeAttribute('my-animation')
+// 	full_cube.setAttribute('my-animation', data)
+// }
 
 let scrambled_state = solved_state
 
@@ -1137,7 +1160,7 @@ function BBB(){
 	console.log(timeList)
 
 	// timeList = new motionList()
-	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)))
+	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)), color_data)
 
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
@@ -1150,20 +1173,20 @@ let rote_speed = 2
 
 let full_cube = undefined
 
-const model_centers	=new Array(6)
-const model_corners	=new Array(8)
-const model_edges		=new Array(12)
+let model_centers	=new Array(6)
+let model_corners	=new Array(8)
+let model_edges		=new Array(12)
 
-const bone_centers	=new Array(6)
-const bone_corners	=new Array(8)
-const bone_edges		=new Array(12)
+let bone_centers	=new Array(6)
+let bone_corners	=new Array(8)
+let bone_edges		=new Array(12)
 
 
 let L_hand = undefined
 let R_hand = undefined
 
-const bone_L_hand	= {}
-const bone_R_hand	= {}
+let bone_L_hand	= {}
+let bone_R_hand	= {}
 
 let bone_name_model={}
 
