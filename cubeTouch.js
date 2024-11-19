@@ -372,7 +372,7 @@ const cubemode = () => ({
 
     
     timeList.imgSpeed = getRuleBySelector(".img-div-back")
-    console.log(timeList.imgSpeed)
+    // console.log(timeList.imgSpeed)
 
     setTimeout(()=>{
       this.icon.style.display = "none"
@@ -443,7 +443,8 @@ const cubemode = () => ({
     _bone_L_hand, _bone_R_hand, 
     _bone_name_model, _frameObj
   ){
-    
+    console.log(`cube mode modeleData`)
+
     full_cube = _full_cube
     model_centers = _model_centers
     model_corners = _model_corners
@@ -466,7 +467,7 @@ const cubemode = () => ({
       _bone_name_model, _frameObj
     )
 
-    timeList.color_set(scrambled_state, color_data)
+    color_set(scrambled_state)
     // timeList.ins(
     //   scrambled_state,
     //   [

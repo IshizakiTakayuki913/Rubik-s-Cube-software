@@ -2,34 +2,42 @@ const myanimation = () => ({
 	schema: {
 		clip: {type: 'string', default: ""},
 		timeScale: {type: 'number', default: 1},
-    frame: {type: "number", default: NaN},
     start: {type: 'number', default: 0},
-    end: {type: 'number', default: 1},
+    end: {type: 'number', default: Infinity},
+    frame: {type: "number", default: NaN},
 	},	
 	init() {
     this.duration = -1
     this.startTime = 0
     
     this.ani = this.el.object3D.children[0].animations.find((n) => n.name == this.data.clip)
+
+    const dur = this.ani.duration // 元のアニメーションの時間
+    // this.data.start = isNaN(this.data.start)?dur:this.data.start
     
     if(this.ani === undefined){
       console.error(`[${this.data.clip}] no glb model animation`)
       return
     }
-    if(this.data.start < 0 || 1 < this.data.start){
-      console.error(`over start [${this.data.start}]`)
+
+    this.data.start = (this.data.start == Infinity ? dur : this.data.start)
+    this.data.end   = (this.data.end   == Infinity ? dur : this.data.end  )
+
+    if(this.data.start < 0 || dur < this.data.start){
+      console.error(`over start ${this.data.start}/${dur}`)
       return
     }
-    if(this.data.end < 0 || 1 < this.data.end){
-      console.error(`over end [${this.data.end}]`)
+    if(this.data.end < 0 || dur < this.data.end){
+      console.error(`over end ${this.data.end}/${dur}`)
       return
     }
+
 
     this.data.timeScale = Math.abs(this.data.timeScale)
 
 		this.direction = this.data.start < this.data.end ? 1 : -1
-    this.duration = this.ani.duration * this.data.timeScale * 1000
     this.sumTime = Math.abs(this.data.start - this.data.end)
+    this.duration = this.sumTime / this.data.timeScale * 1000
 
     this.parts = []
     this.el.object3D.traverse(t => {
@@ -41,12 +49,14 @@ const myanimation = () => ({
     if(isNaN(this.data.frame)){
       this.startTime = Date.now()
       // console.log(`start ${this.el.id} clip=[${this.data.clip}] time=${(Date.now()-baseTime)/1000}`)
+      // console.log({
+      //   timeScale: this.data.timeScale, direction: this.direction,
+      //   duration: this.duration, sumTime: this.sumTime,
+      // })
       return
     }
 
-    const direc = this.direction
-    const time = this.data.frame
-    this.frame(this.ani.tracks, direc, time)
+    this.frame(this.ani.tracks, this.direction, this.data.frame)
 
     // console.log(this.parts)
   },
@@ -54,7 +64,6 @@ const myanimation = () => ({
     // if(!this.data.move) return
 
     const nowTime = Date.now() - this.startTime
-    // console.log(`nowTime ${nowTime}`)
 
     if(nowTime >= this.duration){
       // console.log("tick")
@@ -64,20 +73,22 @@ const myanimation = () => ({
 
     const direc = this.direction
     const time = nowTime / this.duration * this.sumTime * direc + this.data.start
+    // console.log(`${JSON.stringify({nowTime,direc,time})}`)
     this.frame(this.ani.tracks, direc, time)
     
   },
   frame(tracks, direc, time) {
-
+    // direc 再生方向 time 元アニメーションでの再生位置
     tracks.forEach(e => {
       const fullname = e.name.split(".")
       const type = fullname.pop()
       const move = this.parts.find((n) => n.name == fullname.join("."))
 
-      const len = type[0]=="q"?4:3
       let index = direc==1 ?  e.times.findLastIndex((n) => n < time) :
                               e.times.findIndex((n) => n > time)
       if(index == -1) index = 0
+                              
+      const len = type[0]=="q"?4:3
       // console.log({fullname,type,move,len,index})
 
       if((direc == -1 && index == 0 )  || (direc == 1 && index == e.times.length-1)){

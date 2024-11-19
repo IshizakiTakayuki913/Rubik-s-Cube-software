@@ -363,21 +363,18 @@ const colorinput = () => ({
       return
     }
     console.log(parts)
+    const choice_parts = this.parts.object.parent.userData.name
 
-    const choice_parts = this.parts.object.parent.name
-    const regex = /[^a-z]/g;
-    const regex2 = /[^0-9]/g;
-    const parts_type = choice_parts.replace(regex, "")
-    const be = parseInt(choice_parts.replace(regex2, ""))
-    if(!(parts_type === "e" || parts_type === "c"))	return
+  //  console.log(`search_part ${partsNamt} name ${this.parts.object.name}`)
+  //  console.log(this.parts)
+
+
+    const parts_type = choice_parts.slice(0,2)
+    const be = parseInt(choice_parts.slice(2,4))
+    const num = parseInt(this.parts.object.name.at(-1)) - 2
+    if(!(parts_type === "ed" || parts_type === "co"))	return
 
     const pos = parts
-
-    let num = 0
-    if(parts_type === "e"	)
-      num = pos.face.normal.y > 0.707 ? 0 : 1
-    else if(parts_type === "c")
-      num = pos.face.normal.y > 0.707 ? 0 : (pos.face.normal.x > 0.707 ? 1 : 2)
 
     // console.log(`Color_set type [${parts_type}] num [${be}]index [${num}]`)
     face = {parts: choice_parts, type: parts_type, Pindex: be, Findex: num}
@@ -430,13 +427,13 @@ const colorinput = () => ({
     for(let i=0;i<corner.length;i++){
       let F = corner[i].children
       for(let s=0;s<3;s++)
-        F[s].material.color = gray
+        F[s+1].material.color = gray
     }
   
     for(let i=0;i<edge.length;i++){
       let F = edge[i].children
       for(let s=0;s<2;s++)
-        F[s].material.color = gray
+        F[s+1].material.color = gray
     }
 
     ci = color_data

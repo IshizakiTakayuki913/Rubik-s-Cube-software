@@ -146,16 +146,16 @@
     if(intersects.length == 0) return false
 
 		else if(intersects[0].object.el.classList[1]==hitName){
-      if(hitName=="cube"){
-        text=["\n"]
-        for(t of intersects){
-            a=""
-            a+=`id [${t.object.el.id}] `
-            a+=`point [x:${Math.round(t.point.x*100)/100} y:${Math.round(t.point.y*100)/100} z:${Math.round(t.point.z*100)/100} ] `
-            text.push(a)
-        }
-        // console.log(text.join(",\n"))
-      }
+      // if(hitName=="cube"){
+      //   text=["\n"]
+      //   for(t of intersects){
+      //       a=""
+      //       a+=`id [${t.object.el.id}] `
+      //       a+=`point [x:${Math.round(t.point.x*100)/100} y:${Math.round(t.point.y*100)/100} z:${Math.round(t.point.z*100)/100} ] `
+      //       text.push(a)
+      //   }
+      //   // console.log(text.join(",\n"))
+      // }
 			return intersects[0]
     } 
 
@@ -227,7 +227,7 @@
       ["D'","L"],
     ]
     const parts_rot = {
-      c:[
+      co:[
         {x:0, y:180, z:0},
         {x:0, y:90, z:0},
         {x:0, y:0, z:0},
@@ -237,7 +237,7 @@
         {x:0, y:90, z:180},
         {x:0, y:0, z:180},
       ],
-      n:[
+      ce:[
         {x:0, y:180, z:0},
         {x:0, y:90, z:0},
         {x:0, y:0, z:0},
@@ -245,7 +245,7 @@
         {x:-90, y:0, z:0},
         {x:90, y:0, z:0},
       ],
-      e:[
+      ed:[
         {x:0, y:-90, z:90},
         {x:0, y:90, z:-90},
         {x:0, y:90, z:90},
@@ -262,41 +262,34 @@
         {x:0, y:-90, z:180},
       ],
     }
+    const partsNamt = this.parts.object.parent.userData.name
 
-  //  console.log(`search_part ${this.parts.object.parent.name}`)
+  //  console.log(`search_part ${partsNamt} name ${this.parts.object.name}`)
   //  console.log(this.parts)
 
-    const regex = /[^a-z]/g;
-    const regex2 = /[^0-9]/g;
-    const parts_type = this.parts.object.parent.name.replace(regex, "")
-    const be = parseInt(this.parts.object.parent.name.replace(regex2, ""))
-    if(!(parts_type === "c" || parts_type === "n" || parts_type === "e"))	return
+
+    const parts_type = partsNamt.slice(0,2)
+    const be = parseInt(partsNamt.slice(2,4))
+    const face = parseInt(this.parts.object.name.at(-1)) - 3
+    if(!(parts_type === "ed" || parts_type === "ce" || parts_type === "co"))	return
 
     const pos = this.parts
-    let face = 0
-
     let num = 0
     
-    text=""
+    text=`name [${this.parts.object.name}] parts_type [${parts_type}] be [${be}] face [${face}]\n`
 
-    if(parts_type === "n"){
+    if(parts_type === "ce"){
       num = be
-      // console.log(`center num [${num}]`)
       text+=`center num [${num}] face [${face}]\n`
     }
-    else if(parts_type === "e"	){
+    else if(parts_type === "ed"	){
       num = be*2 + 6
-      face = pos.normal.y > 0.707 ? 0 : 1
       num += face
-      
-      // console.log(`edge num [${num}]`)
       text+=`edge num [${num}] face [${face}]\n`
     }
-    else if(parts_type === "c"){
+    else if(parts_type === "co"){
       num = be*3 + 30
-      face = pos.normal.y > 0.707 ? 0 : (pos.normal.x > 0.707 ? 1 : 2)
       num += face
-      // console.log(`corner num [${num}]`)
       text+=`corner num [${num}] face [${face}]\n`
     }
 
@@ -320,12 +313,12 @@
     this.partsRot = prot
     
     let nrot = {x:0, y:0, z:0}
-    if(parts_type === "n"){
+    if(parts_type === "ce"){
     }
-    else if(parts_type === "e"	){
+    else if(parts_type === "ed"	){
       if(face==0) nrot.x = -90
     }
-    else if(parts_type === "c"){
+    else if(parts_type === "co"){
       if(face==0) nrot.x = -90
       else if(face==1) nrot.y = 90
     }
@@ -334,18 +327,18 @@
     this.tile.parentElement.setAttribute("rotation", {...parts_rot[parts_type][be]})
     this.tile.parentElement.setAttribute("position", {...pos.point})
 
-    text+=`out\n`
-    text+=`  pos x[${this.tile.parentElement.object3D.position.x}] y[${this.tile.parentElement.object3D.position.y}] z[${this.tile.parentElement.object3D.position.z}]\n`
-    text+=`  rot x[${this.tile.parentElement.object3D.rotation.x}] y[${this.tile.parentElement.object3D.rotation.y}] z[${this.tile.parentElement.object3D.rotation.z}]\n`
+    // text+=`out\n`
+    // text+=`  pos x[${this.tile.parentElement.object3D.position.x}] y[${this.tile.parentElement.object3D.position.y}] z[${this.tile.parentElement.object3D.position.z}]\n`
+    // text+=`  rot x[${this.tile.parentElement.object3D.rotation.x}] y[${this.tile.parentElement.object3D.rotation.y}] z[${this.tile.parentElement.object3D.rotation.z}]\n`
 
-    text+=`in\n`
-    text+=`  pos x[${this.tile.object3D.position.x}] y[${this.tile.object3D.position.y}] z[${this.tile.object3D.position.z}]\n`
-    text+=`  rot x[${this.tile.object3D.rotation.x}] y[${this.tile.object3D.rotation.y}] z[${this.tile.object3D.rotation.z}]\n`
+    // text+=`in\n`
+    // text+=`  pos x[${this.tile.object3D.position.x}] y[${this.tile.object3D.position.y}] z[${this.tile.object3D.position.z}]\n`
+    // text+=`  rot x[${this.tile.object3D.rotation.x}] y[${this.tile.object3D.rotation.y}] z[${this.tile.object3D.rotation.z}]\n`
     
-    text+=`tile\n`
-    text+=`  rot x[${nrot.x}] y[${nrot.y}] z[${nrot.z}]\n`
+    // text+=`tile\n`
+    // text+=`  rot x[${nrot.x}] y[${nrot.y}] z[${nrot.z}]\n`
     
-  //  console.log(text)
+   console.log(text)
 
     this.new_move = undefined
     this.new_rad = undefined
@@ -480,7 +473,7 @@
         // console.log(`             d < 0.2`)
         // raycast_rotate(move, 0)
         full_cube.removeAttribute("my-animation")
-        full_cube.setAttribute("my-animation",{clip: move, start: rad, end: 0, timeScale: 0.1})
+        full_cube.setAttribute("my-animation",{clip: move, start: rad, end: 0, timeScale: 10})
         // Compensation_anim(move_reverse[move],100, 1 - rad)
 
         return
@@ -498,7 +491,7 @@
       one_rotate(scrambled_state, move)
       full_cube.removeAttribute("my-animation")
       full_cube.setAttribute("my-animation",{
-        clip: move_reverse[move], start: 1 - rad, end: 0, timeScale: 0.1})
+        clip: move_reverse[move], start: 1 - rad, end: 0, timeScale: 10})
       // raycast_rotate(move, 0)
       // Compensation_anim(move,100, rad)
 

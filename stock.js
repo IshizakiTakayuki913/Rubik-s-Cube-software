@@ -127,7 +127,7 @@ function hit(px,py) {
   pointer.x = ( px / window.innerWidth ) * 2 - 1;
   pointer.y = - ( py / window.innerHeight ) * 2 + 1;
   
-  const Cam= camera2.components.camera.camera
+  const Cam= camIn.components.camera.camera
   
   
   raycaster.setFromCamera( pointer, Cam );
@@ -552,13 +552,13 @@ for ( let i = 0; i < intersects.length; i ++ ) {
 // 	text += `sulb [${sulb}]  type [${type}]  pos [${pos}] rote [${ro}]\n`
 // 	text += `parts__Angle [${parts__Angle[step]}] new_ang [${new_ang}]\n`
 
-// 	const camera = document.getElementById('camera')
-// 	let by = (camera.getAttribute("rotation").y+360)%360
+// 	const camOut = document.getElementById('camera')
+// 	let by = (camOut.getAttribute("rotation").y+360)%360
 // 	let ay = (ro[1]+360)%360
 	
 // 	text += `[${by}] [${ay}]`
 
-// 	camera.setAttribute('animation', {
+// 	camOut.setAttribute('animation', {
 // 		property: 'rotation',
 // 		dur: time,
 // 		// from: 0,

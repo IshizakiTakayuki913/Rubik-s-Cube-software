@@ -23,206 +23,7 @@ class motionList{
     this.mew_motion = true
     // this.color_set(sc_st)
     
-    this.L_hand.addEventListener("animation-start",(e) => {
-      this.L_time_index += 1
-      const Lti = this.L_time_index
-      const data = {...this.LhandRotesData[Lti]}
-      // data.loop = 'once'
-      // data.clampWhenFinished = true
-      data.timeScale *= rote_speed
-      data.timeScale = 1 / data.timeScale
-  
-      this.L_hand.removeAttribute('my-animation')
-      this.L_hand.setAttribute('my-animation', data)
-    })
-    this.L_hand.addEventListener("animation-finished",(e)=>{
-      if(this.mew_motion) return
 
-      const Lti = this.L_time_index
-      // if(Lti == this.LhandRotesData.length-1){
-      // // console.log("L_hand アニメーション　終了")
-      //   return
-      // }
-      
-      if(this.groupRotesLhand.indexOf(Lti + 1) != -1){
-        // console.log(`L_hand ステップの区切りのアニメーション`)
-        this.stepAnimationEnd += 1
-        this.animationEnd()
-        return
-      } 
-      
-      const index = this.LstartIndex.indexOf(Lti + 1)
-      if(index != -1){
-        // console.log(`L_hand 回転 区切りのアニメーション`)
-        return
-      }
-
-      let handL = this.LhandRotesTime[Lti+1]
-      handL -= this.LhandRotesTime[Lti]
-      handL -= 1000 / this.LhandRotesData[Lti].timeScale
-      
-      setTimeout(()=>{
-        this.L_hand.dispatchEvent(new Event( "animation-start"))
-      },handL / rote_speed)
-    })
-
-    this.R_hand.addEventListener("animation-start",(e)=>{
-      this.R_time_index += 1
-      const Rti = this.R_time_index
-      const data = {...this.RhandRotesData[Rti]}
-      // data.loop = 'once'
-      // data.clampWhenFinished = true
-      data.timeScale *= rote_speed
-      data.timeScale = 1 / data.timeScale
-
-      // console.log(data)
-
-      this.R_hand.removeAttribute('my-animation')
-      this.R_hand.setAttribute('my-animation', data)
-    })
-    this.R_hand.addEventListener("animation-finished",(e)=>{
-      if(this.mew_motion) return
-
-      const Rti = this.R_time_index
-      // if(Rti == this.RhandRotesData.length-1){
-      // // console.log("R_hand アニメーション　終了")
-      //   return
-      // }
-
-      // console.log(`Rti [${Rti}] gRRh [${this.groupRotesRhand.indexOf(Rti + 1)}]`)
-      if(this.groupRotesRhand.indexOf(Rti + 1) != -1){
-        // console.log(`R_hand ステップの区切りのアニメーション`)
-        this.stepAnimationEnd += 1
-        this.animationEnd()
-        return
-      } 
-
-      const index = this.RstartIndex.indexOf(Rti + 1)
-      if(index != -1){  //  && this.RcubeIndex[index] != -1
-        // console.log(`R_hand 回転 区切りのアニメーション`)
-        return
-      }
-
-      let handR = this.RhandRotesTime[Rti+1]
-      handR -= this.RhandRotesTime[Rti]
-      handR -= 1000 / this.RhandRotesData[Rti].timeScale
-      
-      setTimeout(()=>{
-        this.R_hand.dispatchEvent(new Event( "animation-start"))
-      },handR / rote_speed)
-    })
-
-    this.full_cube.addEventListener("animation-finished",(e)=>{
-      if(this.mew_motion) return
-
-      const Cti = this.Cube_time_index
-      if(this.groupRotesCube.indexOf(Cti+1) != -1){
-        // console.log("ステップ　アニメーション　終了")
-        this.stepAnimationEnd += 1
-        this.animationEnd()
-        return
-      }
-
-      // if(Cti == this.cubeRotesData.length-1){
-      //   console.log("this.full_cube アニメーション　終了")
-      //   return
-      // }
-
-      let full_c = this.cubeRotesTime[Cti+1]
-      full_c -= this.cubeRotesTime[Cti]
-      full_c -= 1000 / this.cubeRotesData[Cti].timeScale
-      
-      setTimeout(()=>{
-        this.full_cube.dispatchEvent(new Event( "animation-start"))
-      },full_c / rote_speed)
-    })
-    this.full_cube.addEventListener("animation-start",(e)=>{
-
-      this.Cube_time_index += 1
-      const Cti = this.Cube_time_index
-
-      // console.log({Cti, Datas: this.Datas[Cti], colorData: this.colorData[Cti]})
-      this.color_set(this.Datas[Cti], this.colorData[Cti])
-
-      const data = {...this.cubeRotesData[Cti]}
-      // data.loop = 'once'
-      // data.clampWhenFinished = true
-      data.timeScale *= rote_speed
-      data.timeScale = 1 / data.timeScale
-
-      this.full_cube.removeAttribute('my-animation')
-      this.full_cube.setAttribute('my-animation', data)
-
-      // const solveDiv = document.querySelectorAll(".img-div-back")
-      // const twoIndex = this.towRotes.indexOf(Cti)
-      // const twoCount = this.towRotes.findLastIndex((e) => Cti > e) + 1
-
-      // console.log({Cti, twoIndex, twoCount})
-
-      // this.imgSpeed.style.transition = `all ${1 / rote_speed}s linear`  
-      // if(twoIndex == -1){
-      //   solveDiv[Cti - twoCount].style.maxWidth = "100%"
-      // }
-      // else{
-      //   solveDiv[Cti - twoCount].style.maxWidth = "50%"
-      // } 
-
-      const fdata = {...this.frameRotesData[Cti]}
-      // console.log(fdata)
-      if(fdata.type != undefined){
-        this.frameObj[fdata.type=="corner"?"edge":"corner"].out.object3D.visible = false
-        
-        this.frameObj[fdata.type].in.setAttribute("rotation", fdata.innerVec)
-        this.frameObj[fdata.type].out.removeAttribute('animation')
-        this.frameObj[fdata.type].out.setAttribute('rotation',"0 0 0")
-        this.frameObj[fdata.type].out.object3D.visible = true
-
-        // console.log({fdata})
-        this.pointM([fdata.type, fdata.frameParts], true)
-
-        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
-        // console.log({data: this.frameRotesData.slice(0, Cti), pdata})
-        if(pdata != undefined){
-          // const pdata = this.frameRotesData[pindex]
-          // console.log({type: pdata.type, frameParts: pdata.frameParts})
-          this.pointM([pdata.type, pdata.frameParts], false)
-        }
-
-        if(fdata.rote){
-          fdata.aniData.dur = 1000 * data.timeScale
-          this.frameObj[fdata.type].out.setAttribute('animation', fdata.aniData) 
-        }
-      }
-
-      if(Object.hasOwn(fdata, "Previous")){
-        // console.log(`----------\n Previous \n----------`)
-        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
-        this.frameObj[pdata.type].out.object3D.visible = false
-        this.pointM([pdata.type, pdata.frameParts], false)
-      }
-
-      const Lti = this.L_time_index + 1
-      const Lindex = this.LstartIndex.indexOf(Lti)
-      if(Lindex != -1 && this.LcubeIndex[Lindex] == Cti){
-        let handL = this.LhandRotesTime[Lti]
-        handL -= this.cubeRotesTime[Cti]
-      
-        setTimeout(()=>{
-          this.L_hand.dispatchEvent(new Event( "animation-start"))
-        },handL / rote_speed)
-      }
-
-      const Rti = this.R_time_index + 1
-      const Rindex = this.RstartIndex.indexOf(Rti)
-      if(Rindex != -1 && this.RcubeIndex[Rindex] == Cti){
-        let handR = this.RhandRotesTime[Rti]
-        handR -= this.cubeRotesTime[Cti]
-      
-        setTimeout(()=>{
-          this.R_hand.dispatchEvent(new Event( "animation-start"))
-        },handR / rote_speed)
-      }
-    })
   }
   ins(_Datas, _Rotes, _color_data, _Hnad_v = [0, 0]){
     // this.constructor()
@@ -291,9 +92,6 @@ class motionList{
     _R = _R.filter((line) => line[0] != "")
 
     _R = _R.flat(Infinity)
-    // console.log(_R)
-    // console.log(groupRotes)
-    // console.log(towRotes)
 
     this.towRotes = towRotes
     this.stepSkip = stepSkip
@@ -367,7 +165,15 @@ class motionList{
     })
 
     this.Datas = []
-    this.Datas.push(_Datas)
+    this.Datas.push(
+        new State(	
+        [0, 1, 2, 3, 4, 5, 6, 7],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 2, 3, 4, 5],
+      )
+    )
 
     this.colorData = []
     this.colorData.push(this.color_data)
@@ -386,13 +192,13 @@ class motionList{
         // console.log(_nR[lindex][rindex])
         this.frameRotesData.push(this.frame_rotate(_nR[lindex][rindex], this.Datas.at(-1), lindex, 0))
         let scmbl = undefined
-        if(_nR[lindex][rindex] > "Z"){
-          this.color_data = this.color_re_set(_nR[lindex][rindex])
-          scmbl = this.Datas.at(-1).hand_move(moves[_nR[lindex][rindex]])
-        }
-        else{
+        // if(_nR[lindex][rindex] > "Z"){
+        //   this.color_data = this.color_re_set(_nR[lindex][rindex])
+        //   scmbl = this.Datas.at(-1).hand_move(moves[_nR[lindex][rindex]])
+        // }
+        // else{
           scmbl = scamble2state(this.Datas.at(-1), _nR[lindex][rindex])
-        }
+        // }
 
         this.Datas.push(scmbl)
         this.colorData.push(this.color_data)
@@ -410,6 +216,194 @@ class motionList{
 
     this.mew_motion = false
 
+    this.cube_Full_Animation_Make(this.Datas, this.cubeRotesData, this.cubeRotesTime)
+
+    this.full_motion_set(
+      "L-hand", this.LhandRotesData, this.LhandRotesTime)
+    this.full_motion_set(
+      "R-hand", this.RhandRotesData, this.RhandRotesTime)
+    // this.full_motion_set(
+    //   "cube", this.cubeRotesData, this.cubeRotesTime)
+
+  
+    const model = [
+      [this.LhandRotesTime, this.LhandRotesData, this.L_hand],
+      [this.RhandRotesTime, this.RhandRotesData, this.R_hand],
+      [this.cubeRotesTime,  this.cubeRotesData,  this.full_cube],
+    ]
+    
+    let last_time = []
+    for(let i=0;i<model.length;i++){
+      last_time.push(model[i][0].at(-1) + this.lastTimeGet(model[i][2], model[i][1])*1000)
+    }
+    
+    const max = last_time.reduce((a, b) => a<b?b:a, 0)
+    
+    for(let j=0;j<model.length;j++){
+      if(last_time[j] == max) continue
+      
+      const model = model[j][2]
+      const full = model.object3D.children[0].animations.find((e) => e.name == "fullanimation")
+      
+      full.duration = max
+      
+      for(let i=0;i<full.tracks.length;i++){
+          full.tracks[i].times.push(max)
+          full.tracks[i].values = full.tracks[i].values
+              .concat(full.tracks[i].values.slice(full.tracks[i].name.split(".")
+                                                  .at(-1)[0]=="q"?-4:-3))
+      }
+    
+    }
+
+  }
+  cube_Full_Animation_Make(Datas, Rotes, Times){
+    const fa = this.full_cube.object3D.children[0].animations
+    const anim = JSON.parse(JSON.stringify(fa.find((e) => e.name == "start")))
+    
+    const moves_ce = [
+      [4],
+      [1],
+      [3],
+      [2],
+      [5],
+      [0],
+      [0,1,2,3,4,5],
+      [0,1,2,3,4,5],
+      [0,1,2,3,4,5],
+      [0,1,2,4,5],
+      [0,2,3,4,5],
+      [0,1,2,3,4],
+      [0,1,2,3,5],
+      [1,2,3,4,5],
+      [0,1,3,4,5],
+    ]
+    const moves_ed = [
+      [4,5,6,7],
+      [1,2,5,9],
+      [0,3,7,11],
+      [2,3,6,10],
+      [8,9,10,11],
+      [0,1,4,8],
+      [0,1,2,3,4,5,6,7,8,9,10,11],
+      [0,1,2,3,4,5,6,7,8,9,10,11],
+      [0,1,2,3,4,5,6,7,8,9,10,11],
+      [1,2,4,5,6,8,9,10],
+      [0,3,4,6,7,8,10,11],
+      [0,1,2,3,4,5,6,7],
+      [0,1,2,3,8,9,10,11],
+      [2,3,5,6,7,9,10,11],
+      [0,1,4,5,7,8,9,11],
+    ]
+    const moves_co = [
+      [0,1,2,3],
+      [1,2,5,6],
+      [0,3,4,7],
+      [2,3,6,7],
+      [4,5,6,7],
+      [0,1,4,5],
+      [0,1,2,3,4,5,6,7],
+      [0,1,2,3,4,5,6,7],
+      [0,1,2,3,4,5,6,7],
+      [1,2,5,6],
+      [0,3,4,7],
+      [0,1,2,3],
+      [4,5,6,7],
+      [2,3,6,7],
+      [0,1,4,5],
+    ]
+    const faces =    ['U', 'R', 'L', 'F', 'D', 'B', 'x', 'y', 'z', 'r', 'l', 'u', 'd', 'f', 'b']
+    const facesXYZ = [  1,   0,   0,   2,   1,   2,   0,   1,   2,   0,   0,   1,   1,   2,   2]
+    const facesVec = [ -1,  -1,   1,  -1,   1,   1,  -1,  -1,  -1,  -1,   1,  -1,   1,  -1,   1]
+
+    const bone_ce = this.bone_centers
+    const bone_ed = this.bone_corners
+    const bone_co = this.bone_edges
+
+    function boneIndex(type, index){
+      return [0,6,18].at(type) + index
+    }
+
+    function animationAdd(clip, Vector3, vec, time){
+      const boneAni = anim.tracks.find((e) => e.name == clip)
+      const quaternion = new THREE.Quaternion(
+        boneAni.values.at(-4),
+        boneAni.values.at(-3),
+        boneAni.values.at(-2),
+        boneAni.values.at(-1),
+      )
+
+      const data = [0,0,0]
+      data[Vector3] = 1
+
+      const target = new THREE.Quaternion()
+      const axis = new THREE.Vector3(data[0], data[1], data[2]).normalize()
+      target.setFromAxisAngle(axis, vec)
+      quaternion.premultiply(target)
+
+      if(boneAni.times.at(-1) < time[0]){
+        boneAni.times.push(time[0])
+        boneAni.values.push(boneAni.values.at(-4))
+        boneAni.values.push(boneAni.values.at(-4))
+        boneAni.values.push(boneAni.values.at(-4))
+        boneAni.values.push(boneAni.values.at(-4))
+      }
+      
+      boneAni.times.push(time[1])
+      boneAni.values.push(quaternion.x)
+      boneAni.values.push(quaternion.y)
+      boneAni.values.push(quaternion.z)
+      boneAni.values.push(quaternion.w)
+    }
+
+    for(let i=0;i<Rotes.length;i++){  //Rotes.length
+      const clip = Rotes[i].clip
+      const faceIndex = faces.indexOf(clip[0])
+      const vec = Math.PI/2 * facesVec[faceIndex] * (clip.length==1?1:-1)
+      const time = [
+        Times[i]/1000, 
+        Times[i]/1000 + 1/Rotes[i].timeScale
+      ]
+
+      moves_ce[faceIndex].forEach((j) => {
+        animationAdd(`ce${("00"+Datas[i].c[j]).slice(-2)}.quaternion`,
+                      facesXYZ[faceIndex], vec, time)
+      })
+      moves_ed[faceIndex].forEach((j) => {
+        animationAdd(`ed${("00"+Datas[i].ep[j]).slice(-2)}.quaternion`,
+                      facesXYZ[faceIndex], vec, time)
+      })
+      moves_co[faceIndex].forEach((j) => {
+        animationAdd(`co${("00"+Datas[i].cp[j]).slice(-2)}.quaternion`,
+                      facesXYZ[faceIndex], vec, time)
+      })
+    }
+
+    const lastTime = Times.at(-1)/1000 + 1/Rotes.at(-1).timeScale
+
+    anim.name = "fullanimation"
+    anim.duration = lastTime
+
+    anim.tracks.forEach((e) => {
+      if(e.times.at(-1) < lastTime){
+        e.times.push(lastTime)
+        if(e.type == "vector"){
+          e.values.push(e.values.at(-3))
+          e.values.push(e.values.at(-3))
+          e.values.push(e.values.at(-3))
+        }
+        else{
+          e.values.push(e.values.at(-4))
+          e.values.push(e.values.at(-4))
+          e.values.push(e.values.at(-4))
+          e.values.push(e.values.at(-4))
+        }
+      }
+    })
+
+    fa.push(anim)
+    // console.log(fa)
+    console.log({Datas, Rotes, Times, anim})
   }
   one_hand_move(sulb, speed, hdvec, influence, Su){
     const Pre_movement2 = {
@@ -813,14 +807,6 @@ class motionList{
       }
     }
   }
-  animationEnd(){
-    // console.log(`animationEnd [${this.stepAnimationEnd}]`)
-    if(this.stepAnimationEnd < 3) return
-
-    console.log(`ステップのアニメーションが全て終了`)
-    const mode  = document.getElementById("scene").components["cube-mode"]
-    mode.step_completion()
-  }
   color_set(sc_st, _colorData){
     // console.log(`----- color_set ----`)
     const corner = this.model_corners
@@ -848,86 +834,6 @@ class motionList{
       let F = center[i].children
       F[0].material.color = set_color_data[colorData[color_cn[sc_st.c[i]][0]]]
     }
-  } 
-  rote_re_start(){
-    // console.log(`モーションリスト　rote_re_start`)
-
-    this.stepAnimationEnd = 0
-
-    let text = []
-    const Rspeed = rote_speed
-
-    const Cti = this.Cube_time_index + 1
-    const Cindex =  this.groupRotesCube.indexOf(Cti)
-
-
-    const Lti = this.L_time_index + 1
-    const Lindex = this.LstartIndex.indexOf(Lti)
-    const LCindex = this.LcubeIndex[Lindex]
-
-    const Rti = this.R_time_index + 1
-    const Rindex = this.RstartIndex.indexOf(Rti)
-    const RCindex = this.RcubeIndex[Rindex]
-
-    const Lsi = this.LstartIndex.findIndex((e) => Lti <= e)
-    const Lci = this.LcubeIndex[Lsi]
-    const LgC = this.groupRotesCube.findLastIndex((e) => e <= Lci)
-
-    const Rsi = this.RstartIndex.findIndex((e) => Rti <= e)
-    const Rci = this.RcubeIndex[Rsi]
-    const RgC = this.groupRotesCube.findLastIndex((e) => e <= Rci)
-
-    let handC = this.cubeRotesTime[Cti]
-    handC -= Math.min(
-      this.cubeRotesTime[Cti],
-      this.LhandRotesTime[Lti],
-      this.RhandRotesTime[Rti]
-    )
-
-    text.push({handC})
-    text.push({Cti, Cindex, Lti, Lsi, Lci, LgC, Rti, Rsi, Rci, RgC})
-
-    setTimeout(()=>{
-      this.full_cube.dispatchEvent(new Event("animation-start"))
-    },handC / Rspeed)
-
-    text.push({Lindex, LCindex, Lti, startIndex: this.LcubeIndex[this.LstartIndex.findLastIndex((e) => e < Lti)], Cti})
-
-
-    if(LCindex == -1 || (Lindex == -1 && this.LcubeIndex[this.LstartIndex.findLastIndex((e) => e < Lti)] < Cti)){
-      let handL = handC
-      handL -= (this.cubeRotesTime[Cti] - this.LhandRotesTime[Lti])
-      text.at(-1).handL = handL
-      // text += `\n{handL: ${handL}}`
-      setTimeout(()=>{
-        this.L_hand.dispatchEvent(new Event("animation-start"))
-      },handL / Rspeed)
-    }
-    else if(Cindex < LgC){
-      // console.log(`L_hand このステップ内でのアニメーションは無し`)
-      this.stepAnimationEnd += 1
-      this.animationEnd()
-    }
-
-
-    text.push({Rindex, RCindex, Rti, startIndex: this.RstartIndex.findIndex((e) => e > Rti), Rti})
-
-    if(RCindex == -1 || (Rindex == -1  && this.RcubeIndex[this.RstartIndex.findLastIndex((e) => e < Rti)] < Cti)){
-      let handR = handC
-      handR -= (this.cubeRotesTime[Cti] - this.RhandRotesTime[Rti])
-      text.at(-1).handR = handR
-      // text += `\n{handR: ${handR}}`
-      setTimeout(()=>{
-        this.R_hand.dispatchEvent(new Event("animation-start"))
-      },handR / Rspeed)
-    }
-    else if(Cindex < RgC){
-      // console.log(`R_hand このステップ内でのアニメーションは無し`)
-      this.stepAnimationEnd += 1
-      this.animationEnd()
-    }
-    baseTime = Date.now()
-    // console.log(text)
   }
   animation_re_set(){
     this.mew_motion = true
@@ -935,15 +841,74 @@ class motionList{
   timelist_push(){
     return this
   }
+  motion_time_set(index, roteData, roteTime, fa) {
+    const a = JSON.parse(JSON.stringify(fa.find((e) => e.name == roteData[index].clip)))
+    
+    let stime = roteTime[index] / 1000
+        
+    for(let i=0;i<a.tracks.length;i++){
+        for(let s=0;s<a.tracks[i].times.length;s++){
+            a.tracks[i].times[s] += stime
+        }
+    }
+  
+    return a
+  }
+  full_motion_set(name, roteData, roteTime) {
+    const r = document.getElementById(name)
+    const fa = r.object3D.children[0].animations
+    
+    const full = this.motion_time_set(0,roteData, roteTime,fa)
+    const dis = 0.01
+  
+    if(full.tracks[0].times[0] != 0){
+        for(let i=0;i<full.tracks.length;i++){
+    full.tracks[i].times.unshift(0)
+    full.tracks[i].values = full.tracks[i].values.slice(0, full.tracks[i].name.split(".").at(-1)[0]=="q"?4:3).concat(full.tracks[i].values)
+        }
+    }
+    
+    for(let j=1;j<roteData.length;j++){
+        const a = this.motion_time_set(j,roteData, roteTime, fa)
+        for(let i=0;i<full.tracks.length;i++){
+            if(a.tracks[i].times[0] - full.tracks[i].times.at(-1) > dis){
+                // console.log({dis})
+                full.tracks[i].times.push(a.tracks[i].times[0] - 0.001)
+                full.tracks[i].values =
+                    full.tracks[i].values.concat(
+                        full.tracks[i].values.slice(full.tracks[i].name.split(".").at(-1)[0]=="q"?-4:-3))
+            }
+            full.tracks[i].times = full.tracks[i].times.concat(a.tracks[i].times)
+            full.tracks[i].values = full.tracks[i].values.concat(a.tracks[i].values)
+        }
+    }
+    
+    full.name = "fullanimation"
+    full.duration = (fa.find((e) => e.name == roteData.at(-1).clip).duration * 1000 + roteTime.at(-1)) / 1000    
+    fa.push(full)
+    console.log(full)
+  }
+  lastTimeGet(model, roteData) {
+    const fa = model.object3D.children[0].animations
+    return fa.find((e) => e.name == roteData.at(-1).clip).duration  
+  }
+  animation(a, b, c){
+    const data = {
+      clip: "fullanimation" ,
+      start: a,
+      end: b,
+      timeScale: c,
+    }
+
+    this.L_hand.removeAttribute("my-animation")
+    this.L_hand.setAttribute("my-animation",data)
+
+    this.R_hand.removeAttribute("my-animation")
+    this.R_hand.setAttribute("my-animation",data)
+
+    this.full_cube.removeAttribute("my-animation")
+    this.full_cube.setAttribute("my-animation",data)
+  }
 }
 
 let timeList
-
-
-    // this.el.addEventListener("mousedown", (e)=>{
-    //   if(!e.currentTarget.classList[0]=="meter-out")  return
-    //   if(this.meter_on) return
-    // console.log("mousedown")
-    //   this.meter_on=true
-    //   this.meter_updata(e)
-    // })

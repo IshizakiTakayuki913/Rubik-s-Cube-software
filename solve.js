@@ -615,21 +615,21 @@ color_cn = [
 ]
 const vec	= 'yxxzyzxyzxxyyzz'
 // // スタンダード
-// let solved_state = new State(	
-// 	[0, 1, 2, 3, 4, 5, 6, 7],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-// 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 1, 2, 3, 4, 5],
-// )
-
-let solved_state = new State(
-  [6,1,0,7,5,2,3,4],
-  [0,1,2,0,2,1,1,2],
-  [1,6,10,3,9,4,5,2,11,7,8,0],
-  [0,1,0,1,0,1,1,1,0,1,0,0],
-  [0,1,2,3,4,5],
+let solved_state = new State(	
+	[0, 1, 2, 3, 4, 5, 6, 7],
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 2, 3, 4, 5],
 )
+
+// let solved_state = new State(
+//   [6,1,0,7,5,2,3,4],
+//   [0,1,2,0,2,1,1,2],
+//   [1,6,10,3,9,4,5,2,11,7,8,0],
+//   [0,1,0,1,0,1,1,1,0,1,0,0],
+//   [0,1,2,3,4,5],
+// )
 
 // // step 12. 14 No
 // let solved_state = new State(
@@ -696,25 +696,30 @@ function one_rotate(sc_st,roate){
 
 	const index = faces.indexOf(roate[0])
 
-	corner = model_corners
-	edge = model_edges
-	center = model_centers
+	const center = model_centers
+	const edge = model_edges
+	const corner = model_corners
+
+	// const center = full_cube.slice(0, 6)
+	// const edge = full_cube.slice(6, 18)
+	// const corner = full_cube.slice(18)
+
 
 	for(let i of moves_face_c[index]){
 		let F = corner[i].children
 		for(let s=0;s<3;s++)
-	  	F[s].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
+	  	F[s+1].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
 	}
 
 	for(let i of moves_face_e[index]){
 		let F = edge[i].children
 		for(let s=0;s<2;s++)
-	  	F[s].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
+	  	F[s+1].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
 	}
 
 	for(let i of moves_face_cn[index]){
 		let F = center[i].children
-	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
+	  F[1].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
 	// full_cube.removeAttribute('my-animation')
 	return sc_st
@@ -722,27 +727,28 @@ function one_rotate(sc_st,roate){
 
 function color_set(sc_st){
 	// console.log(`----- color_set ----`)
-	corner = model_corners
-	edge = model_edges
-	center = model_centers
+
+	const center = model_centers
+	const edge = model_edges
+	const corner = model_corners
 
 	// console.log(sc_st)
 
 	for(let i=0;i<corner.length;i++){
 		let F = corner[i].children
 		for(let s=0;s<3;s++)
-	  	F[s].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
+	  	F[s+1].material.color = set_color_data[color_data[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
 	}
 
 	for(let i=0;i<edge.length;i++){
 		let F = edge[i].children
 		for(let s=0;s<2;s++)
-	  	F[s].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
+	  	F[s+1].material.color = set_color_data[color_data[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
 	}
 
 	for(let i=0;i<center.length;i++){
 		let F = center[i].children
-	  F[0].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
+	  F[1].material.color = set_color_data[color_data[color_cn[sc_st.c[i]][0]]]
 	}
 }
 
@@ -750,7 +756,7 @@ function one_rotate_anim(roate,time = 2000){
 	full_cube.removeAttribute('my-animation')
 	full_cube.setAttribute('my-animation', {
 		clip: roate,
-		timeScale: time/1000,
+		timeScale: 1000/time,
 		start: 1,
 		end: 0,
 		// loop: 'once',
