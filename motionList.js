@@ -21,13 +21,259 @@ class motionList{
     this.frameObj = frameObj
 
     this.mew_motion = true
-    // this.color_set(sc_st)
+    this.animation_start_time = undefined
     
+    const a=document.getElementsByClassName("meter-out")
+    this.meterData = {id: a[0].classList[1], el: a[0],}
 
+    this.meterBar = document.querySelector('.time-meter-animation')
+
+    this.animStyle = getRuleBySelector(".meter-animating")
+
+    this.step_time_meter = undefined
+    this.mode_direction = undefined
+
+    this.anime_done = true
+
+
+    this.back_btn = document.querySelector('.back-div')
+    this.next_btn = document.querySelector('.next-div')
+    this.reverse_btn = document.querySelector('.reverse-div')
+    this.play_btn = document.querySelector('.play-div')
+    this.stop_btn = document.querySelector('.stop-div')
+    this.execution_btn = document.querySelector('.execution-div')
+
+
+    this.next_btn.addEventListener("click",(e) => {
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+      if(this.step_move)  return
+
+      
+      if(this.stepCount == 15){
+        console.log("rote_re_start finish")
+        return {skip: true, check: "over"}
+      }
+      console.log("next_btn")
+      this.stepCount++
+
+      this.step_scroll(this.stepCount)
+
+      this.meterBar.style.maxWidth = "0%"
+      
+
+      const intdex = this.stepSkip[this.stepCount]
+      this.frame(this.stepStartTime[intdex]/1000)
+      this.stopTime = this.stepStartTime[intdex]
+      if(intdex == -1){
+        console.log("rote_re_start skip")
+        return {skip: true, }
+      }
+
+      this.meter_set(intdex)
+
+      // this.animStyle.style.transitionDuration = 
+      //   `${(this.stepStartTime[intdex+1] - this.stepStartTime[intdex]) / rote_speed}ms`
+
+      // this.step_move = true
+      // this.animation_start_time = -1
+      
+      // setTimeout(() => {
+      //   this.meterBar.classList.add("meter-animating")
+      // }, 50)
+
+      // setTimeout(() => {
+      //   this.animation(
+      //     this.stepStartTime[intdex  ]/1000,
+      //     this.stepStartTime[intdex+1]/1000, rote_speed)
+      //   this.meterBar.style.maxWidth = "100%"
+
+      //   this.animation_start_time = Date.now()
+      // }, 100)
+            
+      // this.timeOutId = setTimeout(() => {
+      //   // const mode  = document.getElementById("scene").components["cube-mode"]
+      //   // mode.step_completion()
+
+      //   this.step_move = false
+      //   this.meterBar.classList.remove("meter-animating")
+      //   this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
+      // },
+      //   Math.abs(this.stepStartTime[intdex+1] - this.stepStartTime[intdex]) / rote_speed + 100
+      // )
+    })
+
+    this.back_btn.addEventListener("click",(e) => {
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+      if(this.step_move)  return
+
+      
+      if(this.stepCount == 0){
+        console.log("rote_re_start finish")
+        return {skip: true, check: "over"}
+      }
+      console.log("next_btn")
+      this.stepCount--
+
+      this.step_scroll(this.stepCount)
+
+      this.meterBar.style.maxWidth = "0%"
+      
+
+      const intdex = this.stepSkip[this.stepCount]
+      this.frame(this.stepStartTime[intdex]/1000)
+      this.stopTime = this.stepStartTime[intdex]
+      if(intdex == -1){
+        console.log("rote_re_start skip")
+        return {skip: true, }
+      }
+
+      this.meter_set(intdex)
+    })
+
+    this.stop_btn.addEventListener("click",(e) => {
+      // console.log("settimeput 22")
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+      if(!this.step_move) return
+
+      clearTimeout(this.timeOutId)
+
+      const intdex = this.stepSkip[this.stepCount]
+      let durtime =  (Date.now() - this.animation_start_time)
+      let dur = this.mode_direction * Math.max(Date.now() - this.animation_start_time, 0) * rote_speed + this.stopTime
+
+
+      console.log({
+        durtime: durtime,
+        durtime_x_speed: (durtime * rote_speed),
+        max: this.stepStartTime[intdex+1] - this.stepStartTime[intdex],
+      })
+
+      this.anime_done = true
+      this.mode_direction = undefined
+      this.step_time_meter.Update_Bar_And_Value({type: "value", value: dur})
+      this.meterBar.classList.remove("meter-animating")
+      this.remove_Animation()
+      this.step_move = false
+    })
+
+    this.play_btn.addEventListener("click",(e) => {
+      // console.log("settimeput 22")
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+      if(this.step_move) return
+
+      const intdex = this.stepSkip[this.stepCount]
+
+      if(intdex == -1){
+        console.log("rote_re_start skip")
+        return {skip: true, }
+      }
+      let value = this.step_time_meter.value
+
+      if(this.step_time_meter.value == this.step_time_meter.f1){
+        value = this.step_time_meter.f0
+        this.meterBar.style.maxWidth = "0%"
+      }
+      this.anime_done = true
+      this.mode_direction = 1
+      this.animation_start_time = -1
+      this.animStyle.style.transitionDuration = 
+        `${(this.stepStartTime[intdex+1] - value) / rote_speed}ms`
+
+      this.step_move = true
+      this.stopTime = value
+
+      setTimeout(() => {
+        this.meterBar.classList.add("meter-animating")
+      }, 50)
+
+      console.log({start: value, end: this.stepStartTime[intdex+1], dur: this.stepStartTime[intdex+1] - value})
+
+      setTimeout(() => {
+        this.animation(
+          value/1000,
+          this.stepStartTime[intdex+1]/1000, rote_speed)
+        this.animation_start_time = Date.now()
+        this.meterBar.style.maxWidth = "100%"
+      }, 100)
+
+      this.timeOutId = setTimeout(() => {
+        console.log("this.timeOutId")
+        this.step_move = false
+        this.meterBar.classList.remove("meter-animating")
+        this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
+      },
+        (this.stepStartTime[intdex+1] - value) / rote_speed + 100
+      )
+    })
+
+    this.reverse_btn.addEventListener("click",(e) => {
+      // console.log("settimeput 22")
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+      if(this.step_move) return
+
+      const intdex = this.stepSkip[this.stepCount]
+
+      if(intdex == -1){
+        console.log("rote_re_start skip")
+        return {skip: true, }
+      }
+      let value = this.step_time_meter.value
+
+      if(this.step_time_meter.value == this.step_time_meter.f0){
+
+        value = this.step_time_meter.f1
+        this.meterBar.style.maxWidth = "100%"
+      }
+
+      this.anime_done = true
+      this.mode_direction = -1
+      this.animation_start_time = -1
+      this.animStyle.style.transitionDuration = 
+        `${(value - this.stepStartTime[intdex]) / rote_speed}ms`
+
+      this.step_move = true
+      this.stopTime = value
+
+      setTimeout(() => {
+        this.meterBar.classList.add("meter-animating")
+      }, 50)
+
+      // console.log({start: value, end: this.stepStartTime[intdex], dur: this.stepStartTime[intdex+1] - value})
+
+      setTimeout(() => {
+        this.animation(
+          value/1000,
+          this.stepStartTime[intdex]/1000, rote_speed)
+        this.animation_start_time = Date.now()
+        this.meterBar.style.maxWidth = "0%"
+      }, 100)
+
+      this.timeOutId = setTimeout(() => {
+        console.log("this.timeOutId")
+        this.step_move = false
+        this.meterBar.classList.remove("meter-animating")
+        this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f0})
+      },
+        (value - this.stepStartTime[intdex]) / rote_speed + 100
+      )
+    })
+
+    this.execution_btn.addEventListener("click",(e) => {
+      // console.log("settimeput 22")
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+      console.log("解説　終了")
+      mode.Complete()
+    })
   }
   ins(_Datas, _Rotes, _color_data, _Hnad_v = [0, 0]){
     // this.constructor()
-
+    //  計算に必要なデータをまとめる
     this.Rotes = []
     this.Hnad_v = _Hnad_v
     
@@ -48,66 +294,64 @@ class motionList{
     this.RstartIndex = []
     this.RcubeIndex = []
     
-
-    this.L_time_index = -1
-    this.R_time_index = -1
-    this.Cube_time_index = -1
-    
-    this.stepAnimationEnd = 0
-    
     this.colorData = []
     this.color_data = _color_data
 
-    let towRotes = [], groupRotes = [0], stepSkip = []
+    let towRotes = [], groupRotes = [], stepSkip = []
+    // this.stepCount = undefined
+    // this.stepSkip = undefined
     let _R = _Rotes
     
     let roteCount = 0
 
-    stepSkip = _R.map((e) => e[0].length > 0)
+    // console.log(JSON.parse(JSON.stringify(_R)))
 
-    // console.log(_R)
-    _R = _R.filter((e) => e[0].length > 0)
-    // console.log(_R)
-
-    for(let lindex=0;lindex<_R.length;lindex++){
-      for(let rindex=0;rindex<_R[lindex].length;rindex++){
-        // let dx = 0
-        if(_R[lindex][rindex].length > 1 && _R[lindex][rindex][1] == "2"){
-          towRotes.push(roteCount)
-          // dx += 1
-          _R[lindex][rindex] = [_R[lindex][rindex][0],_R[lindex][rindex][0]]
-          roteCount ++
-        }
-        roteCount ++
+    _R = _R.map(step => {
+      if(step[0] == ''){
+        stepSkip.push(-1)
+        return step
       }
-      _R[lindex] = _R[lindex].flat(Infinity)
-      // console.log(_R[lindex])
-      if(_R[lindex][0].length > 0)
-        groupRotes.push(groupRotes.at(-1) + _R[lindex].length)
+      stepSkip.push(roteCount)
+      groupRotes.push(roteCount)
+
+      step = step.map(Rote => {
+        roteCount ++
+        if(Rote[1] == "2"){
+          towRotes.push(roteCount)
+          roteCount ++
+          return [Rote[0], Rote[0]]
+        }
+        return Rote
+      })
+
+      step = step.flat(Infinity)
+
+
+      return step
+    })
+
+
+    _R = _R.filter((e) => e[0].length > 0).flat(Infinity)
+
+    this.stepSkip = []
+    let stepCount = -1
+    for(let i=0;i<stepSkip.length;i++){
+      this.stepSkip.push(stepSkip[i] != -1 ? ++stepCount : -1)
     }
-
-    let _nR = JSON.parse(JSON.stringify(_R))
-    // console.log(_nR)
-
-    _R = _R.filter((line) => line[0] != "")
-
-    _R = _R.flat(Infinity)
-
+    console.log({stepSkip,inde: this.stepSkip})
     this.towRotes = towRotes
-    this.stepSkip = stepSkip
-    
-
     this.groupRotesCube = groupRotes
-
     this.Rotes = _R
 
     this.set_timeList(this.Rotes)
 
+    this.stepStartTime = []
     this.groupRotesLhand = []
     this.groupRotesRhand = []
 
     let tnkTime = 0
     this.moveList.forEach((m, index) => {
+      if(stepSkip.indexOf(index) != -1)  this.stepStartTime.push(tnkTime)
       if(this.groupRotesCube.indexOf(index) != -1){
         // console.log(`index ${index}`)
         if(this.groupRotesLhand.length == 0 || this.groupRotesLhand.at(-1) < this.LhandRotesData.length)
@@ -124,11 +368,13 @@ class motionList{
         })
       }
       if(m.moveMode > 0){
+        // console.log(m)
         m.R.move_schedule.forEach((m2) => {
           this.RhandRotesTime.push(tnkTime + m2.time)
           this.RhandRotesData.push({clip: m2.clip,  timeScale:  m2.timeScale, })
         })
       }
+
       this.cubeRotesTime.push(tnkTime  + m[m.moveMode==0?"L":"R"].sovle_time)
       this.cubeRotesData .push({
         clip: this.Rotes[index],
@@ -137,10 +383,12 @@ class motionList{
       
       tnkTime += m.time
     })
+
     this.groupRotesLhand.push(this.LhandRotesData.length)
     this.groupRotesRhand.push(this.RhandRotesData.length)
+    this.stepStartTime.push(tnkTime)
 
-    // console.log(this.groupRotesLhand)
+    // console.log(this.stepStartTime)
 
     let hi = this.LstartIndex
     let ci = this.LcubeIndex
@@ -174,54 +422,27 @@ class motionList{
         [0, 1, 2, 3, 4, 5],
       )
     )
-
-    this.colorData = []
-    this.colorData.push(this.color_data)
-    
-    // this.hand_xyz = []
-
-    // this.frame_pos = ["",""]
-
-    // console.log(_nR)
+    // this.colorData = []
+    // this.colorData.push(this.color_data)
 
     this.frameRotesData = []
-    for(let lindex=0;lindex<_nR.length;lindex++){
-      // console.log({rindexMax , rotes: _nR[lindex], len: _nR[lindex].length + rindexMax})
-      for(let rindex=0;rindex<_nR[lindex].length;rindex++){
-        // console.log(` index: [${rindex}]`)
-        // console.log(_nR[lindex][rindex])
-        this.frameRotesData.push(this.frame_rotate(_nR[lindex][rindex], this.Datas.at(-1), lindex, 0))
-        let scmbl = undefined
-        // if(_nR[lindex][rindex] > "Z"){
-        //   this.color_data = this.color_re_set(_nR[lindex][rindex])
-        //   scmbl = this.Datas.at(-1).hand_move(moves[_nR[lindex][rindex]])
-        // }
-        // else{
-          scmbl = scamble2state(this.Datas.at(-1), _nR[lindex][rindex])
-        // }
+    _R.forEach((r) => {
+      let scmbl = scamble2state(this.Datas.at(-1), r)
+      this.Datas.push(scmbl)
+    })
 
-        this.Datas.push(scmbl)
-        this.colorData.push(this.color_data)
-      }
-      if(lindex == 12)  this.frameRotesData.at(-_nR[lindex].length).Previous = true //
-    }
     // console.log(this.frameRotesData)
 
     tnkTime += 1000 / this.cubeRotesData.at(-1).timeScale
     // console.log(`tnkTime [${tnkTime}]`)
 
-    this.L_time_index = -1
-    this.R_time_index = -1
-    this.Cube_time_index = -1
 
     this.mew_motion = false
 
     this.cube_Full_Animation_Make(this.Datas, this.cubeRotesData, this.cubeRotesTime)
 
-    this.full_motion_set(
-      "L-hand", this.LhandRotesData, this.LhandRotesTime)
-    this.full_motion_set(
-      "R-hand", this.RhandRotesData, this.RhandRotesTime)
+    this.full_motion_set("L-hand", this.LhandRotesData, this.LhandRotesTime)
+    this.full_motion_set("R-hand", this.RhandRotesData, this.RhandRotesTime)
     // this.full_motion_set(
     //   "cube", this.cubeRotesData, this.cubeRotesTime)
 
@@ -238,13 +459,17 @@ class motionList{
     }
     
     const max = last_time.reduce((a, b) => a<b?b:a, 0)
+    this.stepStartTime.push(max)
+
+    console.log({max,model})
     
     for(let j=0;j<model.length;j++){
       if(last_time[j] == max) continue
       
-      const model = model[j][2]
-      const full = model.object3D.children[0].animations.find((e) => e.name == "fullanimation")
+      const model2 = model[j][2]
+      const full = model2.object3D.children[0].animations.find((e) => e.name == "fullanimation")
       
+      // console.log({model2})
       full.duration = max
       
       for(let i=0;i<full.tracks.length;i++){
@@ -256,6 +481,39 @@ class motionList{
     
     }
 
+    this.stepCount = 0
+    this.stopTime = 0
+    this.step_move = false
+
+    this.meter_set(0)
+    
+    this.step_scroll(0)
+  }
+  meter_set(intdex){
+    this.step_time_meter = new metar({
+      id: this.meterData.id,
+      el: this.meterData.el,
+      start: this.stepStartTime[intdex],
+      end: this.stepStartTime[intdex+1],
+      value: this.stepStartTime[intdex],
+      dx: 10,
+      constSet: true,
+      callbackfunc: {func1: this, func2: "meter"},
+      count_Disp: false,
+    })
+  }
+  step_scroll(intdex){
+    const _list = document.querySelector(".list")
+    const hei = _list.children[intdex].offsetTop
+    // const St = document.querySelectorAll(`.step${stepCount}`)
+    // for(let i=0;i<St.length;i++)
+    //   St[i].classList.add("now-step")
+
+    _list.scrollTo({
+      top: hei - _list.clientHeight/2,
+      left: 0,
+      behavior: "smooth",
+    })
   }
   cube_Full_Animation_Make(Datas, Rotes, Times){
     const fa = this.full_cube.object3D.children[0].animations
@@ -761,11 +1019,6 @@ class motionList{
     }
     
     return data
-    //   setTimeout(() => {
-    //     pointM([typeName,pos],false)
-    //     pointM([typeName,next_pos],true)
-    //   },time)
-    // }
   }
   set_timeList(_Rotes){
     for(let i=0;i<_Rotes.length;i++){
@@ -783,29 +1036,6 @@ class motionList{
       new_color[i] = this.color_data[color_modes[sulb][i]]
     }
     return new_color
-  }
-  pointM(p,T = true){
-    // console.log({p, T})
-    if(p[0]=="")	return
-    // console.log(p)
-    const A = p[0]=="corner"?this.model_corners:(p[0]=="center"?this.model_centers:this.model_edges)
-    const P = A[p[1]].children
-    // document.getElementById(p).children[0].object3D.children[0].children[0].children
-    // console.log(`pointM name [${p}] ${T}`)
-    if(T){
-      for(let i=0;i<P.length-1;i++){
-        P[i].material.side=0
-        P[i].material.depthTest=false
-        P[i].renderOrder=3
-      }
-    }
-    else{
-      for(let i=0;i<P.length-1;i++){
-        P[i].material.side=2
-        P[i].material.depthTest=true
-        P[i].renderOrder=0
-      }
-    }
   }
   color_set(sc_st, _colorData){
     // console.log(`----- color_set ----`)
@@ -834,9 +1064,6 @@ class motionList{
       let F = center[i].children
       F[0].material.color = set_color_data[colorData[color_cn[sc_st.c[i]][0]]]
     }
-  }
-  animation_re_set(){
-    this.mew_motion = true
   }
   timelist_push(){
     return this
@@ -886,11 +1113,31 @@ class motionList{
     full.name = "fullanimation"
     full.duration = (fa.find((e) => e.name == roteData.at(-1).clip).duration * 1000 + roteTime.at(-1)) / 1000    
     fa.push(full)
-    console.log(full)
+    // console.log(full)
   }
   lastTimeGet(model, roteData) {
     const fa = model.object3D.children[0].animations
     return fa.find((e) => e.name == roteData.at(-1).clip).duration  
+  }
+  frame_set(a){
+    const data = {
+      clip: "fullanimation" ,
+      frame: a,
+    }
+
+    this.L_hand.removeAttribute("my-animation")
+    this.L_hand.setAttribute("my-animation",data)
+
+    this.R_hand.removeAttribute("my-animation")
+    this.R_hand.setAttribute("my-animation",data)
+
+    this.full_cube.removeAttribute("my-animation")
+    this.full_cube.setAttribute("my-animation",data)
+  }
+  frame(a){
+    this.L_hand.components["my-animation"].setFrame(a)
+    this.R_hand.components["my-animation"].setFrame(a)
+    this.full_cube.components["my-animation"].setFrame(a)
   }
   animation(a, b, c){
     const data = {
@@ -908,6 +1155,44 @@ class motionList{
 
     this.full_cube.removeAttribute("my-animation")
     this.full_cube.setAttribute("my-animation",data)
+  }
+  remove_Animation(){
+    this.L_hand.removeAttribute("my-animation")
+    this.R_hand.removeAttribute("my-animation")
+    this.full_cube.removeAttribute("my-animation")
+  }
+  meter(Data){
+    const mode  = document.getElementById("scene").components["cube-mode"]
+    if(mode.data.cube_mode !== "Execution")	return
+
+    const intdex = this.stepSkip[this.stepCount]
+    if(intdex == undefined || intdex == -1){
+      // console.log("現在のステップはスキップ")  
+      return
+    }
+
+
+    if(this.step_move){
+      // console.log("アニメーション中")  
+      clearTimeout(this.timeOutId)
+      this.remove_Animation()
+      this.step_move = false    
+      this.meterBar.classList.remove("meter-animating")
+      // return
+    } 
+
+
+    const a = this.stepStartTime[intdex  ]/1000, b = this.stepStartTime[intdex+1]/1000, p = Data.value/1000
+
+    // console.log({a,b,p,value})
+
+    if(this.anime_done){
+      this.frame_set(p)
+      this.anime_done = false
+      return
+    }
+
+    this.frame(p)
   }
 }
 

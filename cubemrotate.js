@@ -72,7 +72,7 @@
       this.parts = this.hit({x:e.touches[0].clientX , y:e.touches[0].clientY},".cube, .sky", "cube")
 			if(!this.parts) return
       this.search_parts()	
-      console.log(e)
+      // console.log(e)
       this.touchPress = true
       this.touchId = e.touches[0].identifier
       // console.log(this.parts.object.el.parentElement.id)
@@ -338,7 +338,7 @@
     // text+=`tile\n`
     // text+=`  rot x[${nrot.x}] y[${nrot.y}] z[${nrot.z}]\n`
     
-   console.log(text)
+  //  console.log(text)
 
     this.new_move = undefined
     this.new_rad = undefined

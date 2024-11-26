@@ -77,16 +77,74 @@ a-scene {
   /* resize: both; */
 }
 
-.next-step-div {
+.btn-div {
 	position: absolute;
 	z-index: 5;
 	background: unset;
-	left: calc((100% - 8vmin) / 2);
+	left: calc(0);
 	right: auto;
 	bottom: 5%;
-	width: 8vmin;
-	height: 8vmin;
+	width: 6vmin;
+	height: 6vmin;
 }
+
+.btn-div > img {
+	width: 100%;
+	height: 100%;
+}
+
+.back-div {
+	left: calc(8vmin);
+	opacity: 0.2;
+}
+
+.reverse-div {
+	left: calc(16vmin);
+	opacity: 0.2;
+}
+
+.stop-div {
+	left: calc(24vmin);
+}
+
+.play-div {
+	left: calc(32vmin);
+	opacity: 0.2;
+}
+
+.next-div {
+	left: calc(40vmin);
+}
+
+.execution-div{
+	left: calc(48vmin);
+	background: #960000;
+}
+
+
+.step-meter {
+	position: absolute;
+	z-index: 5;
+	background: unset;
+	left: calc((100% - 90%) / 2);
+	right: auto;
+	bottom: 27%;
+	width: 90%;
+	height: 10%;
+}
+.step-meter > .meter-out {
+	width: 100%;
+}
+.meter-out {
+	width: 60%;
+	display: block;
+	position: relative;
+	height: 1.1em !important;
+	/* border-radius: 0.55em; */
+	margin: 0.2em 5% 0.2em 0%;
+	background: #b5b8b2;
+}
+
 
 .pointer {
 	position: absolute;
@@ -102,14 +160,13 @@ a-scene {
 
 .list {
 	width: auto;
-	height: 70%;
+	height: 55%;
 	margin: 0 10px;
 	background: #374573;
 	overflow: scroll;
 	scroll-snap-type: y mandatory;
 	transition: all 1s ease-out;
 	position: relative;
-	scroll-snap-type: y mandatory;
 	border-radius: 0.5em;
 	box-shadow: 0px 0px 4px 4px #374573;
 }
@@ -258,6 +315,7 @@ a-scene {
 	position: absolute;
 	display: flex;
   flex-flow: column;
+	height: 30%;
 	width: 30%;
 	top: 0;
 	right: 0;
@@ -298,16 +356,23 @@ a-scene {
 	padding: unset;
 }
 
-.root-menu div {
+.root-menu div :not(.scroll-folder){
 	height: auto;
 	max-height: 250px;
 	transition: max-height .5s linear 0s;
 	overflow: hidden;
 }
 
-/* .clause-folder{
-	max-height: 0;
-} */
+.scroll-folder{
+	width: 100%;
+	height: 100%;
+	overflow: scroll;
+	scroll-snap-type: y mandatory;
+}
+.scroll-folder::-webkit-scrollbar{
+  display: none;
+}
+
 
 .folder { 
 	width: 100%;
@@ -326,33 +391,93 @@ a-scene {
 .meter-out {
 	width: 60%;
 	display: block;
+	position: relative;
 	height: 1.1em !important;
-	border-radius: 0.55em;
+	/* border-radius: 0.55em; */
 	margin: 0.2em 5% 0.2em 0%;
 	background: #b5b8b2;
 }
-
-.meter-in {
-	width: calc(0.5em);
-	border-radius: 0.55em;
-	height: 0.5em !important;
-	margin: 0.3em 0 0 0.3em;
-	background: #374eff;
-	position: relative;
-	/* display: none; */
-	overflow: unset !important;
+.meter-out::before {
+	content: "";
+	width: 0.55em;
+	display: block;
+	position: absolute;
+	height: 1.1em !important;
+	border-radius: 0.55em 0 0 0.55em;
+	/* margin: 0.2em 5% 0.2em 0%; */
+	background: #b5b8b2;
+	transform: translate(-0.54em, 0em);
+}
+.meter-out::after {
+	content: "";
+	width: 0.55em;
+	display: block;
+	left: 100%;
+	position: absolute;
+	height: 1.1em !important;
+	border-radius: 0 0.55em 0.55em 0;
+	/* margin: 0.2em 5% 0.2em 0%; */
+	background: #b5b8b2;
+	/* transform: translate(100%, 0em); */
 }
 
-.meter-in > div{
+.meter-in {
+	width: 100%;
+	/* border-radius: 0.55em; */
+	top: 50%;
+	height: 0.5em !important;
+	/* margin: 0.3em 0 0 0; */
+	background: #374eff;
 	position: absolute;
-	/* transform: translate(0.2em 0.2em); */
+	/* display: none; */
+	overflow: unset !important;
+	z-index: 100;
+	transform: translate(0em, -50%);
+}
+.meter-in::before {
+	content: "";
+	width: 0.25em;
+	display: block;
+	position: absolute;
+	height: 0.5em !important;
+	border-radius: 0.25em 0 0 0.25em;
+	/* margin: 0.2em 5% 0.2em 0%; */
+	background: #374eff;
+	transform: translate(-0.25em, 0em);
+}
+.meter-in > div {
+	position: absolute;
 	width: 0.9em !important;
 	height: 0.9em !important;
 	border-radius: 50%;
-	bottom: -0.2em;
-	right: -0.2em;
-	background: #374eff; 
+	top: 0.25em;
+	right: -0.9em;
+	background: #374eff;
 	/* overflow: unset !important; */
+	transform: translate(-0.45em, -0.45em);
+}
+
+.time-meter-animation{
+	/* animation-name: r2; linear*/
+	/* animation-name: r2;
+	animation-duration: 2s;
+	animation-iteration-count: 1; */
+	/* transition-property: all;
+  transition-duration: unset; */
+	
+	width: 100%;
+	max-width: 0%;
+}
+
+.meter-animating {
+	/* animation: 5s linear 0s 1 normal forwards running r2; */
+	transition: 5s linear;
+}
+
+@keyframes r2 {
+	/* 0% { max-width: calc(100% - 8.8px - 4.8px); } */
+	0%   { max-width: calc(8px); }
+	100% { max-width: calc(100% - 8.8px); }
 }
 
 .clause-folder > div:not(.folder-tile) {
@@ -555,7 +680,5 @@ a-scene {
 	/* background: #b2ddf5; */
 }
 
-.play-btn {
-	width: 100%;
-	height: 100%;
-}
+
+

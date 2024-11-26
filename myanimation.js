@@ -5,6 +5,7 @@ const myanimation = () => ({
     start: {type: 'number', default: 0},
     end: {type: 'number', default: Infinity},
     frame: {type: "number", default: NaN},
+    finish: {type: "boolean", default: false},
 	},	
 	init() {
     this.duration = -1
@@ -145,7 +146,7 @@ const myanimation = () => ({
 
       // console.log(`end   ${this.el.id} clip=[${this.data.clip}]time=${(Date.now()-baseTime)/1000}`)
 
-      this.el.dispatchEvent(new Event("animation-finished"))
+      if(this.data.finish)  this.el.dispatchEvent(new Event("animation-finished"))
     }
     this.pause()
     // this.el.removeAttribute(this)

@@ -36,40 +36,6 @@ const cubemode = () => ({
     // center.children[2].children[0].setAttribute("gltf-model","#model_frame_edge")
 
     this.load_end = true
-    this.Rotation_Angle = {
-      e: [
-        [-30,-160],
-        [-30,160],
-        [-30,40],
-        [-30,-40],
-        
-        [-30,160],
-        [-30,40],
-        [-30,40],
-        [-30,-40],
-        
-        [30,160],
-        [30,40],
-        [30,40],
-        [30,-40],
-      ],
-      
-      c: [
-        [-30,-160],
-        [-30,160],
-        [-30,40],
-        [-30,-40],
-        
-        [30,-160],
-        [30,160],
-        [30,40],
-        [30,-40],  
-      ]
-    }
-
-    this.parts__Angle = [
-      10,10,10,10,  6,6,6,6,  2,2,2,2,
-    ]
 
     const canvas = document.createElement("canvas")
     canvas.id="icon"
@@ -118,7 +84,6 @@ const cubemode = () => ({
     map.append(list)
 
     
-    const next = document.querySelector('.next-step-div')
     // next.classList.add('next-step')
     // map.append(next)
 
@@ -128,7 +93,6 @@ const cubemode = () => ({
     // pointer.id="pointer"
     // list.append(pointer)
 
-    this.next_step_buttont = next
     this.color_set_buttont = document.getElementsByClassName("color-set-buttont")[0]
     this.calculation_set_buttont = document.getElementsByClassName("calculation_set_buttont")[0]
 
@@ -147,82 +111,6 @@ const cubemode = () => ({
         }
       })
     }
-
-    this.next_step_buttont.addEventListener("click",(e) => {
-			if(this.data.cube_mode !== "Execution")	return
-      if(this.data.Execution_move)  return
-      if(this.data.step_move) return
-      if(this.now_step == 15){
-        console.log(`next_step_buttont 既に完成している`)
-        return
-      }
-
-      const _list = document.querySelector(".list")
-
-      this.now_step += 1
-      
-      hei = _list.children[this.now_step].offsetTop
-
-      St = document.querySelectorAll(`.step${this.now_step}`)
-      for(let i=0;i<St.length;i++)
-        St[i].classList.add("now-step")
-
-      _list.scrollTo({
-        top: hei - _list.clientHeight/2,
-        left: 0,
-        behavior: "smooth",
-      })
-      
-      console.log(`\n\n [${this.now_step}] ステップ`)
-      if(!timeList.stepSkip[this.now_step]){
-        console.log(`スキップ [${this.now_step}]`)
-        return
-      }
-
-      this.data.step_move = true
-
-      timeList.rote_re_start()
-
-      // console.log("")
-      // hand_xyz.length=0
-      // Angle_xyz.length = 0
-
-      
-      // if(this.now_step==12){
-      //   pointM(frame_pos, false)
-      //   typeName = frame_pos[0]=="corner"?"corner":"edge"
-      //   type = frame_pos[0]=="corner"?"frame_corner":"frame_edge"
-      //   const frame=document.getElementById(`frame_${typeName}`)
-      //   const Pframe=document.getElementById(`frame`)
-
-      //   if(Pframe.classList.value.includes(typeName)){
-      //   	frame.setAttribute("visible",false)
-      //   	Pframe.classList.remove(typeName)
-      //   }
-      // }
-      // if(this.now_step<12){
-      //   pointM(frame_pos, false)
-      //   frame_rotate(undefined, this.now_step, 500, false)
-      //   // Angle_move(undefined, this.now_step,500)
-      // }
-
-      // console.log("/////  sum_solution2[0].length==0")
-      // console.log(sum_solution2)
-      // if(sum_solution2[0].length==0 || sum_solution2[0].length==1 && sum_solution2[0]=="")  {
-      //   // console.log("/////  sum_solution2[0].length==0")
-      //   sum_solution2.shift()
-      //   if(sum_solution2.length == 0){
-      //     movementCount = -1
-      //     move180 = false
-      //     this.Complete()
-      //   }
-      // }
-      // else{
-      //   setTimeout(() => {
-      //     this.data.Execution_move = true
-      //   },100)
-      // }
-    })
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
 			if(this.data.cube_mode !== "Free")	return
@@ -241,10 +129,29 @@ const cubemode = () => ({
     
     a=document.getElementsByClassName("meter-out")
     
-    rote_speed_metar = new metar(a[0].classList[1], a[0], 0.2, 10, 4, true)
-    // console.log({rote_speed_metar})
-    hnd_opacity_metar = new metar(a[1].classList[1], a[1], 0.1, 1, 1, false)
-    // console.log({rote_speed_metar})
+    this.rote_speed_metar = new metar({
+      id: a[1].classList[1],
+      el: a[1],
+      start: 0.2,
+      end: 10,
+      value: 4,
+      dx: 0.2,
+      constSet: true,
+      callbackfunc: {func1: this, func2: "meter"},
+      count_Disp: a[1].nextElementSibling,
+    })
+
+    this.hnd_opacity_metar = new metar({
+      id: a[2].classList[1],
+      el: a[2],
+      start: 0.1,
+      end: 1,
+      value: 1,
+      dx: 0.1,
+      constSet: false,
+      callbackfunc: {func1: this, func2: "meter"},
+      count_Disp: a[2].nextElementSibling,
+    })
     
     this.Mode_set("Free")
 	},
@@ -286,6 +193,10 @@ const cubemode = () => ({
           }
         })
         break 
+        
+      case "time-meter":
+
+        break
 
     }
   },
@@ -383,7 +294,6 @@ const cubemode = () => ({
       Lhand.object3D.visible = true
       Rhand.object3D.visible = true
 
-      // this.data.Execution_move = true
       
       this.now_step = -1
       this.Mode_set("Execution")
@@ -391,7 +301,6 @@ const cubemode = () => ({
   },
 
   Complete(){
-    timeList.animation_re_set()
     
 		// this.btn1.children[0].innerHTML = 'Complete'
     const Lhand = document.getElementById("L-hand")
@@ -459,6 +368,7 @@ const cubemode = () => ({
     bone_name_model = _bone_name_model
     frameObj = _frameObj
 
+
     timeList = new motionList(
       _full_cube, _model_centers, _model_corners, _model_edges,
       _bone_centers, _bone_corners, _bone_edges,
@@ -468,30 +378,6 @@ const cubemode = () => ({
     )
 
     color_set(scrambled_state)
-    // timeList.ins(
-    //   scrambled_state,
-    //   [
-    //     [ "R","U","F2","y" ],
-    //     [ "F2","y" ],
-    //     [ "U2","F2","y" ],
-    //     [ "U'","F2","y" ],
-    //     [ "y" ],
-    //     [ "y2","R","U","R'","y2","U","R","U","R'","y" ],
-    //     [ "R","U","R'","U'","R","U","R'","y" ],
-    //     [ "U2","R","U2","R'","U'","R","U","R'","y" ],
-    //     [ "U2","U","R","U'","R'","F","R'","F'","R","y" ],
-    //     [ "U'","R'","F'","R","U","R","U'","R'","F","y" ],
-    //     [ "y","R","U'","R'","F","R'","F'","R","y'","U'","U'","R'","F'","R","U","R","U'","R'","F","y" ],
-    //     [ "U2","U'","R'","F'","R","U","R","U'","R'","F","y" ],
-    //     [ "U'","F","R","U","R'","U'","F'","F","R","U","R'","U'","F'" ],
-    //     [ "U","R","U","R'","U","R","U2","R'","R","U","R'","U","R","U2","R'" ],
-    //     [ "U2" ],
-    //     [ "y'","x'","U2","R2","U'","L'","U","R2","U'","L","U'","x","y","x'","U2","R2","U'","L'","U","R2","U'","L","U'","x" ],
-    //   ],
-    // )
-
-
-
     this.load_end = false
   },
   timeLise_push(){

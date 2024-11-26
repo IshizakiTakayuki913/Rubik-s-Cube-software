@@ -90,8 +90,37 @@
     </div>
 
     <div class="sulves-map">
-      <div class="next-step-div">
+      <div class="btn-div back-div">
+        <img class="back-btn" src="./img/back-step.png">
+      </div>
+
+      <div class="btn-div reverse-div">
+        <img class="reverse-btn" src="./img/reverse-play.png">
+      </div>
+
+      <div class="btn-div stop-div">
+        <img class="stop-btn" src="./img/stop.png">
+      </div>
+
+      <div class="btn-div play-div">
         <img class="play-btn" src="./img/play.png">
+      </div>
+
+      <div class="btn-div next-div">
+        <img class="next-btn" src="./img/next-step.png">
+      </div>
+
+      <div class="btn-div execution-div">
+        <!-- <img class="execution-clause-btn" src="./img/stop.png"> -->
+      </div>
+
+      <div class="step-meter">
+        <div class="meter-out time-meter">
+          <div class="meter-in un-pointer-events time-meter-animation">
+            <div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -99,59 +128,62 @@
       <div class="folder-tile">
         <p>ルービックキューブ</p>
       </div>
-      <div id="c" class="folder">
-        <div class="folder-tile">
-          <p>色入力</p>
-          <!-- <button class="color-set-buttont">実行</button> -->
-        </div>
-        <div>
-          <button class="color-set-buttont">実行</button>
-        </div>
-        <div id="d" class="folder">
+      <div class="scroll-folder">
+        <div id="c" class="folder">
           <div class="folder-tile">
-            <p>補助機能</p>
+            <p>色入力</p>
+            <!-- <button class="color-set-buttont">実行</button> -->
           </div>
           <div>
-            <button >実行</button>
+            <button class="color-set-buttont">実行</button>
+          </div>
+          <div id="d" class="folder">
+            <div class="folder-tile">
+              <p>補助機能</p>
+            </div>
+            <div>
+              <button >実行</button>
+            </div>
+          </div>
+        </div>
+        <div id="b" class="folder">
+          <div class="folder-tile">
+            <p>解説</p>
+          </div>
+          <div>
+            <button class="calculation_set_buttont">実行</button>
+          </div>
+          <div id="d" class="folder">
+            <div class="folder-tile">
+              <p>再生速度</p>
+            </div>
+            <div>
+              <div class="meter-out spped-meter">
+                <div class="meter-in un-pointer-events">
+                  <div>
+                  </div>
+                </div>
+              </div>
+              <p>2</p>
+            </div>
+          </div>
+          <div id="e" class="folder">
+            <div class="folder-tile">
+              <p>手-透明度</p>
+            </div>
+            <div>
+              <div class="meter-out hand-opacity-meter">
+                <div class="meter-in un-pointer-events">
+                  <div>
+                  </div>
+                </div>
+              </div>
+              <p>1</p>
+            </div>
           </div>
         </div>
       </div>
-      <div id="b" class="folder">
-        <div class="folder-tile">
-          <p>解説</p>
-        </div>
-        <div>
-          <button class="calculation_set_buttont">実行</button>
-        </div>
-        <div id="d" class="folder">
-          <div class="folder-tile">
-            <p>再生速度</p>
-          </div>
-          <div>
-            <div class="meter-out spped-meter">
-              <div class="meter-in un-pointer-events">
-                <div>
-                </div>
-              </div>
-            </div>
-            <p>2</p>
-          </div>
-        </div>
-        <div id="e" class="folder">
-          <div class="folder-tile">
-            <p>手-透明度</p>
-          </div>
-          <div>
-            <div class="meter-out hand-opacity-meter">
-              <div class="meter-in un-pointer-events">
-                <div>
-                </div>
-              </div>
-            </div>
-            <p>1</p>
-          </div>
-        </div>
-      </div>
+
     </div>
 
     <div class="step-list-menu">
