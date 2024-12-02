@@ -53,24 +53,26 @@ class motionList{
       if(this.stepCount == 15){
         console.log("rote_re_start finish")
         return {skip: true, check: "over"}
-      }
+      } 
       console.log("next_btn")
       this.stepCount++
 
       this.step_scroll(this.stepCount)
+      
 
       this.meterBar.style.maxWidth = "0%"
       
 
-      const intdex = this.stepSkip[this.stepCount]
-      this.frame(this.stepStartTime[intdex]/1000)
-      this.stopTime = this.stepStartTime[intdex]
-      if(intdex == -1){
+      const index = this.stepSkip[this.stepCount]
+      if(index == -1){
         console.log("rote_re_start skip")
         return {skip: true, }
       }
+      this.frame_set(this.stepStartTime[index]/1000)
+      this.stopTime = this.stepStartTime[index]
 
-      this.meter_set(intdex)
+      this.meter_set(index)
+      this.frameObjSet(index)
 
       // this.animStyle.style.transitionDuration = 
       //   `${(this.stepStartTime[intdex+1] - this.stepStartTime[intdex]) / rote_speed}ms`
@@ -121,15 +123,16 @@ class motionList{
       this.meterBar.style.maxWidth = "0%"
       
 
-      const intdex = this.stepSkip[this.stepCount]
-      this.frame(this.stepStartTime[intdex]/1000)
-      this.stopTime = this.stepStartTime[intdex]
-      if(intdex == -1){
+      const index = this.stepSkip[this.stepCount]
+      if(index == -1){
         console.log("rote_re_start skip")
         return {skip: true, }
       }
+      this.frame_set(this.stepStartTime[index]/1000)
+      this.stopTime = this.stepStartTime[index]
 
-      this.meter_set(intdex)
+      this.meter_set(index)
+      this.frameObjSet(index)
     })
 
     this.stop_btn.addEventListener("click",(e) => {
@@ -871,155 +874,6 @@ class motionList{
 
     return data1
   } 
-  frame_rotate(sulb, scrambled_state, step, time, anime = false){
-    let data = {
-      rote: false,
-      type: undefined,
-      innerVec: undefined,
-      aniData: {},
-    }
-
-    // let hand_xyz = this.hand_xyz
-    // let frame_pos = this.frame_pos
-
-    let text = "\n\n"
-    // text+=`hand_xyz [${hand_xyz.length==0?"None":hand_xyz.join(',')}]\n`
-    
-    if(step>=12)	return data
-
-    const moves_face_c = [
-      [0,1,2,3],
-      [1,2,5,6],
-      [0,3,4,7],
-      [2,3,6,7],
-      [4,5,6,7],
-      [0,1,4,5],
-      [0,1,2,3,4,5,6,7],
-      [0,1,2,3,4,5,6,7],
-      [0,1,2,3,4,5,6,7],
-      [1,2,5,6],
-      [0,3,4,7],
-      [0,1,2,3],
-      [4,5,6,7],
-      [2,3,6,7],
-      [0,1,4,5],
-    ]
-     
-    const moves_face_e = [
-      [4,5,6,7],
-      [1,2,5,9],
-      [0,3,7,11],
-      [2,3,6,10],
-      [8,9,10,11],
-      [0,1,4,8],
-      [0,1,2,3,4,5,6,7,8,9,10,11],
-      [0,1,2,3,4,5,6,7,8,9,10,11],
-      [0,1,2,3,4,5,6,7,8,9,10,11],
-      [1,2,4,5,6,8,9,10],
-      [0,3,4,6,7,8,10,11],
-      [0,1,2,3,4,5,6,7],
-      [0,1,2,3,8,9,10,11],
-      [2,3,5,6,7,9,10,11],
-      [0,1,4,5,7,8,9,11],
-    ]
-    
-    const moves_face_cn = [
-      [4],
-      [1],
-      [3],
-      [2],
-      [5],
-      [0],
-      [0,1,2,3,4,5],
-      [0,1,2,3,4,5],
-      [0,1,2,3,4,5],
-      [0,1,2,4,5],
-      [0,2,3,4,5],
-      [0,1,2,3,4],
-      [0,1,2,3,5],
-      [1,2,3,4,5],
-      [0,1,3,4,5],
-    ]
-
-    const rote = {
-      ce: ["0 180 0","0 90 0","0 0 0","0 -90 0","-90 0 0","90 0 0"],
-      e:  [
-        "0 -90 90","0 90 -90","0 90 90","0 -90 -90","0 180 0","0 90 0",
-        "0 0 0","0 -90 0","0 180 180","0 90 180","0 0 180","0 -90 180"
-        ],
-      c: [
-        "0 180 0","0 90 0","0 0 0","0 270 0",
-        "0 270 180","0 180 180","0 90 180","0 0 180"
-        ],
-    }
-
-    const parts__Angle = [
-      10,10,10,10,  6,6,6,6,  2,2,2,2,
-    ]
-
-    const type = (4 <= step && step < 8)?"c":"e"
-    const typeName = type=="c"?"corner":"edge"
-    const ss = scrambled_state
-    let new_ang = parts__Angle[step]
-
-    text+=`ang ${new_ang} `
-    // for(let han of hand_xyz){		new_ang = moves[han][`${type}p`].indexOf(new_ang);		text+=`-> ${new_ang} `;	}
-    text+='\n'
-    
-    // if(sulb != undefined && sulb[0]>"a"){
-    //   if(hand_xyz.length > 0 && hand_xyz.at(-1)[0] == sulb[0] && hand_xyz.at(-1) != sulb )			hand_xyz.pop()
-    //   else			hand_xyz.push(sulb)
-    // }
-
-    const pos = ss[`${type}p`].indexOf(new_ang)
-
-    data.innerVec = rote[type][pos]
-    data.type = typeName
-    data.frameParts = pos
-  
-    const faces = ['U', 'R', 'L', 'F', 'D', 'B', 'x', 'y', 'z', 'r', 'l', 'u', 'd', 'f', 'b']
-  
-    // console.log({sulb})
-    const index = faces.indexOf(sulb[0])
-    const mode_parts = type=="c"?moves_face_c:moves_face_e
-    // console.log(mode_parts)
-    // console.log(mode_parts[index])
-    const mode = mode_parts[index].indexOf(pos)
-  
-    text += `sulb [${sulb}]  type [${type}]  mode [${mode!=-1?mode:"None"}]  pos [${pos}] rote [${rote[type][pos]}]\n`
-    // text += `[${.join(',')}]\n`
-    text += `index [${index}]\n`
-    text += `mode_parts[index] [${mode_parts[index].join(',')}]\n`
-    text += `indexOf [${mode_parts[index].indexOf(pos)}]\n`
-  
-    if(mode==-1){
-      text += `--------- NO rotation ---------\n\n`
-      // console.log(text)
-      return data
-    }
-  
-    data.rote = true
-    
-    const rad = sulb[1]
-    const size = (rad=='\'')?-1:((rad=='2')?2:1)
-    const vec	= 'yxxzyzxyzxxyyzz'
-    text+=	`anime [${anime}]  rot [rotation.${vec.charAt(index)}]  to [${faces_rad[index] * 90 * size}]`
-  
-    const next_pos = moves[sulb][`${type}p`].indexOf(pos)
-    // data.frameParts_next = next_pos
-  
-    // console.log(text+"\n\n")
-    // frame.setAttribute('animation', )
-    data.aniData = {
-      property: 'rotation.'+vec.charAt(index),
-      dur: time,
-      from: 0,
-      to: faces_rad[index] * 90 * size,
-      easing: 'linear',
-    }
-    
-    return data
-  }
   set_timeList(_Rotes){
     for(let i=0;i<_Rotes.length;i++){
       let a= this.one_motion(_Rotes[i], 1, 0)
@@ -1193,6 +1047,88 @@ class motionList{
     }
 
     this.frame(p)
+  }
+  frameObjSet(index){
+    const f = [
+      ["ed10"], ["ed09"], ["ed08"], ["ed11"],
+      ["co06"], ["co05"], ["co04"], ["co07"],
+      ["ed02"], ["ed01"], ["ed00"], ["ed03"],
+      ["ed04","ed05","ed06","ed07"],
+      ["co00","co01","co02","co03"],
+      ["ed04","ed05","ed06","ed07"],
+      ["co00","co01","co02","co03"],
+      ["co00","co01","co02","co03","co04","co05","co06","co07"],
+      ["ce00","ce01","ce02","ce03","ce04","ce05"],
+      ["ed00","ed01","ed02","ed03","ed04","ed05","ed06","ed07","ed08","ed09","ed10","ed11"],
+    ]
+
+    const F = f[index]
+
+    const bone = {
+      "ce": this.bone_centers,
+      "co": this.bone_corners,
+      "ed": this.bone_edges,
+    }
+    
+    const baseQua = {
+      "co": [
+        [0,0,0,0],
+        [0,-0.7071067811865476,0,0.7071067811865476],
+        [0,1,0,0],
+        [0,0.7071067811865476,0,0.7071067811865476],
+        [0.7071067811865476,0,0.7071067811865475,0],
+        [0,0,1,0],
+        [0.7071067811865476,0,-0.7071067811865475,0],
+        [1,0,0,0]
+      ],
+      "ce": [
+        [0,0,0,1],
+        [0,-0.7071067811865476,0,0.7071067811865476],
+        [0,1,0,0],
+        [0, 0.7071067811865476,0,0.7071067811865476],
+        [0.7071067811865476,0,0,0.7071067811865476],
+        [-0.7071067811865476,0,0,0.7071067811865476],
+      ],
+      "ed": [
+        [0,0,0,1],
+        [0,0,1,0],
+        [0,1,0,0],
+        [1,0,0,0],
+        [0.5,-0.5,0.5,0.5],
+        [-0,0.7071067811865476,-0.7071067811865475,0],
+        [0.5,0.5,-0.5,0.5],
+        [0.7071067811865475,0,0,0.7071067811865476],
+        [-0.5,-0.5,-0.5,0.5],
+        [0,0.7071067811865475,0.7071067811865476,0],
+        [-0.5,0.5,0.5,0.5],
+        [-0.7071067811865475,0,0,0.7071067811865476],
+      ]
+    }
+
+    this.full_cube.object3D.traverse((e)=>{
+      if(e.type=="Group" && ( e.name=="fco" || e.name=="fce" || e.name=="fed")){
+        // console.log(e)
+        // this.full_cube.object3D.remove(e)
+        e.removeFromParent()
+      }
+    })
+
+    // 
+
+    const baseframe = {"co": 0, "ed":1, "ce":2}
+    // bone.ce[0].remove(this.frameObj[0])
+    F.forEach((e)=>{
+      const type = e.slice(0,2)
+      const number = this.Datas.at(-1)[type=="ce"?"c":type[0]+"p"][parseInt(e.slice(-2))]
+      console.log({type, number})
+
+      // .indexOf(parseInt(e.slice(-2)))
+      const mdl = this.frameObj[baseframe[type]].clone()
+      const rot = baseQua[type][number]
+      mdl.quaternion.set(rot[0], rot[1], rot[2], rot[3])
+      bone[type][number].add(mdl)
+    })
+
   }
 }
 

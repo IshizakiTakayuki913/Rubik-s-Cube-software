@@ -147,8 +147,27 @@ const modelLoad = () => ({
     loader.load( './model/frame.glb', ( gltf ) => {
       frameObj = gltf.scene.children
       this.el.dispatchEvent(new Event( "load-all-end"))
+      
       // console.log("frame loaded")
-    
+      gltf.scene.traverse((e)=>{
+        if(e.type=="Group" && e.name!="Scene"){
+          const mesh = e.children
+          mesh[0].material.color={r:0.7,g:1,b:2}
+          mesh[0].material.side=2
+          mesh[0].material.opacity=0.3
+          mesh[0].material.transparent=true
+          mesh[0].material.blending=THREE.AdditiveBlending
+          // mesh[0].material.flatShading = true
+        
+        
+          mesh[1].material.visible=true
+          mesh[1].material.color={r:0.3,g:0.3,b:0.3}
+          mesh[1].material.side=0
+          // mesh[1].material.opacity=0.7
+          // mesh[1].material.transparent=true
+          mesh[1].material.blending=3
+        }
+        })
     })
 
     const model_cube = document.createElement('a-entity')

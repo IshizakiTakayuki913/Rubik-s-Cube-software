@@ -1,0 +1,200 @@
+    this.L_hand.addEventListener("animation-start",(e) => {
+      this.L_time_index += 1
+      const Lti = this.L_time_index
+      const data = {...this.LhandRotesData[Lti]}
+      // data.loop = 'once'
+      // data.clampWhenFinished = true
+      data.timeScale *= rote_speed
+      data.timeScale = 1 / data.timeScale
+  
+      this.L_hand.removeAttribute('my-animation')
+      this.L_hand.setAttribute('my-animation', data)
+    })
+    this.L_hand.addEventListener("animation-finished",(e)=>{
+      if(this.mew_motion) return
+
+      const Lti = this.L_time_index
+      // if(Lti == this.LhandRotesData.length-1){
+      // // console.log("L_hand アニメーション　終了")
+      //   return
+      // }
+      
+      if(this.groupRotesLhand.indexOf(Lti + 1) != -1){
+        // console.log(`L_hand ステップの区切りのアニメーション`)
+        this.stepAnimationEnd += 1
+        this.animationEnd()
+        return
+      } 
+      
+      const index = this.LstartIndex.indexOf(Lti + 1)
+      if(index != -1){
+        // console.log(`L_hand 回転 区切りのアニメーション`)
+        return
+      }
+
+      let handL = this.LhandRotesTime[Lti+1]
+      handL -= this.LhandRotesTime[Lti]
+      handL -= 1000 / this.LhandRotesData[Lti].timeScale
+      
+      setTimeout(()=>{
+        this.L_hand.dispatchEvent(new Event( "animation-start"))
+      },handL / rote_speed)
+    })
+
+    this.R_hand.addEventListener("animation-start",(e)=>{
+      this.R_time_index += 1
+      const Rti = this.R_time_index
+      const data = {...this.RhandRotesData[Rti]}
+      // data.loop = 'once'
+      // data.clampWhenFinished = true
+      data.timeScale *= rote_speed
+      data.timeScale = 1 / data.timeScale
+
+      // console.log(data)
+
+      this.R_hand.removeAttribute('my-animation')
+      this.R_hand.setAttribute('my-animation', data)
+    })
+    this.R_hand.addEventListener("animation-finished",(e)=>{
+      if(this.mew_motion) return
+
+      const Rti = this.R_time_index
+      // if(Rti == this.RhandRotesData.length-1){
+      // // console.log("R_hand アニメーション　終了")
+      //   return
+      // }
+
+      // console.log(`Rti [${Rti}] gRRh [${this.groupRotesRhand.indexOf(Rti + 1)}]`)
+      if(this.groupRotesRhand.indexOf(Rti + 1) != -1){
+        // console.log(`R_hand ステップの区切りのアニメーション`)
+        this.stepAnimationEnd += 1
+        this.animationEnd()
+        return
+      } 
+
+      const index = this.RstartIndex.indexOf(Rti + 1)
+      if(index != -1){  //  && this.RcubeIndex[index] != -1
+        // console.log(`R_hand 回転 区切りのアニメーション`)
+        return
+      }
+
+      let handR = this.RhandRotesTime[Rti+1]
+      handR -= this.RhandRotesTime[Rti]
+      handR -= 1000 / this.RhandRotesData[Rti].timeScale
+      
+      setTimeout(()=>{
+        this.R_hand.dispatchEvent(new Event( "animation-start"))
+      },handR / rote_speed)
+    })
+
+    this.full_cube.addEventListener("animation-finished",(e)=>{
+      if(this.mew_motion) return
+
+      const Cti = this.Cube_time_index
+      if(this.groupRotesCube.indexOf(Cti+1) != -1){
+        // console.log("ステップ　アニメーション　終了")
+        this.stepAnimationEnd += 1
+        this.animationEnd()
+        return
+      }
+
+      // if(Cti == this.cubeRotesData.length-1){
+      //   console.log("this.full_cube アニメーション　終了")
+      //   return
+      // }
+
+      let full_c = this.cubeRotesTime[Cti+1]
+      full_c -= this.cubeRotesTime[Cti]
+      full_c -= 1000 / this.cubeRotesData[Cti].timeScale
+      
+      setTimeout(()=>{
+        this.full_cube.dispatchEvent(new Event( "animation-start"))
+      },full_c / rote_speed)
+    })
+    this.full_cube.addEventListener("animation-start",(e)=>{
+
+      this.Cube_time_index += 1
+      const Cti = this.Cube_time_index
+
+      // console.log({Cti, Datas: this.Datas[Cti], colorData: this.colorData[Cti]})
+      this.color_set(this.Datas[Cti], this.colorData[Cti])
+
+      const data = {...this.cubeRotesData[Cti]}
+      // data.loop = 'once'
+      // data.clampWhenFinished = true
+      data.timeScale *= rote_speed
+      data.timeScale = 1 / data.timeScale
+
+      this.full_cube.removeAttribute('my-animation')
+      this.full_cube.setAttribute('my-animation', data)
+
+      // const solveDiv = document.querySelectorAll(".img-div-back")
+      // const twoIndex = this.towRotes.indexOf(Cti)
+      // const twoCount = this.towRotes.findLastIndex((e) => Cti > e) + 1
+
+      // console.log({Cti, twoIndex, twoCount})
+
+      // this.imgSpeed.style.transition = `all ${1 / rote_speed}s linear`  
+      // if(twoIndex == -1){
+      //   solveDiv[Cti - twoCount].style.maxWidth = "100%"
+      // }
+      // else{
+      //   solveDiv[Cti - twoCount].style.maxWidth = "50%"
+      // } 
+
+      const fdata = {...this.frameRotesData[Cti]}
+      // console.log(fdata)
+      if(fdata.type != undefined){
+        this.frameObj[fdata.type=="corner"?"edge":"corner"].out.object3D.visible = false
+        
+        this.frameObj[fdata.type].in.setAttribute("rotation", fdata.innerVec)
+        this.frameObj[fdata.type].out.removeAttribute('animation')
+        this.frameObj[fdata.type].out.setAttribute('rotation',"0 0 0")
+        this.frameObj[fdata.type].out.object3D.visible = true
+
+        // console.log({fdata})
+        this.pointM([fdata.type, fdata.frameParts], true)
+
+        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
+        // console.log({data: this.frameRotesData.slice(0, Cti), pdata})
+        if(pdata != undefined){
+          // const pdata = this.frameRotesData[pindex]
+          // console.log({type: pdata.type, frameParts: pdata.frameParts})
+          this.pointM([pdata.type, pdata.frameParts], false)
+        }
+
+        if(fdata.rote){
+          fdata.aniData.dur = 1000 * data.timeScale
+          this.frameObj[fdata.type].out.setAttribute('animation', fdata.aniData) 
+        }
+      }
+
+      if(Object.hasOwn(fdata, "Previous")){
+        // console.log(`----------\n Previous \n----------`)
+        let pdata = this.frameRotesData.slice(0, Cti).findLast((e) => e.rote)
+        this.frameObj[pdata.type].out.object3D.visible = false
+        this.pointM([pdata.type, pdata.frameParts], false)
+      }
+
+      const Lti = this.L_time_index + 1
+      const Lindex = this.LstartIndex.indexOf(Lti)
+      if(Lindex != -1 && this.LcubeIndex[Lindex] == Cti){
+        let handL = this.LhandRotesTime[Lti]
+        handL -= this.cubeRotesTime[Cti]
+      
+        setTimeout(()=>{
+          this.L_hand.dispatchEvent(new Event( "animation-start"))
+        },handL / rote_speed)
+      }
+
+      const Rti = this.R_time_index + 1
+      const Rindex = this.RstartIndex.indexOf(Rti)
+      if(Rindex != -1 && this.RcubeIndex[Rindex] == Cti){
+        let handR = this.RhandRotesTime[Rti]
+        handR -= this.cubeRotesTime[Cti]
+      
+        setTimeout(()=>{
+          this.R_hand.dispatchEvent(new Event( "animation-start"))
+        },handR / rote_speed)
+      }
+    })
