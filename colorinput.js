@@ -334,11 +334,12 @@ const colorinput = () => ({
     const C4 = ver_check(D)       //向きがあっているか
     const C5 = pos_parity_check(C3.cp_hit, C3.ep_hit)       //向きがあっているか
 
-    // console.log(C1)
-    // console.log(C2)
-    // console.log(C3)
-    // console.log(C4)
-    // console.log(C5)
+    console.log(D)
+    console.log(C1)
+    console.log(C2)
+    console.log(C3)
+    console.log(C4)
+    console.log(C5)
 
     this.check_list = {
       c1: C1,
@@ -371,7 +372,7 @@ const colorinput = () => ({
 
     const parts_type = choice_parts.slice(0,2)
     const be = parseInt(choice_parts.slice(2,4))
-    const num = parseInt(this.parts.object.name.at(-1)) - 2
+    const num = parseInt(this.parts.object.name.at(-1)) - 3
     if(!(parts_type === "ed" || parts_type === "co"))	return
 
     const pos = parts

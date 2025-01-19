@@ -29,12 +29,14 @@ class motionList{
     this.meterBar = document.querySelector('.time-meter-animation')
 
     this.animStyle = getRuleBySelector(".meter-animating")
+    this.imgStyle = getRuleBySelector(".img-div-back")
 
     this.step_time_meter = undefined
     this.mode_direction = undefined
 
     this.anime_done = true
 
+    this.rotImgs = undefined
 
     this.back_btn = document.querySelector('.back-div')
     this.next_btn = document.querySelector('.next-div')
@@ -51,23 +53,23 @@ class motionList{
 
       
       if(this.stepCount == 15){
-        console.log("rote_re_start finish")
+        // console.log("rote_re_start finish")
         return {skip: true, check: "over"}
       } 
-      console.log("next_btn")
+      // console.log("next_btn")
       this.stepCount++
 
       this.step_scroll(this.stepCount)
-      
 
       this.meterBar.style.maxWidth = "0%"
       
 
       const index = this.stepSkip[this.stepCount]
       if(index == -1){
-        console.log("rote_re_start skip")
+        // console.log("rote_re_start skip")
         return {skip: true, }
       }
+      this.rotateImgReset(index, 0)
       this.frame_set(this.stepStartTime[index]/1000)
       this.stopTime = this.stepStartTime[index]
 
@@ -75,7 +77,7 @@ class motionList{
       this.frameObjSet(index)
 
       // this.animStyle.style.transitionDuration = 
-      //   `${(this.stepStartTime[intdex+1] - this.stepStartTime[intdex]) / rote_speed}ms`
+      //   `${(this.stepStartTime[index+1] - this.stepStartTime[index]) / rote_speed}ms`
 
       // this.step_move = true
       // this.animation_start_time = -1
@@ -86,8 +88,8 @@ class motionList{
 
       // setTimeout(() => {
       //   this.animation(
-      //     this.stepStartTime[intdex  ]/1000,
-      //     this.stepStartTime[intdex+1]/1000, rote_speed)
+      //     this.stepStartTime[index  ]/1000,
+      //     this.stepStartTime[index+1]/1000, rote_speed)
       //   this.meterBar.style.maxWidth = "100%"
 
       //   this.animation_start_time = Date.now()
@@ -101,7 +103,7 @@ class motionList{
       //   this.meterBar.classList.remove("meter-animating")
       //   this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
       // },
-      //   Math.abs(this.stepStartTime[intdex+1] - this.stepStartTime[intdex]) / rote_speed + 100
+      //   Math.abs(this.stepStartTime[index+1] - this.stepStartTime[index]) / rote_speed + 100
       // )
     })
 
@@ -112,10 +114,10 @@ class motionList{
 
       
       if(this.stepCount == 0){
-        console.log("rote_re_start finish")
+        // console.log("rote_re_start finish")
         return {skip: true, check: "over"}
       }
-      console.log("next_btn")
+      // console.log("next_btn")
       this.stepCount--
 
       this.step_scroll(this.stepCount)
@@ -125,9 +127,10 @@ class motionList{
 
       const index = this.stepSkip[this.stepCount]
       if(index == -1){
-        console.log("rote_re_start skip")
+        // console.log("rote_re_start skip")
         return {skip: true, }
       }
+      this.rotateImgReset(index, 0)
       this.frame_set(this.stepStartTime[index]/1000)
       this.stopTime = this.stepStartTime[index]
 
@@ -136,22 +139,22 @@ class motionList{
     })
 
     this.stop_btn.addEventListener("click",(e) => {
-      // console.log("settimeput 22")
       const mode  = document.getElementById("scene").components["cube-mode"]
       if(mode.data.cube_mode !== "Execution")	return
       if(!this.step_move) return
 
       clearTimeout(this.timeOutId)
+      clearTimeout(this.imgTimeOutId)
 
-      const intdex = this.stepSkip[this.stepCount]
+      const index = this.stepSkip[this.stepCount]
       let durtime =  (Date.now() - this.animation_start_time)
       let dur = this.mode_direction * Math.max(Date.now() - this.animation_start_time, 0) * rote_speed + this.stopTime
-
+      this.rotateImgSpeedSet(index, 0)
 
       console.log({
         durtime: durtime,
         durtime_x_speed: (durtime * rote_speed),
-        max: this.stepStartTime[intdex+1] - this.stepStartTime[intdex],
+        max: this.stepStartTime[index+1] - this.stepStartTime[index],
       })
 
       this.anime_done = true
@@ -160,18 +163,64 @@ class motionList{
       this.meterBar.classList.remove("meter-animating")
       this.remove_Animation()
       this.step_move = false
+
+      
+      const value = dur
+
+      let data = {
+        step: this.rotImgIns({type:"step", value:index}),
+        time: this.rotImgIns({type:"time", value:value})
+      }
+      console.log(data)
+      
+      this.rotateImgSet(index, 0)
+      this.rotateImgSpeedSet(index, 0)
+      
+      for(let i=data.step.id0; i<data.time.imgId; i++)  this.rotImgs[i].style.maxWidth = `${100}%`
+
+      if(data.time.now){
+        const percent = (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
+        // console.log(`動作中 perc:${percent}`)
+        switch(data.time.imgType){
+          case "Before":
+            // console.log(`now Before ${100*percent}`)
+            this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent}%`
+            break
+          case "After":
+            // console.log(`now After ${50*percent+50}`)
+            this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent+50}%`
+            break
+          case "no":
+            // console.log(`now no ${100*percent}`)
+
+            this.rotImgs[data.time.imgId].style.maxWidth = `${100*percent}%`
+            break
+        }
+      }
+      else{
+        switch(data.time.imgType){
+          case "Before":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+            break
+          case "After":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+            break
+          case "no":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+            break
+        }
+      }
     })
 
     this.play_btn.addEventListener("click",(e) => {
-      // console.log("settimeput 22")
       const mode  = document.getElementById("scene").components["cube-mode"]
       if(mode.data.cube_mode !== "Execution")	return
       if(this.step_move) return
 
-      const intdex = this.stepSkip[this.stepCount]
+      const index = this.stepSkip[this.stepCount]
 
-      if(intdex == -1){
-        console.log("rote_re_start skip")
+      if(index == -1){
+        // console.log("rote_re_start skip")
         return {skip: true, }
       }
       let value = this.step_time_meter.value
@@ -179,37 +228,40 @@ class motionList{
       if(this.step_time_meter.value == this.step_time_meter.f1){
         value = this.step_time_meter.f0
         this.meterBar.style.maxWidth = "0%"
+        this.rotateImgReset(index, 0)
       }
+
+      this.rotImgPlay(value)
+
       this.anime_done = true
       this.mode_direction = 1
       this.animation_start_time = -1
-      this.animStyle.style.transitionDuration = 
-        `${(this.stepStartTime[intdex+1] - value) / rote_speed}ms`
+      this.animStyle.style.transitionDuration = `${(this.stepStartTime[index+1] - value) / rote_speed}ms`
 
       this.step_move = true
       this.stopTime = value
 
       setTimeout(() => {
         this.meterBar.classList.add("meter-animating")
-      }, 50)
+      }, 5)
 
-      console.log({start: value, end: this.stepStartTime[intdex+1], dur: this.stepStartTime[intdex+1] - value})
 
       setTimeout(() => {
         this.animation(
           value/1000,
-          this.stepStartTime[intdex+1]/1000, rote_speed)
+          this.stepStartTime[index+1]/1000, rote_speed)
         this.animation_start_time = Date.now()
         this.meterBar.style.maxWidth = "100%"
-      }, 100)
+      }, 10)
+
 
       this.timeOutId = setTimeout(() => {
-        console.log("this.timeOutId")
         this.step_move = false
         this.meterBar.classList.remove("meter-animating")
         this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
+        this.rotateImgSpeedSet(index, 0)
       },
-        (this.stepStartTime[intdex+1] - value) / rote_speed + 100
+        (this.stepStartTime[index+1] - value) / rote_speed + 10
       )
     })
 
@@ -219,10 +271,10 @@ class motionList{
       if(mode.data.cube_mode !== "Execution")	return
       if(this.step_move) return
 
-      const intdex = this.stepSkip[this.stepCount]
+      const index = this.stepSkip[this.stepCount]
 
-      if(intdex == -1){
-        console.log("rote_re_start skip")
+      if(index == -1){
+        // console.log("rote_re_start skip")
         return {skip: true, }
       }
       let value = this.step_time_meter.value
@@ -231,38 +283,43 @@ class motionList{
 
         value = this.step_time_meter.f1
         this.meterBar.style.maxWidth = "100%"
+        this.rotateImgReset(index, 100)
       }
+
+      this.rotImgReverse(value)
 
       this.anime_done = true
       this.mode_direction = -1
       this.animation_start_time = -1
       this.animStyle.style.transitionDuration = 
-        `${(value - this.stepStartTime[intdex]) / rote_speed}ms`
+        `${(value - this.stepStartTime[index]) / rote_speed}ms`
 
       this.step_move = true
       this.stopTime = value
 
+
       setTimeout(() => {
         this.meterBar.classList.add("meter-animating")
-      }, 50)
+        this.rotateImgSpeedSet(index, rote_speed)
+      }, 5)
 
-      // console.log({start: value, end: this.stepStartTime[intdex], dur: this.stepStartTime[intdex+1] - value})
+      // console.log({start: value, end: this.stepStartTime[index], dur: this.stepStartTime[index+1] - value})
 
       setTimeout(() => {
         this.animation(
           value/1000,
-          this.stepStartTime[intdex]/1000, rote_speed)
+          this.stepStartTime[index]/1000, rote_speed)
         this.animation_start_time = Date.now()
         this.meterBar.style.maxWidth = "0%"
-      }, 100)
+      }, 10)
 
       this.timeOutId = setTimeout(() => {
-        console.log("this.timeOutId")
+        // console.log("this.timeOutId")
         this.step_move = false
         this.meterBar.classList.remove("meter-animating")
         this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f0})
       },
-        (value - this.stepStartTime[intdex]) / rote_speed + 100
+        (value - this.stepStartTime[index]) / rote_speed + 10
       )
     })
 
@@ -273,7 +330,367 @@ class motionList{
       console.log("解説　終了")
       mode.Complete()
     })
+
+    this.stepList = document.querySelector(`.step-lists`)
+    this.stepList.addEventListener(`click`,(e)=>{
+      const mode  = document.getElementById("scene").components["cube-mode"]
+      if(mode.data.cube_mode !== "Execution")	return
+
+      let newStep = -1
+      console.log(e.target.classList)
+      if(this.step_move){
+        console.log(`動作中`)
+        return
+      }
+
+      if(e.target.classList.contains("step-lists")){
+        console.log(`枠 return`)
+        return
+      }
+      
+      if(e.target.classList.contains("step-mode")){
+        console.log(`step return`)
+        if(parseInt(e.target.classList[1].slice(4)) == this.stepCount) return
+        newStep = e.target.classList[1].slice(4)
+      }
+
+      else{
+        console.log(`step in step return`)
+        newStep = e.target.classList[0].slice(4)
+      }
+
+      this.stepChange(parseInt(newStep))
+    })
   }
+  stepChange(newStep){
+    console.log({newStep})
+
+    // if(newStep == 15){
+    //   // console.log("rote_re_start finish")
+    //   return {skip: true, check: "over"}
+    // } 
+    // console.log("next_btn")
+    this.stepCount = newStep
+
+    this.step_scroll(this.stepCount)
+
+    this.meterBar.style.maxWidth = "0%"
+    
+
+    const index = this.stepSkip[this.stepCount]
+    if(index == -1){
+      // console.log("rote_re_start skip")
+      return {skip: true, }
+    }
+    this.rotateImgReset(index, 0)
+    this.frame_set(this.stepStartTime[index]/1000)
+    this.stopTime = this.stepStartTime[index]
+
+    this.meter_set(index)
+    this.frameObjSet(index)
+  }
+  rotImgReverse(value){
+    const index = this.stepSkip[this.stepCount]
+    // let value = this.step_time_meter.value
+
+    this.rotateImgSet(index, 0)
+    this.rotateImgSpeedSet(index, 0)
+    
+    const data = {
+      step: this.rotImgIns({type:"step", value:index}),
+      time: this.rotImgIns({type:"time", value:value})
+    }
+    // console.log(data)
+
+    for(let i=data.step.id0; i<data.time.imgId; i++)  this.rotImgs[i].style.maxWidth = `${100}%`
+
+    if(data.time.now){
+      const percent = (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
+      // console.log(`動作中 perc:${percent}`)
+      switch(data.time.imgType){
+        case "Before":
+          // console.log(`now Before ${100*percent}`)
+          this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent}%`
+          break
+        case "After":
+          // console.log(`now After ${50*percent+50}`)
+          this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent+50}%`
+          break
+        case "no":
+          // console.log(`now no ${100*percent}`)
+
+          this.rotImgs[data.time.imgId].style.maxWidth = `${100*percent}%`
+          break
+      }
+    }
+    else{
+      switch(data.time.imgType){
+        case "Before":
+          this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+          break
+        case "After":
+          this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+          break
+        case "no":
+          this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+          break
+      }
+    }
+    
+    let rotdri = data.time.now
+    let imgdur = (value - data.time.rotTime.end) / rote_speed
+
+    console.log({
+      start: value, end: this.stepStartTime[index], 
+      id: data.time.rotId-1,
+      next: value - data.time.rotTime.end,
+      next2: imgdur,
+    })
+
+    if(!data.time.now && data.time.rotId == -1){   //  && data.time.rotId < data.step.id1
+      // console.log("画像 -1 ステップ残 ")
+      // let _imgdur = (this.cubeRotesTime[0] - value) / rote_speed
+      // this.imgTimeOutId = setTimeout(rotateNext,100 + _imgdur) 
+    }     
+    else if(!data.time.now ){   // && data.time.rotId >= data.step.id0
+      // console.log(`画像 動作完  ステップ残 ${imgdur}s後`)
+      this.imgTimeOutId = setTimeout(rotateReverse,imgdur + 10)
+    }
+    else if(data.time.now){   //  && data.time.rotId >= data.step.id0
+      const durSecond = 1 / rote_speed * (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
+
+      // console.log(`画像 動作中  ステップ残 ${durSecond}s`)
+
+      setTimeout(() => {
+        this.rotImgs[data.time.imgId].style.transition = `${durSecond}s linear`
+      }, 5)
+
+      setTimeout(() => {
+        switch(data.time.imgType){
+          case "Before":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${0}%`
+            break
+          case "After":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+            break
+          case "no":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${0}%`
+            break
+        }
+      },10)
+
+      if(data.time.rotId >= 1){
+        // console.log({value, nextStart: this.cubeRotesTime[data.time.rotId-1], nextScale: this.cubeRotesData[data.time.rotId-1].timeScale*1000})
+        const nextrot = (value - this.cubeRotesTime[data.time.rotId-1] - this.cubeRotesData[data.time.rotId-1].timeScale*1000) / rote_speed
+        // console.log(`次回まで ${nextrot}s`)
+        this.imgTimeOutId = setTimeout(rotateReverse,10 + nextrot) 
+      }
+    }
+  }
+  rotImgPlay(value){
+    const index = this.stepSkip[this.stepCount]
+    // let value = this.step_time_meter.value
+
+    this.rotateImgSet(index, 0)
+    this.rotateImgSpeedSet(index, 0)
+    
+    let data = {
+      step: this.rotImgIns({type:"step", value:index}),
+      time: this.rotImgIns({type:"time", value:value})
+    }
+    console.log(JSON.parse(JSON.stringify(data)))
+
+    if(data.time.rotId < data.step.id0){
+      console.log(`例外処理`)
+      data.time = this.rotImgIns({type:"time", value:value+1})
+    }
+    console.log(data)
+
+    for(let i=data.step.id0; i<data.time.imgId; i++)  this.rotImgs[i].style.maxWidth = `${100}%`
+
+    if(data.time.now){
+      const percent = (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
+      console.log(`動作中 perc:${percent}`)
+      switch(data.time.imgType){
+        case "Before":
+          // console.log(`now Before ${100*percent}`)
+          this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent}%`
+          break
+        case "After":
+          // console.log(`now After ${50*percent+50}`)
+          this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent+50}%`
+          break
+        case "no":
+          // console.log(`now no ${100*percent}`)
+
+          this.rotImgs[data.time.imgId].style.maxWidth = `${100*percent}%`
+          break
+      }
+    }
+    else if(!data.time.now && data.time.rotId >= data.step.id0){
+      switch(data.time.imgType){
+        case "Before":
+          this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+          break
+        case "After":
+          this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+          break
+        case "no":
+          this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+          break
+      }
+    }
+    
+    let rotdri = data.time.now
+    let imgdur = (this.cubeRotesTime[data.time.rotId+1] - value) / rote_speed
+
+    console.log({
+      start: value, end: this.stepStartTime[index+1], 
+      id: data.time.rotId+1,
+      next: this.cubeRotesTime[data.time.rotId+1] - value,
+      next2: imgdur,
+    })
+
+    if(!data.time.now && data.time.rotId == -1){   //  && data.time.rotId < data.step.id1
+      // console.log("画像 -1 ステップ残 ")
+      let _imgdur = (this.cubeRotesTime[0] - value) / rote_speed
+      this.imgTimeOutId = setTimeout(rotateNext,100 + _imgdur) 
+    }     
+    else if(!data.time.now && data.time.rotId < data.step.id1){   // 
+      // console.log(`画像 動作完  ステップ残 ${imgdur}s後`)
+      this.imgTimeOutId = setTimeout(rotateNext,imgdur + 10)
+    }
+    else if(data.time.now && data.time.rotId < data.step.id1){   // 
+      const durSecond = 1 / rote_speed * (data.time.rotTime.end - value)  / (data.time.rotTime.end - data.time.rotTime.start)
+      // console.log(`画像 動作中  ステップ残 ${durSecond}s`)
+
+      setTimeout(() => {
+        this.rotImgs[data.time.imgId].style.transition = `${durSecond}s linear`
+      }, 5)
+
+      setTimeout(() => {
+        switch(data.time.imgType){
+          case "Before":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+            break
+          case "After":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+            break
+          case "no":
+            this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+            break
+        }
+      },10)
+      this.imgTimeOutId = setTimeout(rotateNext,imgdur + 10) 
+    }
+  }
+  rotateImgSet(step, dur){
+    if(this.stepSkip.indexOf(step) == -1){
+      // console.error(`step:${step}no step`)
+      return
+    }
+    a=this.rotImgIns({type: "step", value: step})
+    // console.log({a})
+    for(let i=a.id0; i<a.id1; i++){
+      this.rotImgs[i].style.maxWidth = `${dur}%`
+    }
+  }
+  rotateImgReset(step, dur){
+    if(this.stepSkip.indexOf(step) == -1){
+      // console.error(`step:${step}no step`)
+      return
+    }
+    a=this.rotImgIns({type: "step", value: step})
+    // console.log({a})
+    for(let i=a.id0; i<a.id1; i++){
+      this.rotImgs[i].style.maxWidth = `${dur}%`
+    }
+  }
+  rotateImgSpeedSet(step, speed = 0){
+    // this.imgStyle.style.transition = `all ${1/speed}s linear`
+
+    if(this.stepSkip.indexOf(step) == -1){
+      // console.error(`step:${step}no step`)
+      return
+    }
+    let value = "none linear"
+    if(speed > 0)  value = `${1/speed}s linear`
+
+    a=this.rotImgIns({type: "step", value: step})
+    // console.log({a})
+    for(let i=a.id0; i<a.id1; i++){
+      this.rotImgs[i].style.transition = value
+      // console.log(this.rotImgs[i].style.transition)
+    }
+    // if(this.stepSkip.indexOf(step) == -1){
+    //   console.error(`step:${step}no step`)
+    //   return
+    // }
+    // a=[this.rotImgIns({type: "step", value: step}),this.rotImgIns({type: "step", value: step+1})]
+    // // console.log({a})
+    // for(let i=a[0]; i<a[1]; i++){
+    //   this.rotImgs[i].style.maxWidth = `${1/speed}s`
+    // }
+  }
+  rotImgIns(data = {type: "step", value: -1}){
+    switch(data.type){
+      case "step":
+        if(data.value < 0  || this.groupRotesCube.length < data.value)
+          return {type: "step", check: false}
+
+        let m = this.towRotes.filter((a) => a<this.groupRotesCube[data.value])
+        if(this.groupRotesCube.length == data.value)  
+          return {type: "step", check: true,
+                  id: this.Rotes.length-this.towRotes.filter((a) => a<this.Rotes.length-1).length}
+        
+        if(this.groupRotesCube.length-1 == data.value)  
+          return {type: "step", check: true,
+                  id0: this.groupRotesCube[data.value] - this.towRotes.filter((a) => a<this.groupRotesCube[data.value]).length,
+                  id1: this.Rotes.length-this.towRotes.filter((a) => a<this.Rotes.length-1).length}
+        // imgId = index
+        return {type: "step", check: true,
+                id0: this.groupRotesCube[data.value] - this.towRotes.filter((a) => a<this.groupRotesCube[data.value]).length,
+                id1: this.groupRotesCube[data.value+1] - this.towRotes.filter((a) => a<this.groupRotesCube[data.value+1]).length}
+
+      case "time":
+        let _index = this.cubeRotesTime.findLastIndex((x)=>x<data.value)
+
+        if(_index == -1)
+          return {type: "time", rotId:-1, imgId:-1, move:-1, rotTime:-1, now: false, imgType:-1}
+
+        // console.log({value:data.value})
+        let rotDur  = 1000 / this.cubeRotesData[_index].timeScale
+        let rotTime = {start: this.cubeRotesTime[_index], end: this.cubeRotesTime[_index]+ rotDur}
+        let move = this.Rotes[_index]
+        let max = this.towRotes.filter((a) => a<_index)
+        let imgId = _index - max.length
+        let imgType = this.towRotes.indexOf(_index  ) != -1 ? "Before" :  
+                   this.towRotes.indexOf(_index-1) != -1 ? "After"  : "no"
+        // console.log({value:data.value, rotId:_index, imgId, move, rotTime, now: data.value <= rotTime.end, imgType})
+        return {type: "time", rotId:_index, imgId, move, rotTime, now: data.value <= rotTime.end, imgType, value:data.value}
+
+        // if(data.value < 0  || this.groupRotesCube.length < data.value)
+        //   return undefined
+
+        // max = this.towRotes.filter((a) => a<=this.groupRotesCube[data.value])
+        // if(this.groupRotesCube.length == data.value)  
+        //   return this.Rotes.length-this.towRotes.filter((a) => a<=this.Rotes.length-1).length
+
+        // // imgId = index
+        // return this.groupRotesCube[data.value] - max.length
+    }
+    // this.rotImgs
+    // this.groupRotesCube
+    // t=timeList
+    // index = t.cubeRotesTime.findLastIndex((x)=>x<time)
+    // move = t.Rotes[index]
+    // const max = t.towRotes.filter((a) => a<=index)
+    // imgId = index - max.length
+    // half = max.at(-1) == index-1
+    // console.log({id:index,time:t.cubeRotesTime[index], imgId, move, half})
+
+  }
+
   ins(_Datas, _Rotes, _color_data, _Hnad_v = [0, 0]){
     // this.constructor()
     //  計算に必要なデータをまとめる
@@ -320,7 +737,7 @@ class motionList{
       step = step.map(Rote => {
         roteCount ++
         if(Rote[1] == "2"){
-          towRotes.push(roteCount)
+          towRotes.push(roteCount-1)
           roteCount ++
           return [Rote[0], Rote[0]]
         }
@@ -341,7 +758,7 @@ class motionList{
     for(let i=0;i<stepSkip.length;i++){
       this.stepSkip.push(stepSkip[i] != -1 ? ++stepCount : -1)
     }
-    console.log({stepSkip,inde: this.stepSkip})
+    // console.log({stepSkip,inde: this.stepSkip})
     this.towRotes = towRotes
     this.groupRotesCube = groupRotes
     this.Rotes = _R
@@ -464,7 +881,7 @@ class motionList{
     const max = last_time.reduce((a, b) => a<b?b:a, 0)
     this.stepStartTime.push(max)
 
-    console.log({max,model})
+    // console.log({max,model})
     
     for(let j=0;j<model.length;j++){
       if(last_time[j] == max) continue
@@ -491,26 +908,37 @@ class motionList{
     this.meter_set(0)
     
     this.step_scroll(0)
+
+    // console.log(document.querySelectorAll(".img-div-back"))
+    // this.rotImgs = document.querySelectorAll(".img-div-back")
   }
-  meter_set(intdex){
+  meter_set(index){
     this.step_time_meter = new metar({
       id: this.meterData.id,
       el: this.meterData.el,
-      start: this.stepStartTime[intdex],
-      end: this.stepStartTime[intdex+1],
-      value: this.stepStartTime[intdex],
+      start: this.stepStartTime[index],
+      end: this.stepStartTime[index+1],
+      value: this.stepStartTime[index],
       dx: 10,
       constSet: true,
       callbackfunc: {func1: this, func2: "meter"},
       count_Disp: false,
     })
   }
-  step_scroll(intdex){
+  step_scroll(index){
     const _list = document.querySelector(".list")
-    const hei = _list.children[intdex].offsetTop
-    // const St = document.querySelectorAll(`.step${stepCount}`)
-    // for(let i=0;i<St.length;i++)
-    //   St[i].classList.add("now-step")
+    const hei = _list.children[index].offsetTop
+    
+    for(let i=0;i<16;i++){
+      if(i == index)  continue
+      const St = document.querySelectorAll(`.step${i}`)
+      for(let s=0;s<St.length;s++)
+        St[s].classList.remove("now-step")
+    }
+
+    const St = document.querySelectorAll(`.step${index}`)
+    for(let i=0;i<St.length;i++)
+      St[i].classList.add("now-step")
 
     _list.scrollTo({
       top: hei - _list.clientHeight/2,
@@ -664,7 +1092,7 @@ class motionList{
 
     fa.push(anim)
     // console.log(fa)
-    console.log({Datas, Rotes, Times, anim})
+    // console.log({Datas, Rotes, Times, anim})
   }
   one_hand_move(sulb, speed, hdvec, influence, Su){
     const Pre_movement2 = {
@@ -1019,8 +1447,8 @@ class motionList{
     const mode  = document.getElementById("scene").components["cube-mode"]
     if(mode.data.cube_mode !== "Execution")	return
 
-    const intdex = this.stepSkip[this.stepCount]
-    if(intdex == undefined || intdex == -1){
+    const index = this.stepSkip[this.stepCount]
+    if(index == undefined || index == -1){
       // console.log("現在のステップはスキップ")  
       return
     }
@@ -1036,7 +1464,7 @@ class motionList{
     } 
 
 
-    const a = this.stepStartTime[intdex  ]/1000, b = this.stepStartTime[intdex+1]/1000, p = Data.value/1000
+    const a = this.stepStartTime[index  ]/1000, b = this.stepStartTime[index+1]/1000, p = Data.value/1000
 
     // console.log({a,b,p,value})
 
@@ -1108,6 +1536,7 @@ class motionList{
     this.full_cube.object3D.traverse((e)=>{
       if(e.type=="Group" && ( e.name=="fco" || e.name=="fce" || e.name=="fed")){
         // console.log(e)
+
         // this.full_cube.object3D.remove(e)
         e.removeFromParent()
       }
@@ -1120,7 +1549,7 @@ class motionList{
     F.forEach((e)=>{
       const type = e.slice(0,2)
       const number = this.Datas.at(-1)[type=="ce"?"c":type[0]+"p"][parseInt(e.slice(-2))]
-      console.log({type, number})
+      // console.log({type, number})
 
       // .indexOf(parseInt(e.slice(-2)))
       const mdl = this.frameObj[baseframe[type]].clone()
@@ -1133,3 +1562,109 @@ class motionList{
 }
 
 let timeList
+
+function rotateNext(){
+  const list = timeList
+  // console.log(`time ${Date.now()%10000}`)
+  const index = list.stepSkip[list.stepCount]
+  const value = list.stopTime + (Date.now() - list.animation_start_time) * rote_speed// + 10
+
+  let data = {
+    step: list.rotImgIns({type:"step", value:index}),
+    time: list.rotImgIns({type:"time", value:value})
+  }
+
+  if(!data.time.now && data.time.rotId){
+    // console.log(`少し前でーす`)
+    data.time = list.rotImgIns({type:"time", value:list.cubeRotesTime[data.time.rotId+1] + 1})
+  }
+  // console.log({index, value, data, })
+
+  if(list.groupRotesCube[index+1] <= data.time.rotId){
+    // console.log(`rotateNext ステップ終了`)
+    return
+  }
+
+  const durSecond = 1 / rote_speed * (data.time.rotTime.end - value - 5)  / (data.time.rotTime.end - data.time.rotTime.start)
+  // console.log(`画像 動作中  ステップ残 ${durSecond}s`)
+
+  // list.rotateImgSpeedSet(data.time.imgId, durSecond)
+  
+  let imgdur = (list.cubeRotesTime[data.time.rotId+1] - value) / rote_speed
+  list.rotImgs[data.time.imgId].style.transition = `${durSecond}s linear`
+
+
+  setTimeout(() => {
+    switch(data.time.imgType){
+      case "Before":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+        break
+      case "After":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+        break
+      case "no":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+        break
+    }
+  },5) 
+
+  if(list.groupRotesCube[index+1] <= data.time.rotId+1 || data.time.rotId+1 == list.Rotes.length ){
+    // console.log(`後 ステップ終了前でーす`)
+    return 
+  }
+    list.imgTimeOutId = setTimeout(rotateNext,imgdur) //-10
+}
+
+function rotateReverse(){
+  const list = timeList
+  // console.log(`time ${Date.now()%10000}`)
+  const index = list.stepSkip[list.stepCount]
+  const value = list.stopTime - (Date.now() - list.animation_start_time) * rote_speed// + 10
+
+  let data = {
+    step: list.rotImgIns({type:"step", value:index}),
+    time: list.rotImgIns({type:"time", value:value})
+  }
+
+  // if(!data.time.now){
+  //   console.log(`少し先でーす`)
+  //   // data.time = list.rotImgIns({type:"time", value:list.cubeRotesTime[data.time.rotId] - 1})
+  // }
+  console.log({index, value, data})
+
+  // if(list.groupRotesCube[index] > data.time.rotId){
+  //   console.log(`rotateNext ステップ終了`)
+  //   return
+  // }
+
+  const durSecond = 1 / rote_speed * (value - data.time.rotTime.start  + 5)  / (data.time.rotTime.end - data.time.rotTime.start)
+  list.rotImgs[data.time.imgId].style.transition = `${durSecond}s linear`
+
+  // list.rotateImgSpeedSet(data.time.imgId, durSecond)
+  
+
+  // console.log(`画像 動作中  ステップ残 ${durSecond}s`)
+
+  setTimeout(() => {
+    switch(data.time.imgType){
+      case "Before":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${0}%`
+        break
+      case "After":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+        break
+      case "no":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${0}%`
+        break
+    }
+  },5) 
+
+  if(data.time.rotId-1 < list.groupRotesCube[index]){
+    // console.log(`後 ステップ終了前でーす`)
+    return 
+  }
+
+  let imgdur = (value - list.cubeRotesTime[data.time.rotId-1] - list.cubeRotesData[data.time.rotId-1].timeScale * 1000) / rote_speed
+  // console.log(`次の画像まで ${imgdur}`)
+  list.imgTimeOutId = setTimeout(rotateReverse,imgdur) //-10
+}

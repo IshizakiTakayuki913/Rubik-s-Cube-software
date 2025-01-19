@@ -282,7 +282,9 @@ const cubemode = () => ({
     }
 
     
-    timeList.imgSpeed = getRuleBySelector(".img-div-back")
+    // timeList.imgSpeed = getRuleBySelector(".img-div-back")
+
+    timeList.rotImgs = document.querySelectorAll(".img-div-back")
     // console.log(timeList.imgSpeed)
 
     setTimeout(()=>{
