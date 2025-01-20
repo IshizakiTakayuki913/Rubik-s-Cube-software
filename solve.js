@@ -1165,7 +1165,12 @@ function BBB(){
 	console.log(sum_solution)
 	console.log(timeList)
 
-	// timeList = new motionList()
+	timeList = new motionList(    
+		full_cube,model_centers,model_corners,
+		model_edges,bone_centers,bone_corners,bone_edges,
+		L_hand ,R_hand,bone_L_hand,bone_R_hand,
+		bone_name_model,frameObj
+	)
 	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)), color_data)
 
 	setTimeout(() => {

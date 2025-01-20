@@ -44,323 +44,333 @@ class motionList{
     this.play_btn = document.querySelector('.play-div')
     this.stop_btn = document.querySelector('.stop-div')
     this.execution_btn = document.querySelector('.execution-div')
-
-
-    this.next_btn.addEventListener("click",(e) => {
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
-      if(this.step_move)  return
-
-      
-      if(this.stepCount == 15){
-        // console.log("rote_re_start finish")
-        return {skip: true, check: "over"}
-      } 
-      // console.log("next_btn")
-      this.stepCount++
-
-      this.step_scroll(this.stepCount)
-
-      this.meterBar.style.maxWidth = "0%"
-      
-
-      const index = this.stepSkip[this.stepCount]
-      if(index == -1){
-        // console.log("rote_re_start skip")
-        return {skip: true, }
-      }
-      this.rotateImgReset(index, 0)
-      this.frame_set(this.stepStartTime[index]/1000)
-      this.stopTime = this.stepStartTime[index]
-
-      this.meter_set(index)
-      this.frameObjSet(index)
-
-      // this.animStyle.style.transitionDuration = 
-      //   `${(this.stepStartTime[index+1] - this.stepStartTime[index]) / rote_speed}ms`
-
-      // this.step_move = true
-      // this.animation_start_time = -1
-      
-      // setTimeout(() => {
-      //   this.meterBar.classList.add("meter-animating")
-      // }, 50)
-
-      // setTimeout(() => {
-      //   this.animation(
-      //     this.stepStartTime[index  ]/1000,
-      //     this.stepStartTime[index+1]/1000, rote_speed)
-      //   this.meterBar.style.maxWidth = "100%"
-
-      //   this.animation_start_time = Date.now()
-      // }, 100)
-            
-      // this.timeOutId = setTimeout(() => {
-      //   // const mode  = document.getElementById("scene").components["cube-mode"]
-      //   // mode.step_completion()
-
-      //   this.step_move = false
-      //   this.meterBar.classList.remove("meter-animating")
-      //   this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
-      // },
-      //   Math.abs(this.stepStartTime[index+1] - this.stepStartTime[index]) / rote_speed + 100
-      // )
-    })
-
-    this.back_btn.addEventListener("click",(e) => {
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
-      if(this.step_move)  return
-
-      
-      if(this.stepCount == 0){
-        // console.log("rote_re_start finish")
-        return {skip: true, check: "over"}
-      }
-      // console.log("next_btn")
-      this.stepCount--
-
-      this.step_scroll(this.stepCount)
-
-      this.meterBar.style.maxWidth = "0%"
-      
-
-      const index = this.stepSkip[this.stepCount]
-      if(index == -1){
-        // console.log("rote_re_start skip")
-        return {skip: true, }
-      }
-      this.rotateImgReset(index, 0)
-      this.frame_set(this.stepStartTime[index]/1000)
-      this.stopTime = this.stepStartTime[index]
-
-      this.meter_set(index)
-      this.frameObjSet(index)
-    })
-
-    this.stop_btn.addEventListener("click",(e) => {
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
-      if(!this.step_move) return
-
-      clearTimeout(this.timeOutId)
-      clearTimeout(this.imgTimeOutId)
-
-      const index = this.stepSkip[this.stepCount]
-      let durtime =  (Date.now() - this.animation_start_time)
-      let dur = this.mode_direction * Math.max(Date.now() - this.animation_start_time, 0) * rote_speed + this.stopTime
-      this.rotateImgSpeedSet(index, 0)
-
-      console.log({
-        durtime: durtime,
-        durtime_x_speed: (durtime * rote_speed),
-        max: this.stepStartTime[index+1] - this.stepStartTime[index],
-      })
-
-      this.anime_done = true
-      this.mode_direction = undefined
-      this.step_time_meter.Update_Bar_And_Value({type: "value", value: dur})
-      this.meterBar.classList.remove("meter-animating")
-      this.remove_Animation()
-      this.step_move = false
-
-      
-      const value = dur
-
-      let data = {
-        step: this.rotImgIns({type:"step", value:index}),
-        time: this.rotImgIns({type:"time", value:value})
-      }
-      console.log(data)
-      
-      this.rotateImgSet(index, 0)
-      this.rotateImgSpeedSet(index, 0)
-      
-      for(let i=data.step.id0; i<data.time.imgId; i++)  this.rotImgs[i].style.maxWidth = `${100}%`
-
-      if(data.time.now){
-        const percent = (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
-        // console.log(`動作中 perc:${percent}`)
-        switch(data.time.imgType){
-          case "Before":
-            // console.log(`now Before ${100*percent}`)
-            this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent}%`
-            break
-          case "After":
-            // console.log(`now After ${50*percent+50}`)
-            this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent+50}%`
-            break
-          case "no":
-            // console.log(`now no ${100*percent}`)
-
-            this.rotImgs[data.time.imgId].style.maxWidth = `${100*percent}%`
-            break
-        }
-      }
-      else{
-        switch(data.time.imgType){
-          case "Before":
-            this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
-            break
-          case "After":
-            this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
-            break
-          case "no":
-            this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
-            break
-        }
-      }
-    })
-
-    this.play_btn.addEventListener("click",(e) => {
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
-      if(this.step_move) return
-
-      const index = this.stepSkip[this.stepCount]
-
-      if(index == -1){
-        // console.log("rote_re_start skip")
-        return {skip: true, }
-      }
-      let value = this.step_time_meter.value
-
-      if(this.step_time_meter.value == this.step_time_meter.f1){
-        value = this.step_time_meter.f0
-        this.meterBar.style.maxWidth = "0%"
-        this.rotateImgReset(index, 0)
-      }
-
-      this.rotImgPlay(value)
-
-      this.anime_done = true
-      this.mode_direction = 1
-      this.animation_start_time = -1
-      this.animStyle.style.transitionDuration = `${(this.stepStartTime[index+1] - value) / rote_speed}ms`
-
-      this.step_move = true
-      this.stopTime = value
-
-      setTimeout(() => {
-        this.meterBar.classList.add("meter-animating")
-      }, 5)
-
-
-      setTimeout(() => {
-        this.animation(
-          value/1000,
-          this.stepStartTime[index+1]/1000, rote_speed)
-        this.animation_start_time = Date.now()
-        this.meterBar.style.maxWidth = "100%"
-      }, 10)
-
-
-      this.timeOutId = setTimeout(() => {
-        this.step_move = false
-        this.meterBar.classList.remove("meter-animating")
-        this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
-        this.rotateImgSpeedSet(index, 0)
-      },
-        (this.stepStartTime[index+1] - value) / rote_speed + 10
-      )
-    })
-
-    this.reverse_btn.addEventListener("click",(e) => {
-      // console.log("settimeput 22")
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
-      if(this.step_move) return
-
-      const index = this.stepSkip[this.stepCount]
-
-      if(index == -1){
-        // console.log("rote_re_start skip")
-        return {skip: true, }
-      }
-      let value = this.step_time_meter.value
-
-      if(this.step_time_meter.value == this.step_time_meter.f0){
-
-        value = this.step_time_meter.f1
-        this.meterBar.style.maxWidth = "100%"
-        this.rotateImgReset(index, 100)
-      }
-
-      this.rotImgReverse(value)
-
-      this.anime_done = true
-      this.mode_direction = -1
-      this.animation_start_time = -1
-      this.animStyle.style.transitionDuration = 
-        `${(value - this.stepStartTime[index]) / rote_speed}ms`
-
-      this.step_move = true
-      this.stopTime = value
-
-
-      setTimeout(() => {
-        this.meterBar.classList.add("meter-animating")
-        this.rotateImgSpeedSet(index, rote_speed)
-      }, 5)
-
-      // console.log({start: value, end: this.stepStartTime[index], dur: this.stepStartTime[index+1] - value})
-
-      setTimeout(() => {
-        this.animation(
-          value/1000,
-          this.stepStartTime[index]/1000, rote_speed)
-        this.animation_start_time = Date.now()
-        this.meterBar.style.maxWidth = "0%"
-      }, 10)
-
-      this.timeOutId = setTimeout(() => {
-        // console.log("this.timeOutId")
-        this.step_move = false
-        this.meterBar.classList.remove("meter-animating")
-        this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f0})
-      },
-        (value - this.stepStartTime[index]) / rote_speed + 10
-      )
-    })
-
-    this.execution_btn.addEventListener("click",(e) => {
-      // console.log("settimeput 22")
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
-      console.log("解説　終了")
-      mode.Complete()
-    })
-
     this.stepList = document.querySelector(`.step-lists`)
-    this.stepList.addEventListener(`click`,(e)=>{
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      if(mode.data.cube_mode !== "Execution")	return
 
-      let newStep = -1
-      console.log(e.target.classList)
-      if(this.step_move){
-        console.log(`動作中`)
-        return
-      }
+    // this.next_btn.addEventListener("click",(e) => {
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+    //   if(this.step_move)  return
 
-      if(e.target.classList.contains("step-lists")){
-        console.log(`枠 return`)
-        return
-      }
       
-      if(e.target.classList.contains("step-mode")){
-        console.log(`step return`)
-        if(parseInt(e.target.classList[1].slice(4)) == this.stepCount) return
-        newStep = e.target.classList[1].slice(4)
-      }
+    //   if(this.stepCount == 15){
+    //     // console.log("rote_re_start finish")
+    //     return {skip: true, check: "over"}
+    //   } 
+    //   // console.log("next_btn")
+    //   this.stepCount++
 
-      else{
-        console.log(`step in step return`)
-        newStep = e.target.classList[0].slice(4)
-      }
+    //   this.step_scroll(this.stepCount)
 
-      this.stepChange(parseInt(newStep))
-    })
+    //   this.meterBar.style.maxWidth = "0%"
+      
+
+    //   const index = this.stepSkip[this.stepCount]
+    //   if(index == -1){
+    //     // console.log("rote_re_start skip")
+    //     return {skip: true, }
+    //   }
+    //   this.rotateImgReset(index, 0)
+    //   this.frame_set(this.stepStartTime[index]/1000)
+    //   this.stopTime = this.stepStartTime[index]
+
+    //   this.meter_set(index)
+    //   this.frameObjSet(index)
+
+    //   // this.animStyle.style.transitionDuration = 
+    //   //   `${(this.stepStartTime[index+1] - this.stepStartTime[index]) / rote_speed}ms`
+
+    //   // this.step_move = true
+    //   // this.animation_start_time = -1
+      
+    //   // setTimeout(() => {
+    //   //   this.meterBar.classList.add("meter-animating")
+    //   // }, 50)
+
+    //   // setTimeout(() => {
+    //   //   this.animation(
+    //   //     this.stepStartTime[index  ]/1000,
+    //   //     this.stepStartTime[index+1]/1000, rote_speed)
+    //   //   this.meterBar.style.maxWidth = "100%"
+
+    //   //   this.animation_start_time = Date.now()
+    //   // }, 100)
+            
+    //   // this.timeOutId = setTimeout(() => {
+    //   //   // const mode  = document.getElementById("scene").components["cube-mode"]
+    //   //   // mode.step_completion()
+
+    //   //   this.step_move = false
+    //   //   this.meterBar.classList.remove("meter-animating")
+    //   //   this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
+    //   // },
+    //   //   Math.abs(this.stepStartTime[index+1] - this.stepStartTime[index]) / rote_speed + 100
+    //   // )
+    // })
+
+    // this.back_btn.addEventListener("click",(e) => {
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+    //   if(this.step_move)  return
+
+      
+    //   if(this.stepCount == 0){
+    //     // console.log("rote_re_start finish")
+    //     return {skip: true, check: "over"}
+    //   }
+    //   // console.log("next_btn")
+    //   this.stepCount--
+
+    //   this.step_scroll(this.stepCount)
+
+    //   this.meterBar.style.maxWidth = "0%"
+      
+
+    //   const index = this.stepSkip[this.stepCount]
+    //   if(index == -1){
+    //     // console.log("rote_re_start skip")
+    //     return {skip: true, }
+    //   }
+    //   this.rotateImgReset(index, 0)
+    //   this.frame_set(this.stepStartTime[index]/1000)
+    //   this.stopTime = this.stepStartTime[index]
+
+    //   this.meter_set(index)
+    //   this.frameObjSet(index)
+    // })
+
+    // this.stop_btn.addEventListener("click",(e) => {
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+    //   if(!this.step_move) return
+
+    //   clearTimeout(this.timeOutId)
+    //   clearTimeout(this.imgTimeOutId)
+
+    //   const index = this.stepSkip[this.stepCount]
+    //   let durtime =  (Date.now() - this.animation_start_time)
+    //   let dur = this.mode_direction * Math.max(Date.now() - this.animation_start_time, 0) * rote_speed + this.stopTime
+    //   this.rotateImgSpeedSet(index, 0)
+
+    //   console.log({
+    //     durtime: durtime,
+    //     durtime_x_speed: (durtime * rote_speed),
+    //     max: this.stepStartTime[index+1] - this.stepStartTime[index],
+    //   })
+
+    //   this.anime_done = true
+    //   this.mode_direction = undefined
+    //   this.step_time_meter.Update_Bar_And_Value({type: "value", value: dur})
+    //   this.meterBar.classList.remove("meter-animating")
+    //   this.remove_Animation()
+    //   this.step_move = false
+
+      
+    //   const value = dur
+
+    //   let data = {
+    //     step: this.rotImgIns({type:"step", value:index}),
+    //     time: this.rotImgIns({type:"time", value:value})
+    //   }
+    //   console.log(data)
+      
+    //   this.rotateImgSet(index, 0)
+    //   this.rotateImgSpeedSet(index, 0)
+      
+    //   for(let i=data.step.id0; i<data.time.imgId; i++)  this.rotImgs[i].style.maxWidth = `${100}%`
+
+    //   if(data.time.now){
+    //     const percent = (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
+    //     // console.log(`動作中 perc:${percent}`)
+    //     switch(data.time.imgType){
+    //       case "Before":
+    //         // console.log(`now Before ${100*percent}`)
+    //         this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent}%`
+    //         break
+    //       case "After":
+    //         // console.log(`now After ${50*percent+50}`)
+    //         this.rotImgs[data.time.imgId].style.maxWidth = `${50*percent+50}%`
+    //         break
+    //       case "no":
+    //         // console.log(`now no ${100*percent}`)
+
+    //         this.rotImgs[data.time.imgId].style.maxWidth = `${100*percent}%`
+    //         break
+    //     }
+    //   }
+    //   else{
+    //     switch(data.time.imgType){
+    //       case "Before":
+    //         this.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+    //         break
+    //       case "After":
+    //         this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+    //         break
+    //       case "no":
+    //         this.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+    //         break
+    //     }
+    //   }
+    // })
+
+    // this.play_btn.addEventListener("click",(e) => {
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+    //   if(this.step_move) return
+
+    //   const index = this.stepSkip[this.stepCount]
+
+    //   if(index == -1){
+    //     // console.log("rote_re_start skip")
+    //     return {skip: true, }
+    //   }
+    //   let value = this.step_time_meter.value
+
+    //   if(this.step_time_meter.value == this.step_time_meter.f1){
+    //     value = this.step_time_meter.f0
+    //     this.meterBar.style.maxWidth = "0%"
+    //     this.rotateImgReset(index, 0)
+    //   }
+
+    //   this.rotImgPlay(value)
+
+    //   this.anime_done = true
+    //   this.mode_direction = 1
+    //   this.animation_start_time = -1
+    //   this.animStyle.style.transitionDuration = `${(this.stepStartTime[index+1] - value) / rote_speed}ms`
+
+    //   this.step_move = true
+    //   this.stopTime = value
+
+    //   setTimeout(() => {
+    //     this.meterBar.classList.add("meter-animating")
+    //   }, 5)
+
+
+    //   setTimeout(() => {
+    //     this.animation(
+    //       value/1000,
+    //       this.stepStartTime[index+1]/1000, rote_speed)
+    //     this.animation_start_time = Date.now()
+    //     this.meterBar.style.maxWidth = "100%"
+    //   }, 10)
+
+
+    //   this.timeOutId = setTimeout(() => {
+    //     this.step_move = false
+    //     this.meterBar.classList.remove("meter-animating")
+    //     this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f1})
+    //     this.rotateImgSpeedSet(index, 0)
+    //   },
+    //     (this.stepStartTime[index+1] - value) / rote_speed + 10
+    //   )
+    // })
+
+    // this.reverse_btn.addEventListener("click",(e) => {
+    //   // console.log("settimeput 22")
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+    //   if(this.step_move) return
+
+    //   const index = this.stepSkip[this.stepCount]
+
+    //   if(index == -1){
+    //     // console.log("rote_re_start skip")
+    //     return {skip: true, }
+    //   }
+    //   let value = this.step_time_meter.value
+
+    //   if(this.step_time_meter.value == this.step_time_meter.f0){
+
+    //     value = this.step_time_meter.f1
+    //     this.meterBar.style.maxWidth = "100%"
+    //     this.rotateImgReset(index, 100)
+    //   }
+
+    //   this.rotImgReverse(value)
+
+    //   this.anime_done = true
+    //   this.mode_direction = -1
+    //   this.animation_start_time = -1
+    //   this.animStyle.style.transitionDuration = 
+    //     `${(value - this.stepStartTime[index]) / rote_speed}ms`
+
+    //   this.step_move = true
+    //   this.stopTime = value
+
+
+    //   setTimeout(() => {
+    //     this.meterBar.classList.add("meter-animating")
+    //     this.rotateImgSpeedSet(index, rote_speed)
+    //   }, 5)
+
+    //   // console.log({start: value, end: this.stepStartTime[index], dur: this.stepStartTime[index+1] - value})
+
+    //   setTimeout(() => {
+    //     this.animation(
+    //       value/1000,
+    //       this.stepStartTime[index]/1000, rote_speed)
+    //     this.animation_start_time = Date.now()
+    //     this.meterBar.style.maxWidth = "0%"
+    //   }, 10)
+
+    //   this.timeOutId = setTimeout(() => {
+    //     // console.log("this.timeOutId")
+    //     this.step_move = false
+    //     this.meterBar.classList.remove("meter-animating")
+    //     this.step_time_meter.Update_Bar_And_Value({type: "value",value: this.step_time_meter.f0})
+    //   },
+    //     (value - this.stepStartTime[index]) / rote_speed + 10
+    //   )
+    // })
+
+    // this.execution_btn.addEventListener("click",(e) => {
+    //   // console.log("settimeput 22")
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+
+      
+    //   console.log("解説　終了")
+    //   mode.Complete()
+    // })
+
+    // this.stepList = document.querySelector(`.step-lists`)
+    // this.stepList.addEventListener(`click`,(e)=>{
+    //   const mode  = document.getElementById("scene").components["cube-mode"]
+    //   if(mode.data.cube_mode !== "Execution")	return
+
+    //   let newStep = -1
+    //   console.log(e.target.classList)
+    //   if(this.step_move){
+    //     console.log(`動作中`)
+    //     return
+    //   }
+
+    //   if(e.target.classList.contains("step-lists")){
+    //     console.log(`枠 return`)
+    //     return
+    //   }
+      
+    //   if(e.target.classList.contains("step-mode")){
+    //     console.log(`step return`)
+    //     if(parseInt(e.target.classList[1].slice(4)) == this.stepCount) return
+    //     newStep = e.target.classList[1].slice(4)
+    //   }
+
+    //   else{
+    //     console.log(`step in step return`)
+    //     newStep = e.target.classList[0].slice(4)
+    //   }
+
+    //   this.stepChange(parseInt(newStep))
+    // })
+
+    this.next_btn.addEventListener("click",next_btn_func)
+    this.back_btn.addEventListener("click",back_btn_func)
+    this.stop_btn.addEventListener("click",stop_btn_func)
+    this.play_btn.addEventListener("click",play_btn_func)
+    this.reverse_btn.addEventListener("click",reverse_btn_func)
+    this.execution_btn.addEventListener("click",execution_btn_func)
+    this.stepList.addEventListener("click",stepList_func)
   }
   stepChange(newStep){
     console.log({newStep})
@@ -500,9 +510,9 @@ class motionList{
     }
     console.log(JSON.parse(JSON.stringify(data)))
 
-    if(data.time.rotId < data.step.id0){
+    if(data.time.imgId < data.step.id0){
       console.log(`例外処理`)
-      data.time = this.rotImgIns({type:"time", value:value+1})
+      data.time = this.rotImgIns({type:"time", value:this.cubeRotesTime[data.time.rotId+1]+1})
     }
     console.log(data)
 
@@ -1559,6 +1569,7 @@ class motionList{
     })
 
   }
+
 }
 
 let timeList
@@ -1667,4 +1678,338 @@ function rotateReverse(){
   let imgdur = (value - list.cubeRotesTime[data.time.rotId-1] - list.cubeRotesData[data.time.rotId-1].timeScale * 1000) / rote_speed
   // console.log(`次の画像まで ${imgdur}`)
   list.imgTimeOutId = setTimeout(rotateReverse,imgdur) //-10
+}
+
+function next_btn_func(){
+  const list = timeList
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+  if(list.step_move)  return
+
+  
+  if(list.stepCount == 15){
+    // console.log("rote_re_start finish")
+    return {skip: true, check: "over"}
+  } 
+  // console.log("next_btn")
+  list.stepCount++
+
+  list.step_scroll(list.stepCount)
+
+  list.meterBar.style.maxWidth = "0%"
+  
+
+  const index = list.stepSkip[list.stepCount]
+  if(index == -1){
+    // console.log("rote_re_start skip")
+    return {skip: true, }
+  }
+  list.rotateImgReset(index, 0)
+  list.frame_set(list.stepStartTime[index]/1000)
+  list.stopTime = list.stepStartTime[index]
+
+  list.meter_set(index)
+  list.frameObjSet(index)
+
+  // list.animStyle.style.transitionDuration = 
+  //   `${(list.stepStartTime[index+1] - list.stepStartTime[index]) / rote_speed}ms`
+
+  // list.step_move = true
+  // list.animation_start_time = -1
+  
+  // setTimeout(() => {
+  //   list.meterBar.classList.add("meter-animating")
+  // }, 50)
+
+  // setTimeout(() => {
+  //   list.animation(
+  //     list.stepStartTime[index  ]/1000,
+  //     list.stepStartTime[index+1]/1000, rote_speed)
+  //   list.meterBar.style.maxWidth = "100%"
+
+  //   list.animation_start_time = Date.now()
+  // }, 100)
+        
+  // list.timeOutId = setTimeout(() => {
+  //   // const mode  = document.getElementById("scene").components["cube-mode"]
+  //   // mode.step_completion()
+
+  //   list.step_move = false
+  //   list.meterBar.classList.remove("meter-animating")
+  //   list.step_time_meter.Update_Bar_And_Value({type: "value",value: list.step_time_meter.f1})
+  // },
+  //   Math.abs(list.stepStartTime[index+1] - list.stepStartTime[index]) / rote_speed + 100
+  // )
+}
+function back_btn_func(){
+  const list = timeList
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+  if(list.step_move)  return
+
+  
+  if(list.stepCount == 0){
+    // console.log("rote_re_start finish")
+    return {skip: true, check: "over"}
+  }
+  // console.log("next_btn")
+  list.stepCount--
+
+  list.step_scroll(list.stepCount)
+
+  list.meterBar.style.maxWidth = "0%"
+  
+
+  const index = list.stepSkip[list.stepCount]
+  if(index == -1){
+    // console.log("rote_re_start skip")
+    return {skip: true, }
+  }
+  list.rotateImgReset(index, 0)
+  list.frame_set(list.stepStartTime[index]/1000)
+  list.stopTime = list.stepStartTime[index]
+
+  list.meter_set(index)
+  list.frameObjSet(index)
+}
+function stop_btn_func(){
+  const list = timeList
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+  if(!list.step_move) return
+
+  clearTimeout(list.timeOutId)
+  clearTimeout(list.imgTimeOutId)
+
+  const index = list.stepSkip[list.stepCount]
+  let durtime =  (Date.now() - list.animation_start_time)
+  let dur = list.mode_direction * Math.max(Date.now() - list.animation_start_time, 0) * rote_speed + list.stopTime
+  list.rotateImgSpeedSet(index, 0)
+
+  console.log({
+    durtime: durtime,
+    durtime_x_speed: (durtime * rote_speed),
+    max: list.stepStartTime[index+1] - list.stepStartTime[index],
+  })
+
+  list.anime_done = true
+  list.mode_direction = undefined
+  list.step_time_meter.Update_Bar_And_Value({type: "value", value: dur})
+  list.meterBar.classList.remove("meter-animating")
+  list.remove_Animation()
+  list.step_move = false
+
+  
+  const value = dur
+
+  let data = {
+    step: list.rotImgIns({type:"step", value:index}),
+    time: list.rotImgIns({type:"time", value:value})
+  }
+  console.log(data)
+  
+  list.rotateImgSet(index, 0)
+  list.rotateImgSpeedSet(index, 0)
+  
+  for(let i=data.step.id0; i<data.time.imgId; i++)  list.rotImgs[i].style.maxWidth = `${100}%`
+
+  if(data.time.now){
+    const percent = (value - data.time.rotTime.start)  / (data.time.rotTime.end - data.time.rotTime.start)
+    // console.log(`動作中 perc:${percent}`)
+    switch(data.time.imgType){
+      case "Before":
+        // console.log(`now Before ${100*percent}`)
+        list.rotImgs[data.time.imgId].style.maxWidth = `${50*percent}%`
+        break
+      case "After":
+        // console.log(`now After ${50*percent+50}`)
+        list.rotImgs[data.time.imgId].style.maxWidth = `${50*percent+50}%`
+        break
+      case "no":
+        // console.log(`now no ${100*percent}`)
+
+        list.rotImgs[data.time.imgId].style.maxWidth = `${100*percent}%`
+        break
+    }
+  }
+  else{
+    switch(data.time.imgType){
+      case "Before":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${50}%`
+        break
+      case "After":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+        break
+      case "no":
+        list.rotImgs[data.time.imgId].style.maxWidth = `${100}%`
+        break
+    }
+  }
+}
+function play_btn_func(){
+  const list = timeList
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+  if(list.step_move) return
+
+  const index = list.stepSkip[list.stepCount]
+
+  if(index == -1){
+    // console.log("rote_re_start skip")
+    return {skip: true, }
+  }
+  let value = list.step_time_meter.value
+
+  if(list.step_time_meter.value == list.step_time_meter.f1){
+    value = list.step_time_meter.f0
+    list.meterBar.style.maxWidth = "0%"
+    list.rotateImgReset(index, 0)
+  }
+
+  list.rotImgPlay(value)
+
+  list.anime_done = true
+  list.mode_direction = 1
+  list.animation_start_time = -1
+  list.animStyle.style.transitionDuration = `${(list.stepStartTime[index+1] - value) / rote_speed}ms`
+
+  list.step_move = true
+  list.stopTime = value
+
+  setTimeout(() => {
+    list.meterBar.classList.add("meter-animating")
+  }, 5)
+
+
+  setTimeout(() => {
+    list.animation(
+      value/1000,
+      list.stepStartTime[index+1]/1000, rote_speed)
+    list.animation_start_time = Date.now()
+    list.meterBar.style.maxWidth = "100%"
+  }, 10)
+
+
+  list.timeOutId = setTimeout(() => {
+    list.step_move = false
+    list.meterBar.classList.remove("meter-animating")
+    list.step_time_meter.Update_Bar_And_Value({type: "value",value: list.step_time_meter.f1})
+    list.rotateImgSpeedSet(index, 0)
+  },
+    (list.stepStartTime[index+1] - value) / rote_speed + 10
+  )
+}
+function reverse_btn_func(){
+  const list = timeList
+  // console.log("settimeput 22")
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+  if(list.step_move) return
+
+  const index = list.stepSkip[list.stepCount]
+
+  if(index == -1){
+    // console.log("rote_re_start skip")
+    return {skip: true, }
+  }
+  let value = list.step_time_meter.value
+
+  if(list.step_time_meter.value == list.step_time_meter.f0){
+
+    value = list.step_time_meter.f1
+    list.meterBar.style.maxWidth = "100%"
+    list.rotateImgReset(index, 100)
+  }
+
+  list.rotImgReverse(value)
+
+  list.anime_done = true
+  list.mode_direction = -1
+  list.animation_start_time = -1
+  list.animStyle.style.transitionDuration = 
+    `${(value - list.stepStartTime[index]) / rote_speed}ms`
+
+  list.step_move = true
+  list.stopTime = value
+
+
+  setTimeout(() => {
+    list.meterBar.classList.add("meter-animating")
+    list.rotateImgSpeedSet(index, rote_speed)
+  }, 5)
+
+  // console.log({start: value, end: list.stepStartTime[index], dur: list.stepStartTime[index+1] - value})
+
+  setTimeout(() => {
+    list.animation(
+      value/1000,
+      list.stepStartTime[index]/1000, rote_speed)
+    list.animation_start_time = Date.now()
+    list.meterBar.style.maxWidth = "0%"
+  }, 10)
+
+  list.timeOutId = setTimeout(() => {
+    // console.log("list.timeOutId")
+    list.step_move = false
+    list.meterBar.classList.remove("meter-animating")
+    list.step_time_meter.Update_Bar_And_Value({type: "value",value: list.step_time_meter.f0})
+  },
+    (value - list.stepStartTime[index]) / rote_speed + 10
+  )
+}
+function execution_btn_func(){
+  const list = timeList
+  // console.log("settimeput 22")
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+
+  list.next_btn.removeEventListener("click",next_btn_func)
+  list.back_btn.removeEventListener("click",back_btn_func)
+  list.stop_btn.removeEventListener("click",stop_btn_func)
+  list.play_btn.removeEventListener("click",play_btn_func)
+  list.reverse_btn.removeEventListener("click",reverse_btn_func)
+  list.execution_btn.removeEventListener("click",execution_btn_func)
+  list.stepList.removeEventListener("click",stepList_func)
+  
+
+  list.frame_set(0)
+
+  list.full_cube.object3D.children[0].animations.pop()
+  list.L_hand.object3D.children[0].animations.pop()
+  list.R_hand.object3D.children[0].animations.pop()
+
+  color_set(scrambled_state)
+  
+  console.log("解説　終了")
+  mode.Complete()
+}
+function stepList_func(e){
+  const list = timeList
+  const mode  = document.getElementById("scene").components["cube-mode"]
+  if(mode.data.cube_mode !== "Execution")	return
+
+  let newStep = -1
+  console.log(e.target.classList)
+  if(list.step_move){
+    console.log(`動作中`)
+    return
+  }
+
+  if(e.target.classList.contains("step-lists")){
+    console.log(`枠 return`)
+    return
+  }
+  
+  if(e.target.classList.contains("step-mode")){
+    console.log(`step return`)
+    if(parseInt(e.target.classList[1].slice(4)) == list.stepCount) return
+    newStep = e.target.classList[1].slice(4)
+  }
+
+  else{
+    console.log(`step in step return`)
+    newStep = e.target.classList[0].slice(4)
+  }
+
+  list.stepChange(parseInt(newStep))
 }
