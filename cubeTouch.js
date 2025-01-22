@@ -11,6 +11,7 @@ const cubemode = () => ({
         "Calculation":  1,
         "Execution":    2,
         "Input":        3,
+        "learning":     4,
         "Viewpoint":    0,
         "Rotation":     1,
         "Colorset":     2,
@@ -18,10 +19,11 @@ const cubemode = () => ({
 		},
 		mode_list: {default: 
 			[
-        [true,  true,   false],
-        [false, false,  false],
-        [true,  false,  false],
-        [true,  false,  true],
+        [ true,  true, false],
+        [false, false, false],
+        [ true, false, false],
+        [ true, false,  true],
+        [ true,  true, false],
       ]
 		},
     Viewpoint: {type: 'boolean', default: false},
@@ -202,6 +204,8 @@ const cubemode = () => ({
   },
     		
   Mode_set(Nmode){
+    // console.error(`Nmode: ${Nmode}`)
+
     this.data.cube_mode = Nmode
     const Viewpoint = document.getElementById("camIn").components["camera-view"]
     const Rotation  = document.getElementById("camIn").components["cube-rotate"]

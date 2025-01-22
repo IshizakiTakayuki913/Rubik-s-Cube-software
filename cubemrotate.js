@@ -496,8 +496,8 @@
       // Compensation_anim(move,100, rad)
 
       
-      const mode  = document.getElementById("scene").components["cube-mode"]
-      mode.Ins_reset()
+      // const mode  = document.getElementById("scene").components["cube-mode"]
+      // mode.Ins_reset()
       // this.log.innerHTML = `moves [${move1}]<br>` + this.log.innerHTML
     }
   },

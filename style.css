@@ -119,9 +119,16 @@ a-scene {
 	left: calc(50% + 16vmin);
 }
 
-.execution-div{
+.execution-div {
 	left: calc(100% - 12vmin);
 	background: #960000;
+}
+
+.learning-div {
+	translate: calc(-50%) calc(-100% - 2vmin);
+	top: 0;
+	right: 0;
+	background: #003796;
 }
 
 

@@ -632,7 +632,7 @@ const vec	= 'yxxzyzxyzxxyyzz'
 // )
 
 // step 12. 14 No
-let solved_state = new State(
+let scrambled_state = new State(
   [4,5,0,7,3,1,6,2],
   [2,1,0,0,1,0,0,2],
   [11,6,7,1,5,2,3,0,8,9,10,4],
@@ -802,8 +802,6 @@ function Compensation_anim(Rota,Time = 2000, Rad){
 // 	full_cube.removeAttribute('my-animation')
 // 	full_cube.setAttribute('my-animation', data)
 // }
-
-let scrambled_state = solved_state
 
 let search = new Search()
 
@@ -1040,7 +1038,18 @@ const solv_step = [
 	]
 ]
 
+let solbe_save = undefined
+let color_data_save = undefined
+
 function BBB(){
+	solbe_save = new State(
+		scrambled_state.cp,
+		scrambled_state.co,
+		scrambled_state.ep,
+		scrambled_state.eo,
+		scrambled_state.c,
+	)
+	color_data_save = color_data
 	SST = scrambled_state
 	let sum_solution = []
 	tank = []
@@ -1171,7 +1180,7 @@ function BBB(){
 		L_hand ,R_hand,bone_L_hand,bone_R_hand,
 		bone_name_model,frameObj
 	)
-	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)), color_data)
+	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)), JSON.parse(JSON.stringify(color_data)))
 
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
