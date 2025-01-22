@@ -1256,3 +1256,77 @@ function getRuleBySelector(sele){
 	}
 	return rule;
 }
+
+const step = [
+	[
+		// [
+			// "U","U'","U2",
+			// "R","R'","R2",
+			// "L","L'","L2",
+			// "y R2 y'","F2",
+		// ],
+		[
+			// "F","F'","F2",
+			"U' R' F","U' R' F R",
+		],
+	],
+	[
+		// [
+			// "y","y'","y2",
+			// "U","U'","U2",
+			// "R U R'",
+		// ],
+		[
+			"R U R'",
+			"U R U' R'",
+			"R U' R'",
+			"R U2 R' U' R U R'",
+		],
+	],
+	[
+		// [
+			// "y","y'","y2",
+			// "U","U'","U2",
+			// "R U' R' F R' F' R",
+		// ],
+		[
+			"R' F' R U R U' R' F",
+			"R U' R' F R' F' R",
+			"U' R' F' R U R U' R' F",
+			"U R U' R' F R' F' R",
+		],
+	],
+	[
+		[
+			// "U",
+			// "U'",
+			// "U2",
+			"F R U R' U' F'",
+			// "F R' F' R U R U' R'",
+		],
+	],
+	[
+		[
+			// "U",
+			// "U'",
+			// "U2",
+			"R U R' U R U2 R'",
+			// "F R' F' R U R U' R'",
+		],
+	],
+	[
+		[
+			// "U",
+			// "U'",
+			// "U2",
+			"R U' R U R U R U' R' U' R2",
+			// "F R' F' R U R U' R'",
+		],
+	],
+	[
+		[
+			"x' U2 R2 U' L' U R2 U' L U' x",
+			// "F R' F' R U R U' R'",
+		],
+	]
+]

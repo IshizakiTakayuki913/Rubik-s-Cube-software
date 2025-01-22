@@ -247,6 +247,17 @@ a-scene {
 	height: 7vmin;
 }
 
+.frame-div > p {
+	position: absolute;
+	display: inline;
+	color: #000000;
+	margin: unset;
+	translate: -48% -100%;
+	z-index: 18;
+	background: #ffffffa3;
+	border-radius: 20%;
+}
+
 .now-move{
 	background: rgb(0 246 255);
 }

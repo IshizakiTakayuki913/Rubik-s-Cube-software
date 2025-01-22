@@ -218,6 +218,7 @@ const cubemode = () => ({
   },
 
   Ins_Complete(Sol){
+    console.log(Sol)
     const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
 
     const rotas = document.getElementsByClassName('rotas')
@@ -237,6 +238,8 @@ const cubemode = () => ({
     const line = document.getElementsByClassName('line')[0]
     const lineCount = parseInt(line.clientWidth / imgW)
 
+    const _name = document.createElement("p")
+
     for(let i=0;i<Sol.length;i++){
       rotas[i].innerHTML = ''
       if(Sol[i].length == 0){
@@ -255,8 +258,23 @@ const cubemode = () => ({
           len += 1
           const D = imgDiv.cloneNode(), I=img.cloneNode()
           D.classList.remove("img-div")
+          D.classList.add("frame-div")
           I.src=`./img/(.png`
           D.append(I)
+          
+          const PatternName = _name.cloneNode()
+          let hit = undefined
+
+          step.forEach((_n, I) => {
+            _n[0].forEach((n, J) => {
+              if(Sol[i][s] == n){
+                hit = [I, J]
+              }
+            })         
+          })
+          PatternName.textContent = `${"ABCDEFG"[hit[0]]}${hit[1]+1}`
+
+          D.append(PatternName)
           rotas[i].append(D)
         }
         for(j of Sol[i][s].split(" ")){
