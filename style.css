@@ -125,10 +125,20 @@ a-scene {
 }
 
 .learning-div {
-	translate: calc(-50%) calc(-100% - 2vmin);
+	translate: calc(-2vmin) calc(-100% - 2vmin);
 	top: 0;
 	right: 0;
-	background: #003796;
+	background: #003796db;
+	width: auto;
+	padding: 2%;
+	height: min-content;
+	display: none;
+}
+
+.learning-div > p{
+	text-align: center;
+	margin: unset;
+	color: #fff;
 }
 
 

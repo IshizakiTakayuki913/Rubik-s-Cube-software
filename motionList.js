@@ -68,21 +68,28 @@ class motionList{
     this.stepCount = newStep
 
     this.step_scroll(this.stepCount)
-
     this.meterBar.style.maxWidth = "0%"
     
-
     const index = this.stepSkip[this.stepCount]
     if(index == -1){
-      // console.log("rote_re_start skip")
+      const _index = this.stepSkip.slice(this.stepCount).find((e)=>e>-1)
+      if(_index == undefined)  this.frame_set(this.stepStartTime.at(-1)/1000)
+      else  this.frame_set(this.stepStartTime[_index]/1000)
+
+      this.frameObjSet(this.stepCount)
+      this.learning_btn.style.display = "none"
+      console.log(`rote_re_start skip newId:${_index}`)
       return {skip: true, }
     }
+
     this.rotateImgReset(index, 0)
     this.frame_set(this.stepStartTime[index]/1000)
     this.stopTime = this.stepStartTime[index]
 
     this.meter_set(index)
-    this.frameObjSet(index)
+    this.frameObjSet(this.stepCount)
+    
+    this.learning_btn.style.display = "block"
   }
   rotImgReverse(value){
     const index = this.stepSkip[this.stepCount]
@@ -386,17 +393,22 @@ class motionList{
 
   }
 
-  ins(_Datas, _Rotes, _color_data, _Hnad_v = [0, 0]){
+  ins(_Datas, _color_data, _Rotes, _RotPatterns, _Hnad_v = [0, 0]){
     // this.constructor()
     //  計算に必要なデータをまとめる
     this.Rotes = []
     this.Hnad_v = _Hnad_v
 
-    this.setData = _Datas
+    this.sourceData = _Datas
+    this.setData = _Datas.copy()
+    this.sourceColor_data = _color_data
+    this.setColor_data = [..._color_data]
+    // console.log(_color_data)
     
     this.moveList=[]
 
     this.Datas = []
+    this.colorData = []
 
     this.cubeRotesTime = []
     this.cubeRotesData = []
@@ -411,8 +423,6 @@ class motionList{
     this.RstartIndex = []
     this.RcubeIndex = []
     
-    this.colorData = []
-    this.color_data = _color_data
 
     let towRotes = [], groupRotes = [], stepSkip = []
     // this.stepCount = undefined
@@ -540,7 +550,7 @@ class motionList{
       )
     )
     // this.colorData = []
-    // this.colorData.push(this.color_data)
+    // this.colorData.push(this.setColor_data)
 
     this.frameRotesData = []
     _R.forEach((r) => {
@@ -598,16 +608,98 @@ class motionList{
     
     }
 
+
+
+    const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
+
+    const rotas = document.getElementsByClassName('rotas')
+  
+    const imgDiv = document.createElement('div')
+    imgDiv.classList.add("img-div")
+    imgDiv.style.width = imgW
+    imgDiv.style.height = imgW
+
+    const pimgDiv = document.createElement('div')
+    pimgDiv.classList.add("img-div-back")
+    imgDiv.append(pimgDiv)
+
+    const img = document.createElement('img')
+    img.classList.add('rotate-img')
+
+    const line = document.getElementsByClassName('line')[0]
+    const lineCount = parseInt(line.clientWidth / imgW)
+
+    const _name = document.createElement("p")
+
+    console.log(_RotPatterns)
+    const Pattern = _RotPatterns
+    for(let i=0;i<Pattern.length;i++){
+      rotas[i].innerHTML = ''
+      if(Pattern[i].length == 0){
+        const D = imgDiv.cloneNode(), I=img.cloneNode()
+        // D.classList.remove("img-div")
+        I.src=`./img/skip.png`
+        I.style.width = `${3 * imgW}px`
+        rotas[i].parentElement.style.height = `${imgW}px`
+        // D.append(I)
+        rotas[i].append(I)
+        continue
+      }
+      let len = 0
+      for(let s=0;s<Pattern[i].length;s++){
+        if(Pattern[i][s].length>2){
+          len += 1
+          const D = imgDiv.cloneNode(), I=img.cloneNode()
+          D.classList.remove("img-div")
+          D.classList.add("frame-div")
+          I.src=`./img/(.png`
+          D.append(I)
+          
+          const PatternName = _name.cloneNode()
+          let hit = undefined
+
+          step.forEach((_n, I) => {
+            _n[0].forEach((n, J) => {
+              if(Pattern[i][s] == n){
+                hit = [I, J]
+              }
+            })         
+          })
+          PatternName.textContent = `${"ABCDEFG"[hit[0]]}${hit[1]+1}`
+
+          D.append(PatternName)
+          rotas[i].append(D)
+        }
+        for(let j of Pattern[i][s].split(" ")){
+          len += 1
+          const D = imgDiv.cloneNode(true), I=img.cloneNode()
+          I.src=`./img/${j}.png`
+          D.append(I)
+          rotas[i].append(D)
+        }
+        if(Pattern[i][s].length>2){
+          len += 1
+          const D = imgDiv.cloneNode(), I=img.cloneNode()
+          D.classList.remove("img-div")
+          I.src=`./img/).png`
+          D.append(I)
+          rotas[i].append(D)
+        }
+      }      
+      // console.log(`sum_solution [${sum_solution[i].length}]  lineCount [${lineCount}]`)
+      rotas[i].style.width = `${Math.min(len, lineCount) * imgW}px`
+      rotas[i].parentElement.style.height = `${Math.ceil(len / lineCount) * imgW}px`
+
+    }
+    // timeList.imgSpeed = getRuleBySelector(".img-div-back")
+
+    this.rotImgs = document.querySelectorAll(".img-div-back")
+
     this.stepCount = 0
     this.stopTime = 0
     this.step_move = false
 
-    this.meter_set(0)
-    
-    this.step_scroll(0)
-
-    // console.log(document.querySelectorAll(".img-div-back"))
-    // this.rotImgs = document.querySelectorAll(".img-div-back")
+    this.stepChange(this.stepCount)
   }
   meter_set(index){
     this.step_time_meter = new metar({
@@ -1010,38 +1102,37 @@ class motionList{
     // console.log(`sum time ${sum}`)
   }
   color_re_set(sulb){
-    let new_color = new Array(this.color_data.length)
-    for(let i=0;i<this.color_data.length;i++){
-      new_color[i] = this.color_data[color_modes[sulb][i]]
+    let new_color = new Array(this.setColor_data.length)
+    for(let i=0;i<this.setColor_data.length;i++){
+      new_color[i] = this.setColor_data[color_modes[sulb][i]]
     }
     return new_color
   }
-  color_set(sc_st, _colorData){
+  color_set(sc_st, colorData){
     // console.log(`----- color_set ----`)
     const corner = this.model_corners
     const edge = this.model_edges
     const center = this.model_centers
 
-    const colorData = _colorData
 
-    // console.log(sc_st)
+    console.log({sc_st, colorData})
 
     for(let i=0;i<corner.length;i++){
       // console.log(corner[i])
       let F = corner[i].children
       for(let s=0;s<3;s++)
-        F[s].material.color = set_color_data[colorData[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
+        F[s+1].material.color = set_color_data[colorData[color_c[sc_st.cp[i]][(s + 3 - sc_st.co[i]) % 3]]]
     }
 
     for(let i=0;i<edge.length;i++){
       let F = edge[i].children
       for(let s=0;s<2;s++)
-        F[s].material.color = set_color_data[colorData[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
+        F[s+1].material.color = set_color_data[colorData[color_e[sc_st.ep[i]][(s + 2 - sc_st.eo[i]) % 2]]]
     }
 
     for(let i=0;i<center.length;i++){
       let F = center[i].children
-      F[0].material.color = set_color_data[colorData[color_cn[sc_st.c[i]][0]]]
+      F[1].material.color = set_color_data[colorData[color_cn[sc_st.c[i]][0]]]
     }
   }
   timelist_push(){
@@ -1232,9 +1323,6 @@ class motionList{
 
     this.full_cube.object3D.traverse((e)=>{
       if(e.type=="Group" && ( e.name=="fco" || e.name=="fce" || e.name=="fed")){
-        // console.log(e)
-
-        // this.full_cube.object3D.remove(e)
         e.removeFromParent()
       }
     })
@@ -1256,7 +1344,6 @@ class motionList{
     })
 
   }
-
 }
 
 let timeList
@@ -1312,7 +1399,6 @@ function rotateNext(){
   }
     list.imgTimeOutId = setTimeout(rotateNext,imgdur) //-10
 }
-
 function rotateReverse(){
   const list = timeList
   // console.log(`time ${Date.now()%10000}`)
@@ -1366,7 +1452,6 @@ function rotateReverse(){
   // console.log(`次の画像まで ${imgdur}`)
   list.imgTimeOutId = setTimeout(rotateReverse,imgdur) //-10
 }
-
 function next_btn_func(){
   const list = timeList
   const mode  = document.getElementById("scene").components["cube-mode"]
@@ -1381,52 +1466,7 @@ function next_btn_func(){
   // console.log("next_btn")
   list.stepCount++
 
-  list.step_scroll(list.stepCount)
-
-  list.meterBar.style.maxWidth = "0%"
-  
-
-  const index = list.stepSkip[list.stepCount]
-  if(index == -1){
-    // console.log("rote_re_start skip")
-    return {skip: true, }
-  }
-  list.rotateImgReset(index, 0)
-  list.frame_set(list.stepStartTime[index]/1000)
-  list.stopTime = list.stepStartTime[index]
-
-  list.meter_set(index)
-  list.frameObjSet(index)
-
-  // list.animStyle.style.transitionDuration = 
-  //   `${(list.stepStartTime[index+1] - list.stepStartTime[index]) / rote_speed}ms`
-
-  // list.step_move = true
-  // list.animation_start_time = -1
-  
-  // setTimeout(() => {
-  //   list.meterBar.classList.add("meter-animating")
-  // }, 50)
-
-  // setTimeout(() => {
-  //   list.animation(
-  //     list.stepStartTime[index  ]/1000,
-  //     list.stepStartTime[index+1]/1000, rote_speed)
-  //   list.meterBar.style.maxWidth = "100%"
-
-  //   list.animation_start_time = Date.now()
-  // }, 100)
-        
-  // list.timeOutId = setTimeout(() => {
-  //   // const mode  = document.getElementById("scene").components["cube-mode"]
-  //   // mode.step_completion()
-
-  //   list.step_move = false
-  //   list.meterBar.classList.remove("meter-animating")
-  //   list.step_time_meter.Update_Bar_And_Value({type: "value",value: list.step_time_meter.f1})
-  // },
-  //   Math.abs(list.stepStartTime[index+1] - list.stepStartTime[index]) / rote_speed + 100
-  // )
+  timeList.stepChange(list.stepCount)
 }
 function back_btn_func(){
   const list = timeList
@@ -1442,22 +1482,7 @@ function back_btn_func(){
   // console.log("next_btn")
   list.stepCount--
 
-  list.step_scroll(list.stepCount)
-
-  list.meterBar.style.maxWidth = "0%"
-  
-
-  const index = list.stepSkip[list.stepCount]
-  if(index == -1){
-    // console.log("rote_re_start skip")
-    return {skip: true, }
-  }
-  list.rotateImgReset(index, 0)
-  list.frame_set(list.stepStartTime[index]/1000)
-  list.stopTime = list.stepStartTime[index]
-
-  list.meter_set(index)
-  list.frameObjSet(index)
+  timeList.stepChange(list.stepCount)
 }
 function stop_btn_func(){
   const list = timeList
@@ -1649,6 +1674,9 @@ function execution_btn_func(){
   // console.log("settimeput 22")
   const mode  = document.getElementById("scene").components["cube-mode"]
   if(mode.data.cube_mode !== "Execution")	return
+  if(list.step_move) return
+
+  list.learning_btn.style.display = "none"
 
   list.next_btn.removeEventListener("click",next_btn_func)
   list.back_btn.removeEventListener("click",back_btn_func)
@@ -1656,8 +1684,14 @@ function execution_btn_func(){
   list.play_btn.removeEventListener("click",play_btn_func)
   list.reverse_btn.removeEventListener("click",reverse_btn_func)
   list.execution_btn.removeEventListener("click",execution_btn_func)
+  list.learning_btn.removeEventListener("click",learning_btn_func)
   list.stepList.removeEventListener("click",stepList_func)
   
+  list.full_cube.object3D.traverse((e)=>{
+    if(e.type=="Group" && ( e.name=="fco" || e.name=="fce" || e.name=="fed")){
+      e.removeFromParent()
+    }
+  })
 
   list.frame_set(0)
 
@@ -1665,7 +1699,9 @@ function execution_btn_func(){
   list.L_hand.object3D.children[0].animations.pop()
   list.R_hand.object3D.children[0].animations.pop()
 
-  color_set(scrambled_state)
+  list.color_set(list.setData, list.setColor_data)
+  list.sourceData = list.setData
+  list.sourceColor_data = list.setColor_data
   
   console.log("解説　終了")
   mode.Complete()
@@ -1676,14 +1712,15 @@ function learning_btn_func(){
   // console.log("settimeput 22")
   const mode  = document.getElementById("scene").components["cube-mode"]
   console.log({s:0, cube_mode: mode.data.cube_mode})
+  if(list.step_move) return
   if(mode.data.cube_mode != "Execution" && mode.data.cube_mode != "learning") return
 
   const index = list.stepSkip[list.stepCount]
 
   if(mode.data.cube_mode == "Execution"){
     list.frame_set(0)
-    scrambled_state = list.setData.apply_move(list.Datas[list.groupRotesCube[index]])
-    color_set(scrambled_state)
+    list.sourceData = list.setData.apply_move(list.Datas[list.groupRotesCube[index]])
+    list.color_set(list.sourceData, list.setColor_data)
 
     list.full_cube.object3D.traverse((e)=>{
       if(e.type=="Group" && ( e.name=="fco" || e.name=="fce" || e.name=="fed")){
@@ -1695,17 +1732,25 @@ function learning_btn_func(){
     list.R_hand.object3D.visible = false
     // this.color_set(sc_st, _colorData)
 
+    list.learning_btn.querySelector("p").textContent = '解説モードへ'
+
     mode.Mode_set("learning")
     console.log("解説 => 学習")
     console.log({s:1, cube_mode: mode.data.cube_mode})
   }
   else if(mode.data.cube_mode == "learning"){
     mode.Mode_set("Execution")
-    color_set(list.setData)
 
     list.L_hand.object3D.visible = true
     list.R_hand.object3D.visible = true
+    
+    console.log({Datas:list.setData, setColor_data:list.setColor_data})
+    list.color_set(list.setData, list.setColor_data)
+
+    list.learning_btn.querySelector("p").textContent = '試行モードへ'
+
     list.stepChange(list.stepCount)
+
     console.log("学習 => 解説")
     console.log({s:2, cube_mode: mode.data.cube_mode})
   }
@@ -1722,6 +1767,7 @@ function stepList_func(e){
   const list = timeList
   const mode  = document.getElementById("scene").components["cube-mode"]
   if(mode.data.cube_mode !== "Execution")	return
+  if(list.step_move) return
 
   let newStep = -1
   console.log(e.target.classList)

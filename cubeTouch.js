@@ -115,9 +115,13 @@ const cubemode = () => ({
     }
     
 		this.calculation_set_buttont.addEventListener('click', (e) => {
-			if(this.data.cube_mode !== "Free")	return
-      this.Mode_set("Calculation")
-			this.Calculation()
+			if(this.data.cube_mode == "Free"){
+        this.Mode_set("Calculation")
+        this.Calculation()
+      }
+      else if(this.data.cube_mode == "Execution"){
+        execution_btn_func()
+      }
 		})
 
 		this.color_set_buttont.addEventListener('click', (e) => {
@@ -146,7 +150,7 @@ const cubemode = () => ({
     this.hnd_opacity_metar = new metar({
       id: a[2].classList[1],
       el: a[2],
-      start: 0.1,
+      start: 0,
       end: 1,
       value: 1,
       dx: 0.1,
@@ -221,107 +225,18 @@ const cubemode = () => ({
     // console.log(`Viewpoint [${Viewpoint.data.Viewpoint}] Rotation [${Rotation.data.Rotation}] Colorset [${Colorset.data.Colorset}]`)
   },
 
-  Ins_Complete(Sol){
-    console.log(Sol)
-    const imgW = Math.ceil(Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight)*0.07)
-
-    const rotas = document.getElementsByClassName('rotas')
-  
-    const imgDiv = document.createElement('div')
-    imgDiv.classList.add("img-div")
-    imgDiv.style.width = imgW
-    imgDiv.style.height = imgW
-
-    const pimgDiv = document.createElement('div')
-    pimgDiv.classList.add("img-div-back")
-    imgDiv.append(pimgDiv)
-
-    const img = document.createElement('img')
-    img.classList.add('rotate-img')
-
-    const line = document.getElementsByClassName('line')[0]
-    const lineCount = parseInt(line.clientWidth / imgW)
-
-    const _name = document.createElement("p")
-
-    for(let i=0;i<Sol.length;i++){
-      rotas[i].innerHTML = ''
-      if(Sol[i].length == 0){
-        const D = imgDiv.cloneNode(), I=img.cloneNode()
-        // D.classList.remove("img-div")
-        I.src=`./img/skip.png`
-        I.style.width = `${3 * imgW}px`
-        rotas[i].parentElement.style.height = `${imgW}px`
-        // D.append(I)
-        rotas[i].append(I)
-        continue
-      }
-      let len = 0
-      for(s=0;s<Sol[i].length;s++){
-        if(Sol[i][s].length>2){
-          len += 1
-          const D = imgDiv.cloneNode(), I=img.cloneNode()
-          D.classList.remove("img-div")
-          D.classList.add("frame-div")
-          I.src=`./img/(.png`
-          D.append(I)
-          
-          const PatternName = _name.cloneNode()
-          let hit = undefined
-
-          step.forEach((_n, I) => {
-            _n[0].forEach((n, J) => {
-              if(Sol[i][s] == n){
-                hit = [I, J]
-              }
-            })         
-          })
-          PatternName.textContent = `${"ABCDEFG"[hit[0]]}${hit[1]+1}`
-
-          D.append(PatternName)
-          rotas[i].append(D)
-        }
-        for(j of Sol[i][s].split(" ")){
-          len += 1
-          const D = imgDiv.cloneNode(true), I=img.cloneNode()
-          I.src=`./img/${j}.png`
-          D.append(I)
-          rotas[i].append(D)
-        }
-        if(Sol[i][s].length>2){
-          len += 1
-          const D = imgDiv.cloneNode(), I=img.cloneNode()
-          D.classList.remove("img-div")
-          I.src=`./img/).png`
-          D.append(I)
-          rotas[i].append(D)
-        }
-      }      
-      // console.log(`sum_solution [${sum_solution[i].length}]  lineCount [${lineCount}]`)
-      rotas[i].style.width = `${Math.min(len, lineCount) * imgW}px`
-      rotas[i].parentElement.style.height = `${Math.ceil(len / lineCount) * imgW}px`
-
-    }
+  Ins_Complete(){
+    this.icon.style.display = "none"
+    this.icon.classList.remove("rotate-ani")
+    
+    const Lhand = document.getElementById("L-hand")
+    const Rhand = document.getElementById("R-hand")
+    Lhand.object3D.visible = true
+    Rhand.object3D.visible = true
 
     
-    // timeList.imgSpeed = getRuleBySelector(".img-div-back")
-
-    timeList.rotImgs = document.querySelectorAll(".img-div-back")
-    // console.log(timeList.imgSpeed)
-
-    setTimeout(()=>{
-      this.icon.style.display = "none"
-      this.icon.classList.remove("rotate-ani")
-      
-      const Lhand = document.getElementById("L-hand")
-      const Rhand = document.getElementById("R-hand")
-      Lhand.object3D.visible = true
-      Rhand.object3D.visible = true
-
-      
-      this.now_step = -1
-      this.Mode_set("Execution")
-    },100)
+    this.now_step = -1
+    this.Mode_set("Execution")
   },
 
   Complete(){

@@ -28,7 +28,7 @@ class State {
 		let new_c = new Array(6);
 		for(let i=0;i<6;i++)	new_c[i] = this.c[move.c[i]]
 		
-		return new State(new_cp, new_co, new_ep, new_eo, new_c);
+		return new State(new_cp, new_co, new_ep, new_eo, new_c)
 	}
 	
 	hand_move(move) {
@@ -74,6 +74,16 @@ class State {
 		//console.log(this.ep)
 		//console.log(this.eo)
 		//console.log(this.c)
+	}
+
+	copy(){
+		return new State(
+			[...this.cp],
+			[...this.co],
+			[...this.ep],
+			[...this.eo],
+			[...this.c],
+		)
 	}
 }
 
@@ -1180,11 +1190,12 @@ function BBB(){
 		L_hand ,R_hand,bone_L_hand,bone_R_hand,
 		bone_name_model,frameObj
 	)
-	timeList.ins(scrambled_state, JSON.parse(JSON.stringify(sum_solution)), JSON.parse(JSON.stringify(color_data)))
+	console.log(color_data)
+	timeList.ins(scrambled_state, color_data, JSON.parse(JSON.stringify(sum_solution)), tank)
 
 	setTimeout(() => {
 		const scene = document.getElementById('scene').components["cube-mode"]
-		scene.Ins_Complete(tank)
+		scene.Ins_Complete()
 	},50)
 }
 
